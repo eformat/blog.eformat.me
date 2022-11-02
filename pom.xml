@@ -7,8 +7,10 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jbake.inputDirectory>${project.basedir}/src/jbake</jbake.inputDirectory>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <github.global.server>github</github.global.server>
     </properties>
 
     <url>https://github.com/eformat/blog.eformat.me</url>
