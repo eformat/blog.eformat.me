@@ -1,0 +1,25 @@
+name: Release
+
+# Run workflow on commits to the `master` branch
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Deploy
+        run: mvn deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
