@@ -1,5 +1,12 @@
 # blog.eformat.me
 
+Test Locally
 ```bash
-mvn compile
+mvn site
+serve target/blog/
+```
+
+Deploy to ghPages
+```bash
+mvn deploy
 ```
