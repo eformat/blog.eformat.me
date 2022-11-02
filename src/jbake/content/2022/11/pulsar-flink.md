@@ -12,7 +12,8 @@ I have been messing around with yet another streaming demo (YASD). You really ju
 
 I am a fan of [server sent events](https://en.wikipedia.org/wiki/Server-sent_events), why ? because they are HTML5 native. No messing around with web sockets. I have a a [small quarkus app](https://github.com/eformat/quote-generator) that generates stock quotes:
 
-<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500">
+<div id="lightbox"></div>
+<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
 
 that you can easily run it locally or on OpenShift:
 
@@ -61,7 +62,7 @@ podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persiste
 
 And i need to write this post as well .. getting it to run in OpenShift ...
 
-<div id="lightbox"></div>
 <img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom">
 
+</br>
 Source code is here - https://github.com/eformat/flink-stocks
