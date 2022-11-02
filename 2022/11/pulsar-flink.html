@@ -15,6 +15,7 @@
     <meta property="og:site_name" content="eformat.me" />
 
     <!-- Le styles -->
+    <link href="../../css/lightbox.css" rel="stylesheet">
     <link href="../../css/yeti/bootstrap.min.css" rel="stylesheet">
     <link href="../../css/base.css" rel="stylesheet">
     <link href="../../css/asciidoctor.css" rel="stylesheet">
@@ -130,6 +131,9 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 <p>And then consume messages to make sure they are there !</p>
 <pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 </code></pre>
+<p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
+<div id="lightbox"></div>
+<img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom">
 <p>Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
 </p>
         </div>
@@ -192,6 +196,7 @@ oc create route edge quote-generator --service=quote-generator --port=8080
     <!-- Javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../js/lightbox.js"></script>
 
     <!--script type="text/javascript">
         window.___gcfg = {lang: 'en'};

@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 2 Nov 2022 14:59:20 +1000</pubDate>
-      <lastBuildDate>Wed, 2 Nov 2022 14:59:20 +1000</lastBuildDate>
+      <pubDate>Wed, 2 Nov 2022 15:39:59 +1000</pubDate>
+      <lastBuildDate>Wed, 2 Nov 2022 15:39:59 +1000</lastBuildDate>
 
       
       <item>
@@ -43,6 +43,9 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 &lt;p&gt;And then consume messages to make sure they are there !&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And i need to write this post as well .. getting it to run in OpenShift &amp;hellip;&lt;/p&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;img src=&quot;/2022/11/flink-stocks-ocp.png&quot; width=&quot;600&quot; class=&quot;zoom&quot;&gt;
 &lt;p&gt;Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&quot;&gt;https://github.com/eformat/flink-stocks&lt;/a&gt;&lt;/p&gt;
 
           </description>
