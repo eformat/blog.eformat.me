@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>eformat.me</title>
+    <link>https://blog.eformat.me</link>
+    <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
+    <description>eformat.me</description>
+    <language>en-gb</language>
+      <pubDate>Wed, 2 Nov 2022 14:45:09 +1000</pubDate>
+      <lastBuildDate>Wed, 2 Nov 2022 14:45:09 +1000</lastBuildDate>
+
+      
+      <item>
+          <title>Pulsar Flink</title>
+          <link>https://blog.eformat.me/2022/11/pulsar-flink.html</link>
+          <pubDate>Wed, 2 Nov 2022 00:00:00 +1000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/pulsar-flink.html</guid>
+          <description>
+              &lt;h1&gt;&lt;a href=&quot;#pulsar-flink&quot; id=&quot;pulsar-flink&quot;&gt;Pulsar Flink&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.&lt;/p&gt;
+&lt;p&gt;I am a fan of &lt;a href=&quot;https://en.wikipedia.org/wiki/Server-sent_events&quot;&gt;server sent events&lt;/a&gt;, why ? because they are HTML5 native. No messing around with web sockets. I have a a &lt;a href=&quot;https://github.com/eformat/quote-generator&quot;&gt;small quarkus app&lt;/a&gt; that generates stock quotes:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif&quot; width=&quot;500&quot;&gt;&lt;/p&gt;
+&lt;p&gt;that you can easily run it locally or on OpenShift:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;oc new-app quay.io/eformat/quote-generator:latest
+oc create route edge quote-generator --service=quote-generator --port=8080
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and then retrieve the events in the browser or by curl:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;curl -H &amp;quot;Content-Type: application/json&amp;quot; --max-time 9999999 -N http://localhost:8080/quotes/stream
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So, first challenge - How might we consume these SSE&amp;rsquo;s using Flink? I found a handy &lt;a href=&quot;https://github.com/aws-samples/amazon-kinesis-data-analytics-apache-flink-server-sent-events-sse/tree/main/kinesis-data-analytics-sse&quot;&gt;AWS Kinesis SSE demo&lt;/a&gt; which i snarfed the SSE/OKHttp code from. I wired this into flinks &lt;code&gt;RichSourceFunction&lt;/code&gt;:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/4d5fd40d8566e99e866e1e7fd4cb6388.js&quot;&gt;&lt;/script&gt;
+&lt;p&gt;So now i could consume this SSE source as a &lt;code&gt;DataStream&lt;/code&gt;&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js&quot;&gt;&lt;/script&gt;
+&lt;p&gt;In the example, i wire in the stock quotes for &lt;code&gt;NFLX&lt;/code&gt; and &lt;code&gt;RHT&lt;/code&gt;. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this &lt;a href=&quot;https://flink.apache.org/news/2015/02/09/streaming-example.html&quot;&gt;stock price&lt;/a&gt; example from 2015! cool. So i implemented a simple &lt;code&gt;BuyFunction&lt;/code&gt; class that makes stock buy recommendations:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js&quot;&gt;&lt;/script&gt;
+&lt;p&gt;Lastly, it needs to be put to a sink. Again, i started by using a simple print sink:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js&quot;&gt;&lt;/script&gt;
+&lt;p&gt;Friends of mine have been telling me how much more awesome &lt;code&gt;Pulsar&lt;/code&gt; is compared to &lt;code&gt;Kafka&lt;/code&gt; so i also tried out sending to a local pulsar container that you can run using:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And sent to using a simple class utilizing the pulsar java client:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js&quot;&gt;&lt;/script&gt;
+&lt;p&gt;And then consume messages to make sure they are there !&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&quot;&gt;https://github.com/eformat/flink-stocks&lt;/a&gt;&lt;/p&gt;
+
+          </description>
+      </item>
+      
+      <item>
+          <title>The Compelling Platform</title>
+          <link>https://blog.eformat.me/2022/11/the-compelling-platform.html</link>
+          <pubDate>Tue, 1 Nov 2022 00:00:00 +1000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/the-compelling-platform.html</guid>
+          <description>
+              &lt;h1&gt;&lt;a href=&quot;#the-compelling-platform&quot; id=&quot;the-compelling-platform&quot;&gt;The Compelling Platform&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;&amp;ldquo;Build it and they will come !&amp;rdquo;&lt;/em&gt; - 1989 movie Field of Dreams.&lt;/p&gt;
+&lt;p&gt;A &lt;em&gt;key&lt;/em&gt; ingredient for success when building a platform is that it must be &lt;em&gt;compelling&lt;/em&gt; to use. What makes a platform compelling ?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The platform is self-service for the overwhelming majority of use cases.&lt;/li&gt;
+&lt;li&gt;The platform is composable, containing discrete services that can be used independently.&lt;/li&gt;
+&lt;li&gt;The platform does not force an inflexible way of working upon the delivery team.&lt;/li&gt;
+&lt;li&gt;The platform is quick and cheap to start using, with an easy on-ramp (e.g. Quick start guides, documentation, code samples)&lt;/li&gt;
+&lt;li&gt;The platform has a rich internal user community for sharing&lt;/li&gt;
+&lt;li&gt;The platform is secure and compliant by default&lt;/li&gt;
+&lt;li&gt;The platform is up to date&lt;/li&gt;
+&lt;li&gt;The platform is the thinnest viable&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A platform should also be more than just software and APIs - it is documentation, and consulting, and support and evangelism, and templates and guidelines.&lt;/p&gt;
+&lt;p&gt;You must also move away from &lt;em&gt;project&lt;/em&gt; as the primary mechanism for funding and staffing delivery of technology. Platform is a &lt;em&gt;product&lt;/em&gt;, and needs a long-lived and stable team tasked with both build and run.&lt;/p&gt;
+&lt;h2&gt;&lt;a href=&quot;#define-platform&quot; id=&quot;define-platform&quot;&gt;Define Platform&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;&amp;ldquo;A platform is a curated experience for the customer of the platform (engineers)&amp;rdquo;&lt;/em&gt; - Matthew Skelton.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&amp;ldquo;A digital platform is a foundation of self-service APIs, tools, services, knowledge and support which are arranged as a compelling internal product. Autonomous delivery teams can make use of the platform to deliver product features at a higher pace, with reduced co-ordination.&amp;rdquo;&lt;/em&gt; - Evan Botcher.&lt;/p&gt;
+&lt;p&gt;What it is &lt;b&gt;NOT:&lt;/b&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It is not the limited virtualised hosting and locked-down centrally-managed tooling that you already have.&lt;/li&gt;
+&lt;li&gt;It is not just OpenShift, Ansible or RHEL by themselves.&lt;/li&gt;
+&lt;li&gt;The &lt;em&gt;fattest&lt;/em&gt; platform in the world.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The starting point is to &lt;em&gt;&amp;ldquo;Use these N services in these ways &amp;hellip;&amp;rdquo;&lt;/em&gt; - this is a curated experience.&lt;/p&gt;
+&lt;p&gt;The &lt;em&gt;Thinnest Viable Platform&lt;/em&gt; is a small, curated set of complementary services or patterns used together to simplify and accelerate delivery.&lt;/p&gt;
+&lt;p&gt;The platform will evolve and its design should meet common team interaction modes.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/eformat/the-compelling-platform/blob/main/PATTERNS.md&quot;&gt;Patterns for the Compelling Platform &amp;gt;&lt;/a&gt;&lt;/p&gt;
+
+          </description>
+      </item>
+      
+
+  </channel> 
+</rss>

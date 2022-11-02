@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    
+    <title>eformat.me - streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="eformat.me : streaming">
+    <meta property="og:title" content="eformat.me - streaming" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/streaming.html" />
+    <meta property="og:description" content="eformat.me : streaming" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="eformat.me" />
+
+    <!-- Le styles -->
+    <link href="../css/yeti/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/asciidoctor.css" rel="stylesheet">
+    <!-- link href="/css/bootstrap-theme.min.css" rel="stylesheet" -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="wrap">
+
+	
+	      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">eformat.me</a>
+          </div>
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav">
+              <li><a href="https://github.com/eformat" target="github:eformat">Github</a></li>
+              <li><a href="../archive.html">Archives</a></li>
+              <li><a href="../feeds/posts/default.xml">Flux RSS</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+      <div class="container">
+
+
+	<div class="page-header">
+            <div class="row">
+                <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: streaming</h1></div>
+            </div>
+	</div>
+
+    <div class="row">
+
+    <div class="col-sm-8">
+        
+            
+                <a href="../2022/11/pulsar-flink.html"><h1>Pulsar Flink</h1></a>
+                <p>02 November 2022</p>
+
+                <p>Tags :
+                <a href="streaming.html">streaming</a>, <a href="pulsar.html">pulsar</a>, <a href="flink.html">flink</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/pulsar-flink.html" data-text="Pulsar Flink" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/pulsar-flink.html"></div>
+
+                <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
+<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.</p>
+<p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
+<p><img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500"></p>
+<p>that you can easily run it locally or on OpenShift:</p>
+<pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
+oc create route edge quote-generator --service=quote-generator --port=8080
+</code></pre>
+<p>and then retrieve the events in the browser or by curl:</p>
+<pre><code class="language-bash">curl -H &quot;Content-Type: application/json&quot; --max-time 9999999 -N http://localhost:8080/quotes/stream
+</code></pre>
+<p>So, first challenge - How might we consume these SSE&rsquo;s using Flink? I found a handy <a href="https://github.com/aws-samples/amazon-kinesis-data-analytics-apache-flink-server-sent-events-sse/tree/main/kinesis-data-analytics-sse">AWS Kinesis SSE demo</a> which i snarfed the SSE/OKHttp code from. I wired this into flinks <code>RichSourceFunction</code>:</p>
+<script src="https://gist.github.com/eformat/4d5fd40d8566e99e866e1e7fd4cb6388.js"></script>
+<p>So now i could consume this SSE source as a <code>DataStream</code></p>
+<script src="https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js"></script>
+<p>In the example, i wire in the stock quotes for <code>NFLX</code> and <code>RHT</code>. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this <a href="https://flink.apache.org/news/2015/02/09/streaming-example.html">stock price</a> example from 2015! cool. So i implemented a simple <code>BuyFunction</code> class that makes stock buy recommendations:</p>
+<script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
+<p>Lastly, it needs to be put to a sink. Again, i started by using a simple print sink:</p>
+<script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
+<p>Friends of mine have been telling me how much more awesome <code>Pulsar</code> is compared to <code>Kafka</code> so i also tried out sending to a local pulsar container that you can run using:</p>
+<pre><code class="language-bash">podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
+</code></pre>
+<p>And sent to using a simple class utilizing the pulsar java client:</p>
+<script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
+<p>And then consume messages to make sure they are there !</p>
+<pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
+</code></pre>
+<p>Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
+</p>
+                <p><a href="2022/11/pulsar-flink.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+
+    </div>
+
+    <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+            <h4>Mike Hepburn</h4>
+            <p>This is really working out great.</p>
+            <ul>
+                <li><a href="https://twitter.com/eformat">@eformat</a></li>
+            </ul>
+        </div>
+
+
+        <div class="sidebar-module">
+            <h4>Tags</h4>
+            <ol class="list-unstyled" style="margin-left: 0px">
+                
+
+                <li><a href="flink.html">flink</a> (1)</li>
+                
+
+                <li><a href="platform.html">platform</a> (1)</li>
+                
+
+                <li><a href="platform as product.html">platform as product</a> (1)</li>
+                
+
+                <li><a href="pulsar.html">pulsar</a> (1)</li>
+                
+
+                <li><a href="streaming.html">streaming</a> (1)</li>
+                
+            </ol>
+        </div>
+    </div>
+
+    </div>
+
+		</div>
+		<div id="push"></div>
+    </div>
+    
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a></p>
+      </div>
+    </div>
+    
+    <!-- Javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <!--script type="text/javascript">
+        window.___gcfg = {lang: 'en'};
+
+        (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/platform.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+    </script-->
+
+    <!--script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-', '');
+      ga('send', 'pageview');
+
+    </script-->
+    
+  </body>
+</html>
+

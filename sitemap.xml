@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    <url>
+        <loc>https://blog.eformat.me/index.html</loc>
+        <lastmod>2022-11-02</lastmod>
+    </url>
+    <url>
+        <loc>https://blog.eformat.me/archive.html</loc>
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/flink.html</loc>
+        
+
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/streaming.html</loc>
+        
+
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/platform as product.html</loc>
+        
+
+        <lastmod>2022-11-01</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/platform.html</loc>
+        
+
+        <lastmod>2022-11-01</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/pulsar.html</loc>
+        
+
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+
+    <url>
+        <loc>https://blog.eformat.me/2022/11/pulsar-flink.html</loc>
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/2022/11/the-compelling-platform.html</loc>
+        <lastmod>2022-11-01</lastmod>
+    </url>
+
+</urlset>
