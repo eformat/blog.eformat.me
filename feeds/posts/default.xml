@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 2 Nov 2022 15:50:18 +1000</pubDate>
-      <lastBuildDate>Wed, 2 Nov 2022 15:50:18 +1000</lastBuildDate>
+      <pubDate>Wed, 2 Nov 2022 06:28:47 +0000</pubDate>
+      <lastBuildDate>Wed, 2 Nov 2022 06:28:47 +0000</lastBuildDate>
 
       
       <item>
           <title>Pulsar Flink</title>
           <link>https://blog.eformat.me/2022/11/pulsar-flink.html</link>
-          <pubDate>Wed, 2 Nov 2022 00:00:00 +1000</pubDate>
+          <pubDate>Wed, 2 Nov 2022 00:00:00 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/pulsar-flink.html</guid>
           <description>
               &lt;h1&gt;&lt;a href=&quot;#pulsar-flink&quot; id=&quot;pulsar-flink&quot;&gt;Pulsar Flink&lt;/a&gt;&lt;/h1&gt;
@@ -55,7 +55,7 @@ Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&q
       <item>
           <title>The Compelling Platform</title>
           <link>https://blog.eformat.me/2022/11/the-compelling-platform.html</link>
-          <pubDate>Tue, 1 Nov 2022 00:00:00 +1000</pubDate>
+          <pubDate>Tue, 1 Nov 2022 00:00:00 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/the-compelling-platform.html</guid>
           <description>
               &lt;h1&gt;&lt;a href=&quot;#the-compelling-platform&quot; id=&quot;the-compelling-platform&quot;&gt;The Compelling Platform&lt;/a&gt;&lt;/h1&gt;
