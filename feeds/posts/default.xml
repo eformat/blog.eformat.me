@@ -6,9 +6,133 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 2 Nov 2022 06:52:56 +0000</pubDate>
-      <lastBuildDate>Wed, 2 Nov 2022 06:52:56 +0000</lastBuildDate>
+      <pubDate>Wed, 2 Nov 2022 21:29:56 +0000</pubDate>
+      <lastBuildDate>Wed, 2 Nov 2022 21:29:56 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>DevOps with OpenShift Introduction</title>
+          <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
+          <pubDate>Wed, 2 Nov 2022 21:29:20 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
+          <description>
+              &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
+&lt;h2 id=&quot;Introduction-to-DevOps&quot;&gt;5 Years!&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It&amp;#8217;s been five years since we wrote the inaugural DevOps with OpenShift book. I re-read the introduction recently, and thought &lt;em&gt;&quot;It hasn&amp;#8217;t aged that badly !&quot;&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://cloud.redhat.com/hubfs/pdfs/DevOps_with_OpenShift.pdf&quot; class=&quot;bare&quot;&gt;https://cloud.redhat.com/hubfs/pdfs/DevOps_with_OpenShift.pdf&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;cover&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;/2022/11/dowo_cover.png&quot; alt=&quot;DevOps with OpenShift&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 1. DevOps with OpenShift&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_introduction_to_devops_with_openshift&quot;&gt;Introduction to DevOps with OpenShift&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This book provides a practical guide for using OpenShift as an enablement technology for DevOps. OpenShift&amp;#8217;s combination of container management platform with natively container-aware automation can bring those Developer and Operations constituencies together in ways not previously possible. This enables software work products to present themselves in a standardized form to your preferred continuous integration and delivery tool chains.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Container awareness makes it possible to leverage deployment strategies and quality of service characteristics honored by the container management platform and underlying orchestration engine. We can start thinking in terms of &lt;em&gt;containers-as-code&lt;/em&gt; rather than &lt;em&gt;infrastructure-as-code&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So to get started, let&amp;#8217;s review some key DevOps concepts as interpreted with a container-centric viewpoint.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_devops&quot;&gt;DevOps&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;DevOps is concerned with aligning the constituents in the software delivery process to a common goal of value delivery&amp;#x2014;and it&amp;#8217;s not just Developers and Operators, but InfoSec and Quality Assurance functions and more. Recognize that wealth is created when the work product is valued by actors external to the production system. Value delivery outcomes are measured by metrics tied to production delivery velocity, quality, and waste. DevOps emphasizes behavioral- or cultural-related changes such as those which encourage teaming, inclusion, feedback, and experimentation. Technological interventions such as automation are central as they can reinforce such target behaviors. DevOps does not necessarily imply functional roles in software delivery such as development, quality assurance, or operations are merged or seconded. More important is that a professional respect and shared sensibility is formed across the delivery team.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_containers&quot;&gt;Containers&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Containers are the runtime representation of a packaging format based on a lightweight, immutable image. Runtime dependencies are resolved within the image which facilitates portability. This makes possible the agreement on a standardized software work product. Management and runtime tooling that is container aware can then be applied consistently no matter what the underlying technology stack. Container-based workloads are suitable for multi-tenancy on a single compute instance and when implemented securely can realize significant operation efficiencies. An important corollary is that launching a new workload does not incur the cost of provisioning new compute infrastructure. This enables a true on-demand, self-service experience for users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_container_orchestration&quot;&gt;Container Orchestration&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Container orchestration involves the lifecycle management of container workloads, including functions such as to schedule, stop, start, and replicate across a cluster of machines. Compute resources for running workloads are abstracted, allowing the host infrastructure to be treated as a single logical deployment target. Kubernetes is an open source community project addressing container orchestration. It groups containers that make up an application into logical units for easy management and discovery, and features self-healing, service discovery, load balancing, and storage services among its rich feature set. Orchestration plays a critical role in our design goal of application-centricity as quality of service attributes and deployment patterns are executed by invoking Kubernetes API primitives.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_continuous_integration&quot;&gt;Continuous Integration&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Continuous integration (CI) concerns the integration of code from potentially multiple authors into a shared source code management (SCM) repository. Such check-ins could occur many times a day, and automation steps in such a process could include gates or controls to expose any issues as early as possible. SCMs such as Git include workflow support to commit to trunk, push, and merge code pull requests from multiple developers. With containers, a Git push event could be configured to then trigger an image build event via the webhooks mechanism.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_continuous_delivery&quot;&gt;Continuous Delivery&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Once a CI strategy is in place, consideration can then move to achieving continuous delivery (CD). This involves automating the steps required to promote the work product from one environment to the next within the defined software development lifecycle (SDLC). Such steps could include automated testing, smoke, unit, functional, and static code analysis and static dependency checks for known security vulnerabilities. With containers, promotion in later stages of the SLC may merely involve the tagging of the (immutable) image to mark acceptance. Binary promotions are also possible such that only the image is pushed (to the target registry of the new environment), leaving source code in situ.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_continuous_deployment&quot;&gt;Continuous Deployment&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By convention, we can denote the special case of automated continuous delivery to production as &lt;em&gt;continuous deployment&lt;/em&gt; (CD). We make such a distinction because such deployments may be subject to additional governance processes and gates&amp;#x2014;for example, deliberate human intervention to manage risk and complete sign-off procedures. We make such a distinction because such deployments may be subject to additional governance processes. As per &lt;a href=&quot;#one_1&quot;&gt;Continuous delivery versus deployment&lt;/a&gt;, there may be scenarios for deliberate human intervention to manage risk and complete sign-off procedures.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;one_1&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;/2022/11/dowo_0101.png&quot; alt=&quot;Continuous Delivery versus Deployment&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 2. Continuous delivery versus deployment&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_pipelines&quot;&gt;Pipelines&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Pipelines are a representation of the flow/automation in a CI/CD process. Typically a pipeline might call out discrete steps in the software delivery process and present them visually or via a high-level scripting language so the flow can be manipulated. The steps might include build, unit tests, acceptance tests, packaging, documentation, reporting, and deployment and verification phases. Well-designed pipelines help deliver better quality code faster by enabling participants in the software delivery process to more easily diagnose and respond to feedback. As illustrated in &lt;a href=&quot;#one_2&quot;&gt;Smaller releases, release often, faster feedback&lt;/a&gt;, diagnosis and response turnaround can be accelerated by organizing releases into smaller and more frequent release bundles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;one_2&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;/2022/11/dowo_0102.png&quot; alt=&quot;Smaller, more frequent releases&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 3. Smaller releases, release often, faster feedback&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_software_configuration_management&quot;&gt;Software Configuration Management&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For our purposes we will take a narrower view of software configuration management (CM) and focus on the recommended software engineering practice of separating dynamic configuration from static runtime software. Doing so allows developers and operations engineers to change the configuration without having to rebuild the runtime such as might occur when deploying to different environments. Containers, based as they are on immutable images, amplify this behavior as the alternative would be configuration layered across multiple images for each deployment scenario.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_deployment_patterns&quot;&gt;Deployment Patterns&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Aligned with the goal of automation across all steps in the software delivery lifecycle are patterns for deployment. We look here for strategies that can balance across criteria including safety, testability, reversibility, and downtime minimization in cloud-scale scenarios. Some deployment patterns also offer opportunities for capturing and responding to feedback. An A/B deployment allows for testing a user-defined hypothesis such as whether application version A is more effective than B. Usage results can then drive weighted load balancing across the alternatives. Automation of deployment strategies in this DevOps world are implemented by driving the orchestration APIs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_continuous_improvement&quot;&gt;Continuous Improvement&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Let&amp;#8217;s conclude this chapter by covering continuous improvement (&lt;a href=&quot;#one_3&quot;&gt;Continuous improvement&lt;/a&gt;), which should be the thread that connects all of the process improvement&amp;#x2013;related practices summarized. The environment changes and so must we. These practices make it easy and inexpensive to experiment, formulate, and test hypotheses, as well as capture, act on, and experiment with the feedback received. This way we can continue to inject energy into the system and so maintain a state of dynamic stability&amp;#x2014;a balance of adaptive/agile versus fixed/stable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;one_3&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;/2022/11/dowo_0103.png&quot; alt=&quot;Continuous Improvement&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 4. Continuous improvement&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_summary&quot;&gt;Summary&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We covered here some of what is unique and nuanced about DevOps with OpenShift and why it matters. Realizing these DevOps concepts using natively container-aware automation can bring cloud deployment power to &lt;em&gt;all&lt;/em&gt; the people, from 10x programmer to citizen developer. The following chapters will show you how.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Pulsar Flink</title>
@@ -17,11 +141,11 @@
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/pulsar-flink.html</guid>
           <description>
               &lt;h1&gt;&lt;a href=&quot;#pulsar-flink&quot; id=&quot;pulsar-flink&quot;&gt;Pulsar Flink&lt;/a&gt;&lt;/h1&gt;
-&lt;p&gt;I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.&lt;/p&gt;
+&lt;p&gt;I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩&lt;/p&gt;
 &lt;p&gt;I am a fan of &lt;a href=&quot;https://en.wikipedia.org/wiki/Server-sent_events&quot;&gt;server sent events&lt;/a&gt;, why ? because they are HTML5 native. No messing around with web sockets. I have a a &lt;a href=&quot;https://github.com/eformat/quote-generator&quot;&gt;small quarkus app&lt;/a&gt; that generates stock quotes:&lt;/p&gt;
 &lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
 &lt;img src=&quot;https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif&quot; width=&quot;500&quot; class=&quot;zoom&quot;&gt;
-&lt;p&gt;that you can easily run it locally or on OpenShift:&lt;/p&gt;
+&lt;p&gt;that you can easily run locally or on OpenShift:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;oc new-app quay.io/eformat/quote-generator:latest
 oc create route edge quote-generator --service=quote-generator --port=8080
 &lt;/code&gt;&lt;/pre&gt;
@@ -34,18 +158,18 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 &lt;script src=&quot;https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js&quot;&gt;&lt;/script&gt;
 &lt;p&gt;In the example, i wire in the stock quotes for &lt;code&gt;NFLX&lt;/code&gt; and &lt;code&gt;RHT&lt;/code&gt;. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this &lt;a href=&quot;https://flink.apache.org/news/2015/02/09/streaming-example.html&quot;&gt;stock price&lt;/a&gt; example from 2015! cool. So i implemented a simple &lt;code&gt;BuyFunction&lt;/code&gt; class that makes stock buy recommendations:&lt;/p&gt;
 &lt;script src=&quot;https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js&quot;&gt;&lt;/script&gt;
-&lt;p&gt;Lastly, it needs to be put to a sink. Again, i started by using a simple print sink:&lt;/p&gt;
+&lt;p&gt;Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:&lt;/p&gt;
 &lt;script src=&quot;https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js&quot;&gt;&lt;/script&gt;
 &lt;p&gt;Friends of mine have been telling me how much more awesome &lt;code&gt;Pulsar&lt;/code&gt; is compared to &lt;code&gt;Kafka&lt;/code&gt; so i also tried out sending to a local pulsar container that you can run using:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And sent to using a simple class utilizing the pulsar java client:&lt;/p&gt;
+&lt;p&gt;And forwrded to pulsar using a simple utility class using the pulsar java client:&lt;/p&gt;
 &lt;script src=&quot;https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js&quot;&gt;&lt;/script&gt;
-&lt;p&gt;And then consume messages to make sure they are there !&lt;/p&gt;
+&lt;p&gt;Then consume the messages to make sure they are there !&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And i need to write this post as well .. getting it to run in OpenShift &amp;hellip;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/2022/11/flink-stocks-ocp.png&quot; width=&quot;600&quot; class=&quot;zoom&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/2022/11/flink-stocks-ocp.png&quot; width=&quot;640&quot; class=&quot;zoom&quot;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;/br&gt;&lt;br /&gt;
 Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&quot;&gt;https://github.com/eformat/flink-stocks&lt;/a&gt;&lt;/p&gt;
 

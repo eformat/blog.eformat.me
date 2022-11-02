@@ -31,6 +31,20 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/devops.html</loc>
+        
+
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/openshift.html</loc>
+        
+
+        <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/platform.html</loc>
         
 
@@ -44,6 +58,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</loc>
+        <lastmod>2022-11-02</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2022/11/pulsar-flink.html</loc>

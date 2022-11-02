@@ -11,7 +11,7 @@
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
     <meta property="og:url" content="https://blog.eformat.me/tags/pulsar.html" />
     <meta property="og:description" content="eformat.me : pulsar" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
     <!-- Le styles -->
@@ -87,11 +87,11 @@
                 <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/pulsar-flink.html"></div>
 
                 <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
-<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.</p>
+<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩</p>
 <p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
 <div id="lightbox"></div>
 <img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
-<p>that you can easily run it locally or on OpenShift:</p>
+<p>that you can easily run locally or on OpenShift:</p>
 <pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
 oc create route edge quote-generator --service=quote-generator --port=8080
 </code></pre>
@@ -104,18 +104,18 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 <script src="https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js"></script>
 <p>In the example, i wire in the stock quotes for <code>NFLX</code> and <code>RHT</code>. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this <a href="https://flink.apache.org/news/2015/02/09/streaming-example.html">stock price</a> example from 2015! cool. So i implemented a simple <code>BuyFunction</code> class that makes stock buy recommendations:</p>
 <script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
-<p>Lastly, it needs to be put to a sink. Again, i started by using a simple print sink:</p>
+<p>Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:</p>
 <script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
 <p>Friends of mine have been telling me how much more awesome <code>Pulsar</code> is compared to <code>Kafka</code> so i also tried out sending to a local pulsar container that you can run using:</p>
 <pre><code class="language-bash">podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
 </code></pre>
-<p>And sent to using a simple class utilizing the pulsar java client:</p>
+<p>And forwrded to pulsar using a simple utility class using the pulsar java client:</p>
 <script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
-<p>And then consume messages to make sure they are there !</p>
+<p>Then consume the messages to make sure they are there !</p>
 <pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 </code></pre>
 <p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
-<p><img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom"></p>
+<p><img src="/2022/11/flink-stocks-ocp.png" width="640" class="zoom"></p>
 <p></br><br />
 Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
 </p>
@@ -141,7 +141,13 @@ Source code is here - <a href="https://github.com/eformat/flink-stocks">https://
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
+                <li><a href="devops.html">devops</a> (1)</li>
+                
+
                 <li><a href="flink.html">flink</a> (1)</li>
+                
+
+                <li><a href="openshift.html">openshift</a> (1)</li>
                 
 
                 <li><a href="platform.html">platform</a> (1)</li>
@@ -168,7 +174,7 @@ Source code is here - <a href="https://github.com/eformat/flink-stocks">https://
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 02 06:52:56 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 02 21:29:57 UTC 2022</a></p>
       </div>
     </div>
     
