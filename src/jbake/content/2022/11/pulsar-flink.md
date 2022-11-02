@@ -8,14 +8,14 @@ id=pulsar-flink
 
 # Pulsar Flink
 
-I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.
+I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩
 
 I am a fan of [server sent events](https://en.wikipedia.org/wiki/Server-sent_events), why ? because they are HTML5 native. No messing around with web sockets. I have a a [small quarkus app](https://github.com/eformat/quote-generator) that generates stock quotes:
 
 <div id="lightbox"></div>
 <img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
 
-that you can easily run it locally or on OpenShift:
+that you can easily run locally or on OpenShift:
 
 ```bash
 oc new-app quay.io/eformat/quote-generator:latest
@@ -40,7 +40,7 @@ In the example, i wire in the stock quotes for `NFLX` and `RHT`. Next step, proc
 
 <script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
 
-Lastly, it needs to be put to a sink. Again, i started by using a simple print sink:
+Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:
 
 <script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
 
@@ -50,11 +50,11 @@ Friends of mine have been telling me how much more awesome `Pulsar` is compared 
 podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
 ```
 
-And sent to using a simple class utilizing the pulsar java client:
+And forwrded to pulsar using a simple utility class using the pulsar java client:
 
 <script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
 
-And then consume messages to make sure they are there !
+Then consume the messages to make sure they are there !
 
 ```bash
 podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
@@ -62,7 +62,7 @@ podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persiste
 
 And i need to write this post as well .. getting it to run in OpenShift ...
 
-<img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom">
+<img src="/2022/11/flink-stocks-ocp.png" width="640" class="zoom">
 
 </br>
 Source code is here - https://github.com/eformat/flink-stocks

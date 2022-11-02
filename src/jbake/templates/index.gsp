@@ -13,7 +13,7 @@
 
         <div class="col-sm-8">
 
-            <% posts.take(5).each { post -> %>
+            <% posts.take(1).each { post -> %>
                 <%if (post.status == "published") {%>
                     <div itemscope itemtype="http://schema.org/Blog">
                         <div itemprop="author" itemscope itemtype="http://schema.org/Person">

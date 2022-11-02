@@ -47,7 +47,7 @@
             out << "eformat.me : This is working out great."
         }
     %>" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
     <!-- Le styles -->
