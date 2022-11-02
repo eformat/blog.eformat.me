@@ -9,6 +9,7 @@ on:
 
 jobs:
   release:
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
