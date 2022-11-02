@@ -12,6 +12,7 @@
     <!-- Javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>js/lightbox.js"></script>
 
     <!--script type="text/javascript">
         window.___gcfg = {lang: 'en'};

@@ -51,6 +51,7 @@
     <meta property="og:site_name" content="eformat.me" />
 
     <!-- Le styles -->
+    <link href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>css/lightbox.css" rel="stylesheet">
     <link href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>css/yeti/bootstrap.min.css" rel="stylesheet">
     <link href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>css/base.css" rel="stylesheet">
     <link href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>css/asciidoctor.css" rel="stylesheet">

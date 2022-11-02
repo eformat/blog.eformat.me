@@ -59,4 +59,9 @@ And then consume messages to make sure they are there !
 podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 ```
 
+And i need to write this post as well .. getting it to run in OpenShift ...
+
+<div id="lightbox"></div>
+<img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom">
+
 Source code is here - https://github.com/eformat/flink-stocks

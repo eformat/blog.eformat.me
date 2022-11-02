@@ -2,7 +2,7 @@
 
 Test Locally
 ```bash
-mvn site
+mvn generate-resources
 serve target/blog/
 ```
 
