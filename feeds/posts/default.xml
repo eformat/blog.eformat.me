@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 2 Nov 2022 15:39:59 +1000</pubDate>
-      <lastBuildDate>Wed, 2 Nov 2022 15:39:59 +1000</lastBuildDate>
+      <pubDate>Wed, 2 Nov 2022 15:50:18 +1000</pubDate>
+      <lastBuildDate>Wed, 2 Nov 2022 15:50:18 +1000</lastBuildDate>
 
       
       <item>
@@ -19,7 +19,8 @@
               &lt;h1&gt;&lt;a href=&quot;#pulsar-flink&quot; id=&quot;pulsar-flink&quot;&gt;Pulsar Flink&lt;/a&gt;&lt;/h1&gt;
 &lt;p&gt;I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.&lt;/p&gt;
 &lt;p&gt;I am a fan of &lt;a href=&quot;https://en.wikipedia.org/wiki/Server-sent_events&quot;&gt;server sent events&lt;/a&gt;, why ? because they are HTML5 native. No messing around with web sockets. I have a a &lt;a href=&quot;https://github.com/eformat/quote-generator&quot;&gt;small quarkus app&lt;/a&gt; that generates stock quotes:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif&quot; width=&quot;500&quot;&gt;&lt;/p&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif&quot; width=&quot;500&quot; class=&quot;zoom&quot;&gt;
 &lt;p&gt;that you can easily run it locally or on OpenShift:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;oc new-app quay.io/eformat/quote-generator:latest
 oc create route edge quote-generator --service=quote-generator --port=8080
@@ -44,9 +45,9 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And i need to write this post as well .. getting it to run in OpenShift &amp;hellip;&lt;/p&gt;
-&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
-&lt;img src=&quot;/2022/11/flink-stocks-ocp.png&quot; width=&quot;600&quot; class=&quot;zoom&quot;&gt;
-&lt;p&gt;Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&quot;&gt;https://github.com/eformat/flink-stocks&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/2022/11/flink-stocks-ocp.png&quot; width=&quot;600&quot; class=&quot;zoom&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;br /&gt;
+Source code is here - &lt;a href=&quot;https://github.com/eformat/flink-stocks&quot;&gt;https://github.com/eformat/flink-stocks&lt;/a&gt;&lt;/p&gt;
 
           </description>
       </item>

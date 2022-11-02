@@ -104,7 +104,8 @@
                             <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
 <p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many.</p>
 <p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
-<p><img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500"></p>
+<div id="lightbox"></div>
+<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
 <p>that you can easily run it locally or on OpenShift:</p>
 <pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
 oc create route edge quote-generator --service=quote-generator --port=8080
@@ -129,9 +130,9 @@ oc create route edge quote-generator --service=quote-generator --port=8080
 <pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
 </code></pre>
 <p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
-<div id="lightbox"></div>
-<img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom">
-<p>Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
+<p><img src="/2022/11/flink-stocks-ocp.png" width="600" class="zoom"></p>
+<p></br><br />
+Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
 </p>
                         </div>
                         <p><a itemprop="discussionUrl" href="2022/11/pulsar-flink.html#disqus_thread">Comments</a></p>
