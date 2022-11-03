@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 3 Nov 2022 01:40:29 +0000</pubDate>
-      <lastBuildDate>Thu, 3 Nov 2022 01:40:29 +0000</lastBuildDate>
+      <pubDate>Thu, 3 Nov 2022 01:46:06 +0000</pubDate>
+      <lastBuildDate>Thu, 3 Nov 2022 01:46:06 +0000</lastBuildDate>
 
       
       <item>
-          <title>AI Constraints Programming with Quarkus and Optaplanner</title>
+          <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:40:12 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 01:45:42 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -88,7 +88,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:40:12 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 01:45:42 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
