@@ -1,7 +1,7 @@
 title=The Compelling Platform
 date=2022-11-01
 type=post
-tags=platform,platform as product
+tags=platform,platform as product,openshift
 status=published
 id=compelling-platform
 ~~~~~~

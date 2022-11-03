@@ -1,7 +1,7 @@
 title=Pulsar Flink
 date=2022-11-02
 type=post
-tags=streaming,pulsar,flink
+tags=streaming,pulsar,flink,java
 status=published
 id=pulsar-flink
 ~~~~~~
