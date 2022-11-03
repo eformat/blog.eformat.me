@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 3 Nov 2022 01:46:06 +0000</pubDate>
-      <lastBuildDate>Thu, 3 Nov 2022 01:46:06 +0000</lastBuildDate>
+      <pubDate>Thu, 3 Nov 2022 01:47:02 +0000</pubDate>
+      <lastBuildDate>Thu, 3 Nov 2022 01:47:02 +0000</lastBuildDate>
 
       
       <item>
           <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:45:42 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 01:46:47 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -50,7 +50,7 @@
 &lt;/div&gt;
 &lt;div id=&quot;school-timetable-class&quot; class=&quot;imageblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;img src=&quot;ddd-school-timetable-classes.png&quot; alt=&quot;Class Diagram&quot;&gt;
+&lt;img src=&quot;/2022/11/ddd-school-timetable-classes.png&quot; alt=&quot;Class Diagram&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;title&quot;&gt;Figure 2. Class Diagram&lt;/div&gt;
 &lt;/div&gt;
@@ -88,7 +88,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:45:42 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 01:46:47 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
