@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 3 Nov 2022 01:47:02 +0000</pubDate>
-      <lastBuildDate>Thu, 3 Nov 2022 01:47:02 +0000</lastBuildDate>
+      <pubDate>Thu, 3 Nov 2022 02:18:33 +0000</pubDate>
+      <lastBuildDate>Thu, 3 Nov 2022 02:18:33 +0000</lastBuildDate>
 
       
       <item>
           <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:46:47 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 02:18:09 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -33,11 +33,10 @@
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;So much fun ! 😁 to code.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&quot;school-timetable&quot; class=&quot;imageblock&quot;&gt;
-&lt;div class=&quot;content&quot;&gt;
-&lt;img src=&quot;/2022/11/quarkus-school-timetabling-screenshot.png&quot; alt=&quot;Quarkus School Timetable&quot;&gt;
-&lt;/div&gt;
-&lt;div class=&quot;title&quot;&gt;Figure 1. Quarkus School Timetable&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;quarkus-school-timetabling-screenshot&quot;&gt;
+  &lt;img src=&quot;/2022/11/quarkus-school-timetabling-screenshot.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;div class=&quot;title&quot;&gt;Figure - Quarkus School Timetable&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;There were a couple of long learnt lessons i remembered whilst playing with the code.&lt;/p&gt;
@@ -46,13 +45,12 @@
 &lt;p&gt;(1) Domain Driven Design&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keep giving - DDD is perfect to help you out here.&lt;/p&gt;
+&lt;p&gt;To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keeps giving - DDD (and UML) is perfect to help you out here.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&quot;school-timetable-class&quot; class=&quot;imageblock&quot;&gt;
-&lt;div class=&quot;content&quot;&gt;
-&lt;img src=&quot;/2022/11/ddd-school-timetable-classes.png&quot; alt=&quot;Class Diagram&quot;&gt;
-&lt;/div&gt;
-&lt;div class=&quot;title&quot;&gt;Figure 2. Class Diagram&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;ddd-school-timetable-classes&quot;&gt;
+  &lt;img src=&quot;/2022/11/ddd-school-timetable-classes.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;div class=&quot;title&quot;&gt;Figure - Class Hierarchy&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.&lt;/p&gt;
@@ -75,7 +73,7 @@
 &lt;p&gt;I am now a fan 🥰&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;One last lesson from the OptaPlanner crew was their change to use a new static doc generation system, which is a thing of beauty i have to say, to &lt;a href=&quot;https://jbake.org&quot;&gt;JBake&lt;/a&gt; which i am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.&lt;/p&gt;
+&lt;p&gt;One last lesson from the OptaPlanner crew was their use of a a new static doc-generation system, their docs are a thing of beauty i have to say, &lt;a href=&quot;https://jbake.org&quot;&gt;JBake&lt;/a&gt; which I am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;OptaPlanner Quickstarts Code - &lt;a href=&quot;https://github.com/kiegroup/optaplanner-quickstarts&quot; class=&quot;bare&quot;&gt;https://github.com/kiegroup/optaplanner-quickstarts&lt;/a&gt;&lt;/p&gt;
@@ -88,7 +86,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Thu, 3 Nov 2022 01:46:47 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 02:18:09 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
