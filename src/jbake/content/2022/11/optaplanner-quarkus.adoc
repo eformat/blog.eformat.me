@@ -26,7 +26,7 @@ To get at the heart of constraints programming you need a good object class hier
 
 [[school-timetable-class]]
 .Class Diagram
-image::ddd-school-timetable-classes.png["Class Diagram"]
+image::/2022/11/ddd-school-timetable-classes.png["Class Diagram"]
 
 You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.
 
