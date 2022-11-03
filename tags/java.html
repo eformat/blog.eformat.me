@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - streaming</title>
+    <title>eformat.me - java</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : streaming">
-    <meta property="og:title" content="eformat.me - streaming" />
+    <meta name="description" content="eformat.me : java">
+    <meta property="og:title" content="eformat.me - java" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/streaming.html" />
-    <meta property="og:description" content="eformat.me : streaming" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/java.html" />
+    <meta property="og:description" content="eformat.me : java" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -66,13 +66,95 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: streaming</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: java</h1></div>
             </div>
 	</div>
 
     <div class="row">
 
     <div class="col-sm-8">
+        
+            
+                <a href="../2022/11/optaplanner-quarkus.html"><h1>AI Constraints Programming with Quarkus and Optaplanner</h1></a>
+                <p>03 November 2022</p>
+
+                <p>Tags :
+                <a href="quarkus.html">quarkus</a>, <a href="constraints.html">constraints</a>, <a href="optaplanner.html">optaplanner</a>, <a href="java.html">java</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/optaplanner-quarkus.html" data-text="AI Constraints Programming with Quarkus and Optaplanner" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/optaplanner-quarkus.html"></div>
+
+                <p><div class="sect1">
+<h2 id="_ai_on_quarkus_i_love_it_when_an_optaplan_comes_together">AI on Quarkus: I love it when an OptaPlan comes together</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I have been meaning to look at <a href="https://www.optaplanner.org/">OptaPlanner</a> for ages. All i can say is <em>"Sorry Geoffrey De Smet, you are a goddamn genius and i should have played with OptaPlanner way sooner".</em></p>
+</div>
+<div class="paragraph">
+<p>So, i watched this video to see how to get started.</p>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe src="https://www.youtube.com/embed/3N3NoDs3Ylc?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="paragraph">
+<p>So much fun ! 😁 to code.</p>
+</div>
+<div id="school-timetable" class="imageblock">
+<div class="content">
+<img src="/2022/11/quarkus-school-timetabling-screenshot.png" alt="Quarkus School Timetable">
+</div>
+<div class="title">Figure 1. Quarkus School Timetable</div>
+</div>
+<div class="paragraph">
+<p>There were a couple of long learnt lessons i remembered whilst playing with the code.</p>
+</div>
+<div class="paragraph">
+<p>(1) Domain Driven Design</p>
+</div>
+<div class="paragraph">
+<p>To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keep giving - DDD is perfect to help you out here.</p>
+</div>
+<div id="school-timetable-class" class="imageblock">
+<div class="content">
+<img src="ddd-school-timetable-classes.png" alt="Class Diagram">
+</div>
+<div class="title">Figure 2. Class Diagram</div>
+</div>
+<div class="paragraph">
+<p>You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.</p>
+</div>
+<div class="paragraph">
+<p>(2) Constraints Programming</p>
+</div>
+<div class="paragraph">
+<p>I went looking for some code i helped write some 15 years ago ! A <a href="https://en.wikipedia.org/wiki/Constraint_programming">Constraint</a> based programming model we had written in C++</p>
+</div>
+<script src="https://gist.github.com/eformat/87efba0e2ec717ff077852c5924766ec.js"></script>
+<div class="paragraph">
+<p>We had a whole bunch of Production classes used for calculating different trades types and their values. You added these <em>productions</em> into a solver class heirarcy and if you had the right <a href="https://en.wikipedia.org/wiki/Degrees_of_freedom">degrees of freedom</a> your trade calculation would be successful. The beauty of it was the solver would spit out any parameter you had not specified, as long as it was possible to calculate it based on the production rules.</p>
+</div>
+<div class="paragraph">
+<p>OptaPlanner viscerally reminded me of that code and experience, and started me thinking about how to use it for a similar use case.</p>
+</div>
+<script src="https://gist.github.com/eformat/6551fe9434bb0a810321c83bd07adee2.js"></script>
+<div class="paragraph">
+<p>I am now a fan 🥰</p>
+</div>
+<div class="paragraph">
+<p>One last lesson from the OptaPlanner crew was their change to use a new static doc generation system, which is a thing of beauty i have to say, to <a href="https://jbake.org">JBake</a> which i am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.</p>
+</div>
+<div class="paragraph">
+<p>OptaPlanner Quickstarts Code - <a href="https://github.com/kiegroup/optaplanner-quickstarts" class="bare">https://github.com/kiegroup/optaplanner-quickstarts</a></p>
+</div>
+</div>
+</div></p>
+                <p><a href="2022/11/optaplanner-quarkus.html#disqus_thread">Commentaires</a></p>
+            
+
         
             
                 <a href="../2022/11/pulsar-flink.html"><h1>Pulsar Flink</h1></a>

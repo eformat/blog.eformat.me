@@ -6,14 +6,89 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 2 Nov 2022 21:29:56 +0000</pubDate>
-      <lastBuildDate>Wed, 2 Nov 2022 21:29:56 +0000</lastBuildDate>
+      <pubDate>Thu, 3 Nov 2022 01:40:29 +0000</pubDate>
+      <lastBuildDate>Thu, 3 Nov 2022 01:40:29 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>AI Constraints Programming with Quarkus and Optaplanner</title>
+          <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
+          <pubDate>Thu, 3 Nov 2022 01:40:12 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_ai_on_quarkus_i_love_it_when_an_optaplan_comes_together&quot;&gt;AI on Quarkus: I love it when an OptaPlan comes together&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have been meaning to look at &lt;a href=&quot;https://www.optaplanner.org/&quot;&gt;OptaPlanner&lt;/a&gt; for ages. All i can say is &lt;em&gt;&quot;Sorry Geoffrey De Smet, you are a goddamn genius and i should have played with OptaPlanner way sooner&quot;.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, i watched this video to see how to get started.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;videoblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;iframe src=&quot;https://www.youtube.com/embed/3N3NoDs3Ylc?rel=0&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So much fun ! 😁 to code.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;school-timetable&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;/2022/11/quarkus-school-timetabling-screenshot.png&quot; alt=&quot;Quarkus School Timetable&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 1. Quarkus School Timetable&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There were a couple of long learnt lessons i remembered whilst playing with the code.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(1) Domain Driven Design&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keep giving - DDD is perfect to help you out here.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;school-timetable-class&quot; class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;ddd-school-timetable-classes.png&quot; alt=&quot;Class Diagram&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;title&quot;&gt;Figure 2. Class Diagram&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(2) Constraints Programming&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I went looking for some code i helped write some 15 years ago ! A &lt;a href=&quot;https://en.wikipedia.org/wiki/Constraint_programming&quot;&gt;Constraint&lt;/a&gt; based programming model we had written in C++&lt;/p&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/87efba0e2ec717ff077852c5924766ec.js&quot;&gt;&lt;/script&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We had a whole bunch of Production classes used for calculating different trades types and their values. You added these &lt;em&gt;productions&lt;/em&gt; into a solver class heirarcy and if you had the right &lt;a href=&quot;https://en.wikipedia.org/wiki/Degrees_of_freedom&quot;&gt;degrees of freedom&lt;/a&gt; your trade calculation would be successful. The beauty of it was the solver would spit out any parameter you had not specified, as long as it was possible to calculate it based on the production rules.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OptaPlanner viscerally reminded me of that code and experience, and started me thinking about how to use it for a similar use case.&lt;/p&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/6551fe9434bb0a810321c83bd07adee2.js&quot;&gt;&lt;/script&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I am now a fan 🥰&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One last lesson from the OptaPlanner crew was their change to use a new static doc generation system, which is a thing of beauty i have to say, to &lt;a href=&quot;https://jbake.org&quot;&gt;JBake&lt;/a&gt; which i am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OptaPlanner Quickstarts Code - &lt;a href=&quot;https://github.com/kiegroup/optaplanner-quickstarts&quot; class=&quot;bare&quot;&gt;https://github.com/kiegroup/optaplanner-quickstarts&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Wed, 2 Nov 2022 21:29:20 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 01:40:12 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
