@@ -14,19 +14,27 @@ video::3N3NoDs3Ylc[youtube]
 
 So much fun ! 😁 to code.
 
-[[school-timetable]]
-.Quarkus School Timetable
-image::/2022/11/quarkus-school-timetabling-screenshot.png["Quarkus School Timetable"]
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-school-timetabling-screenshot">
+  <img src="/2022/11/quarkus-school-timetabling-screenshot.png" class="zoom">
+  <div class="title">Figure - Quarkus School Timetable</div>
+</div>
+++++
 
 There were a couple of long learnt lessons i remembered whilst playing with the code.
 
 (1) Domain Driven Design
 
-To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keep giving - DDD is perfect to help you out here.
+To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keeps giving - DDD (and UML) is perfect to help you out here.
 
-[[school-timetable-class]]
-.Class Diagram
-image::/2022/11/ddd-school-timetable-classes.png["Class Diagram"]
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="ddd-school-timetable-classes">
+  <img src="/2022/11/ddd-school-timetable-classes.png" class="zoom">
+  <div class="title">Figure - Class Hierarchy</div>
+</div>
+++++
 
 You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.
 
@@ -48,6 +56,6 @@ OptaPlanner viscerally reminded me of that code and experience, and started me t
 
 I am now a fan 🥰
 
-One last lesson from the OptaPlanner crew was their change to use a new static doc generation system, which is a thing of beauty i have to say, to https://jbake.org[JBake] which i am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.
+One last lesson from the OptaPlanner crew was their use of a a new static doc-generation system, their docs are a thing of beauty i have to say, https://jbake.org[JBake] which I am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.
 
 OptaPlanner Quickstarts Code - https://github.com/kiegroup/optaplanner-quickstarts
