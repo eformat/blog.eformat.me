@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    
+    <title>eformat.me - argocd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="eformat.me : argocd">
+    <meta property="og:title" content="eformat.me - argocd" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/argocd.html" />
+    <meta property="og:description" content="eformat.me : argocd" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:site_name" content="eformat.me" />
+
+    <!-- Le styles -->
+    <link href="../css/lightbox.css" rel="stylesheet">
+    <link href="../css/yeti/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/asciidoctor.css" rel="stylesheet">
+    <!-- link href="/css/bootstrap-theme.min.css" rel="stylesheet" -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="wrap">
+
+	
+	      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">eformat.me</a>
+          </div>
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav">
+              <li><a href="https://github.com/eformat" target="github:eformat">Github</a></li>
+              <li><a href="../archive.html">Archives</a></li>
+              <li><a href="../feeds/posts/default.xml">Flux RSS</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+      <div class="container">
+
+
+	<div class="page-header">
+            <div class="row">
+                <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: argocd</h1></div>
+            </div>
+	</div>
+
+    <div class="row">
+
+    <div class="col-sm-8">
+        
+            
+                <a href="../2022/11/argocd-patterns-vault.html"><h1>Patterns with ArgoCD - Vault</h1></a>
+                <p>03 November 2022</p>
+
+                <p>Tags :
+                <a href="argocd.html">argocd</a>, <a href="gitops.html">gitops</a>, <a href="patterns.html">patterns</a>, <a href="vault.html">vault</a>, <a href="security.html">security</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/argocd-patterns-vault.html" data-text="Patterns with ArgoCD - Vault" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/argocd-patterns-vault.html"></div>
+
+                <p><div class="sect1">
+<h2 id="_team_collaboration_with_argocd">Team Collaboration with ArgoCD</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I have written before about collaborating using GitOps, ArgoCD and Red Hat GitOps Operator. How can we better align our deployments with our teams ?</p>
+</div>
+<div class="paragraph">
+<p>The array of patterns and the helm chart are described <a href="https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/TEAM_DOCS.md">in a fair bit of detail here</a>. I want to talk about using one of these patterns at scale - hundred&#8217;s of apps across multiple clusters.</p>
+</div>
+<div class="sect2">
+<h3 id="_platform_cluster_argocd_tenant_team_argocds">Platform Cluster ArgoCD, Tenant Team ArgoCD&#8217;s</h3>
+<div class="paragraph">
+<p>For Product Teams working in large organisations that have a central Platform Team - this pattern is probably the most natural i think.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="sre-cluster-argo-team-namespaced">
+  <img src="/2022/11/sre-cluster-argo-team-namespaced.png" class="zoom">
+  <div class="title">Figure - Platform ArgoCD, Namespaced ArgoCD per Team</div>
+</div>
+<div class="paragraph">
+<p>It allows the platform team to control cluster and elevated privileges, activities like controlling namespaces, configuring cluster resources etc, in their Cluster Scoped ArgoCD, whilst Product Teams can control their namespaces independently of them.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The RedHat GitOps Operator (cluster scoped)</p>
+</li>
+<li>
+<p>Platform Team (cluster scoped) ArgoCD instance</p>
+</li>
+<li>
+<p>Team (namespace scoped) ArgoCD instances</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When doing multi-cluster, i usually prefer to have ArgoCD <em>"in the cluster"</em> rather than remotely controlling a cluster. This seems better from an availability / single point of failure point of view. Of course if its a more <em>edge</em> use case, remote cluster connections may make sense.</p>
+</div>
+<div class="paragraph">
+<p>OK, so the Tenant ArgoCD is deployed in <strong>namespaced</strong> mode and controls multiple team namespaces. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.</p>
+</div>
+<div class="paragraph">
+<p>All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo.</p>
+</div>
+<div class="paragraph">
+<p>It is worth pointing out that any elevated cluster RBAC permissions that are needed by the Product Teams' are done via git PR&#8217;s into the platform team&#8217;s gitops repo. Once configured, the Tenant team is in control of their namespaces and can get on with managing their own products and tooling.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_secrets_management_with_argocd_vault_plugin">Secrets Management with ArgoCD Vault Plugin</h3>
+<div class="paragraph">
+<p>To make this work at scale and in production within an organisation, the "batteries" for secrets management must be included! They are table stakes really. It&#8217;s fiddly, but worth the effort.</p>
+</div>
+<div class="paragraph">
+<p>There are many ways to do secrets management beyond k8s secrets - <a href="https://cloud.redhat.com/blog/a-guide-to-gitops-and-secret-management-with-argocd-operator-and-sops">KSOPS</a>, <a href="https://external-secrets.io">External Secrets Operator</a> etc. The method i want to talk about uses the <a href="https://argocd-vault-plugin.readthedocs.io/en/stable/backends/">ArgoCD Vault Plugin</a> which i will abbreviate to <strong>AVP</strong>. It supports multiple secret backends by the way. In this case, i am going to use <a href="https://developer.hashicorp.com/vault/docs/auth/kubernetes">Hashicorp Vault</a> and the k8s integration auth method. Setting up vault is dealt with <a href="https://eformat.github.io/vault-quickstart/">separately</a> but can be done on-cluster or off-cluster.</p>
+</div>
+<div class="paragraph">
+<p>To get AVP working, you basically deploy the ArgoCD repo server with a ServiceAccount and use that secret to authenticate to Hashi Vault using k8s auth method. This way each ArgoCD instance uses the token associated with that service account to authenticate. Note that in OpenShift 4.11+ when creating new service accounts (SA), a service account token secret is <a href="https://docs.openshift.com/container-platform/4.11/nodes/pods/nodes-pods-secrets.html#nodes-pods-secrets-creating-sa_nodes-pods-secrets">no longer automatically generated.</a></p>
+</div>
+<div class="paragraph">
+<p>Once done, our secrets can be easily referenced from within source code using either annotations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">kind: Secret
+apiVersion: v1
+metadata:
+  name: example-secret
+  annotations:
+    avp.kubernetes.io/path: "path/to/app-secret"
+type: Opaque
+data:
+  password: &lt;password-vault-key&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or directly via the full path:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">  password: &lt;path:kv/data/path/to/app-secret#password-vault-key&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can also reference the secrets directly from our ArgoCD Application definitions, here is an example of using helm (kustomize and plain yaml are also supported).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">  source:
+    repoURL: https://github.com/eformat/my-gitrepo.git
+    path: gitops/my-app/chart
+    targetRevision: main
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              repository: image-registry.openshift-image-registry.svc:5000/my-namespace/my-app
+              tag: "1.2.3"
+            password: &lt;path:kv/data/path/to/app-secret#password-vault-key&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I also use a pattern to pass down the Vault annotation path down to the helm chart from the ArgoCD Application, and to keep things clean (and you sane!) I have a Vault secret per-application (containing many KV2 - key:value pairs).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            resources:
+              limits:
+                cpu: 500m         # a non secret value
+            avp:
+              secretPath: "kv/data/path/to/app-secret"  # use this in the annotations</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows you to control the <strong>path</strong> to your secrets in Vault which can be configured by convention e.g.  <strong>kv/data/cluster/namespace/app</strong> as an example.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_argocd_configuration_the_gory_details">ArgoCD Configuration - The Gory Details</h3>
+<div class="paragraph">
+<p>OK, great .. but how do i get there with my Team ArgoCD ? Let&#8217;s take a look in depth at the <a href="https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml"><strong>argocd-values.yaml</strong></a> file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.</p>
+</div>
+<div class="paragraph">
+<p>The important bit for AVP integration is to mount the token from a service account that we have created - in this case the service account is called <strong>argocd-repo-vault</strong> and we set <strong>mountastoken</strong> to "true".</p>
+</div>
+<div class="paragraph">
+<p>Next, we use an <strong>initContainer</strong> to download the AVP golang binary and save it to a <strong>custom-tools</strong> directory. If you are doing this disconnected, the binary needs to be made available offline.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">argocd_cr:
+  statusBadgeEnabled: true
+  repo:
+    mountsatoken: true
+    serviceaccount: argocd-repo-vault
+    volumes:
+    - name: custom-tools
+      emptyDir: {}
+    initContainers:
+    - name: download-tools
+      image: registry.access.redhat.com/ubi8/ubi-minimal:latest
+      command: [sh, -c]
+      env:
+        - name: AVP_VERSION
+          value: "1.11.0"
+      args:
+        - &gt;-
+          curl -Lo /tmp/argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v\${AVP_VERSION}/argocd-vault-plugin_\${AVP_VERSION}_linux_amd64 &amp;&amp; chmod +x /tmp/argocd-vault-plugin &amp;&amp; mv /tmp/argocd-vault-plugin /custom-tools/
+      volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+    volumeMounts:
+    - mountPath: /usr/local/bin/argocd-vault-plugin
+      name: custom-tools
+      subPath: argocd-vault-plugin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We need to create the <em>glue</em> between our ArgoCD Applications' and how they call/use the AVP binary. This is done using the <strong>configManagementPlugins</strong> stanza. Note we use three methods, one for plain YAML, once for helm charts, one for kustomize. The plugin <strong>plugin: name:</strong> is what we reference from our ArgoCD Application.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">  configManagementPlugins: |
+    - name: argocd-vault-plugin
+      generate:
+        command: ["sh", "-c"]
+        args: ["argocd-vault-plugin -s team-ci-cd:team-avp-credentials generate ./"]
+    - name: argocd-vault-plugin-helm
+      init:
+        command: [sh, -c]
+        args: ["helm dependency build"]
+      generate:
+        command: ["bash", "-c"]
+        args: ['helm template "$ARGOCD_APP_NAME" -n "$ARGOCD_APP_NAMESPACE" -f &lt;(echo "$ARGOCD_ENV_HELM_VALUES") . | argocd-vault-plugin generate -s team-ci-cd:team-avp-credentials -']
+    - name: argocd-vault-plugin-kustomize
+      generate:
+        command: ["sh", "-c"]
+        args: ["kustomize build . | argocd-vault-plugin -s team-ci-cd:team-avp-credentials generate -"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We make use of environment variables set within the AVP plugin for helm so that the namespace and helm values from the ArgoCD Application are set correctly. See the <a href="https://argocd-vault-plugin.readthedocs.io/en/stable/usage/">AVP documentation</a> for full details of usage.</p>
+</div>
+<div class="paragraph">
+<p>One thing to note, is the <strong>team-ci-cd:team-avp-credentials</strong> secret. This specifies <em>how</em> the AVP binary connects and authenticates to Hashi Vault. It is a secret that you need to set up. An example as follows for a simple hashi vault in-cluster deployment:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">export AVP_TYPE=vault
+export VAULT_ADDR=https://vault-active.hashicorp.svc:8200   # vault url
+export AVP_AUTH_TYPE=k8s                              # kubernetes auth
+export AVP_K8S_ROLE=argocd-repo-vault                 # vault role (service account name)
+export VAULT_SKIP_VERIFY=true
+export AVP_MOUNT_PATH=auth/$BASE_DOMAIN-$PROJECT_NAME
+
+cat &lt;&lt;EOF | oc apply -n ${PROJECT_NAME} -f-
+---
+apiVersion: v1
+stringData:
+  VAULT_ADDR: "${VAULT_ADDR}"
+  VAULT_SKIP_VERIFY: "${VAULT_SKIP_VERIFY}"
+  AVP_AUTH_TYPE: "${AVP_AUTH_TYPE}"
+  AVP_K8S_ROLE: "${AVP_K8S_ROLE}"
+  AVP_TYPE: "${AVP_TYPE}"
+  AVP_K8S_MOUNT_PATH: "${AVP_MOUNT_PATH}"
+kind: Secret
+metadata:
+  name: team-avp-credentials
+  namespace: ${PROJECT_NAME}
+type: Opaque
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I am leaving out the gory details of Vault/ACL setup which are documented <a href="https://eformat.github.io/vault-quickstart/">elsewhere</a>, however to create the auth secret from the <strong>argocd-repo-vault</strong> in vault i use this shell script:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">export SA_TOKEN=$(oc -n ${PROJECT_NAME} get sa/${APP_NAME} -o yaml | grep ${APP_NAME}-token | awk '{print $3}')
+export SA_JWT_TOKEN=$(oc -n ${PROJECT_NAME} get secret $SA_TOKEN -o jsonpath="{.data.token}" | base64 --decode; echo)
+export SA_CA_CRT=$(oc -n ${PROJECT_NAME} get secret $SA_TOKEN -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)
+
+vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
+  token_reviewer_jwt="$SA_JWT_TOKEN" \
+  kubernetes_host="$(oc whoami --show-server)" \
+  kubernetes_ca_cert="$SA_CA_CRT"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_do_all_this_again">Why Do All This Again ?</h3>
+<div class="paragraph">
+<p>The benefit of all this gory secrets configuration stuff:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>we can now store secrets safely in a backend vault at enterprise scale</p>
+</li>
+<li>
+<p>we have all of our ArgoCD&#8217;s use these secrets consistently with gitops in a multi-tenanted manner</p>
+</li>
+<li>
+<p>we keep secrets values out of our source code</p>
+</li>
+<li>
+<p>we can control all of this with gitops</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It also means that the platform an product teams, can manage secrets in a consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses <strong>namespaces</strong> - you can just set the env.var into your ArgoCD Application like so.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">    plugin:
+      name: argocd-vault-plugin-kustomize
+      env:
+        - name: VAULT_NAMESPACE
+          value: "my-team-apps"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Tenant team&#8217;s are now fully in control of their namespaces and secrets and can get on with managing their own applications, products and tools !</p>
+</div>
+</div>
+</div>
+</div></p>
+                <p><a href="2022/11/argocd-patterns-vault.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+
+    </div>
+
+    <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+            <h4>Mike Hepburn</h4>
+            <p>This is really working out great.</p>
+            <ul>
+                <li><a href="https://twitter.com/eformat">@eformat</a></li>
+            </ul>
+        </div>
+
+
+        <div class="sidebar-module">
+            <h4>Tags</h4>
+            <ol class="list-unstyled" style="margin-left: 0px">
+                
+
+                <li><a href="java.html">java</a> (2)</li>
+                
+
+                <li><a href="openshift.html">openshift</a> (2)</li>
+                
+
+                <li><a href="argocd.html">argocd</a> (1)</li>
+                
+
+                <li><a href="constraints.html">constraints</a> (1)</li>
+                
+
+                <li><a href="devops.html">devops</a> (1)</li>
+                
+
+                <li><a href="flink.html">flink</a> (1)</li>
+                
+
+                <li><a href="gitops.html">gitops</a> (1)</li>
+                
+
+                <li><a href="optaplanner.html">optaplanner</a> (1)</li>
+                
+
+                <li><a href="patterns.html">patterns</a> (1)</li>
+                
+
+                <li><a href="platform.html">platform</a> (1)</li>
+                
+
+                <li><a href="platform as product.html">platform as product</a> (1)</li>
+                
+
+                <li><a href="pulsar.html">pulsar</a> (1)</li>
+                
+
+                <li><a href="quarkus.html">quarkus</a> (1)</li>
+                
+
+                <li><a href="security.html">security</a> (1)</li>
+                
+
+                <li><a href="streaming.html">streaming</a> (1)</li>
+                
+
+                <li><a href="vault.html">vault</a> (1)</li>
+                
+            </ol>
+        </div>
+    </div>
+
+    </div>
+
+		</div>
+		<div id="push"></div>
+    </div>
+    
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 03 23:53:43 UTC 2022</a></p>
+      </div>
+    </div>
+    
+    <!-- Javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../js/lightbox.js"></script>
+
+    <!--script type="text/javascript">
+        window.___gcfg = {lang: 'en'};
+
+        (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/platform.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+    </script-->
+
+    <!--script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-', '');
+      ga('send', 'pageview');
+
+    </script-->
+    
+  </body>
+</html>
+

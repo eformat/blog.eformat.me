@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 3 Nov 2022 02:18:33 +0000</pubDate>
-      <lastBuildDate>Thu, 3 Nov 2022 02:18:33 +0000</lastBuildDate>
+      <pubDate>Thu, 3 Nov 2022 23:53:43 +0000</pubDate>
+      <lastBuildDate>Thu, 3 Nov 2022 23:53:43 +0000</lastBuildDate>
 
       
       <item>
           <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Thu, 3 Nov 2022 02:18:09 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 23:53:22 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -86,7 +86,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Thu, 3 Nov 2022 02:18:09 +0000</pubDate>
+          <pubDate>Thu, 3 Nov 2022 23:53:22 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
@@ -200,6 +200,290 @@
 &lt;h3 id=&quot;_summary&quot;&gt;Summary&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;We covered here some of what is unique and nuanced about DevOps with OpenShift and why it matters. Realizing these DevOps concepts using natively container-aware automation can bring cloud deployment power to &lt;em&gt;all&lt;/em&gt; the people, from 10x programmer to citizen developer. The following chapters will show you how.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
+      
+      <item>
+          <title>Patterns with ArgoCD - Vault</title>
+          <link>https://blog.eformat.me/2022/11/argocd-patterns-vault.html</link>
+          <pubDate>Thu, 3 Nov 2022 23:53:22 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/argocd-patterns-vault.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_team_collaboration_with_argocd&quot;&gt;Team Collaboration with ArgoCD&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have written before about collaborating using GitOps, ArgoCD and Red Hat GitOps Operator. How can we better align our deployments with our teams ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The array of patterns and the helm chart are described &lt;a href=&quot;https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/TEAM_DOCS.md&quot;&gt;in a fair bit of detail here&lt;/a&gt;. I want to talk about using one of these patterns at scale - hundred&amp;#8217;s of apps across multiple clusters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_platform_cluster_argocd_tenant_team_argocds&quot;&gt;Platform Cluster ArgoCD, Tenant Team ArgoCD&amp;#8217;s&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For Product Teams working in large organisations that have a central Platform Team - this pattern is probably the most natural i think.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;sre-cluster-argo-team-namespaced&quot;&gt;
+  &lt;img src=&quot;/2022/11/sre-cluster-argo-team-namespaced.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;div class=&quot;title&quot;&gt;Figure - Platform ArgoCD, Namespaced ArgoCD per Team&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It allows the platform team to control cluster and elevated privileges, activities like controlling namespaces, configuring cluster resources etc, in their Cluster Scoped ArgoCD, whilst Product Teams can control their namespaces independently of them.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The RedHat GitOps Operator (cluster scoped)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Platform Team (cluster scoped) ArgoCD instance&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Team (namespace scoped) ArgoCD instances&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When doing multi-cluster, i usually prefer to have ArgoCD &lt;em&gt;&quot;in the cluster&quot;&lt;/em&gt; rather than remotely controlling a cluster. This seems better from an availability / single point of failure point of view. Of course if its a more &lt;em&gt;edge&lt;/em&gt; use case, remote cluster connections may make sense.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OK, so the Tenant ArgoCD is deployed in &lt;strong&gt;namespaced&lt;/strong&gt; mode and controls multiple team namespaces. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It is worth pointing out that any elevated cluster RBAC permissions that are needed by the Product Teams&apos; are done via git PR&amp;#8217;s into the platform team&amp;#8217;s gitops repo. Once configured, the Tenant team is in control of their namespaces and can get on with managing their own products and tooling.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_secrets_management_with_argocd_vault_plugin&quot;&gt;Secrets Management with ArgoCD Vault Plugin&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To make this work at scale and in production within an organisation, the &quot;batteries&quot; for secrets management must be included! They are table stakes really. It&amp;#8217;s fiddly, but worth the effort.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are many ways to do secrets management beyond k8s secrets - &lt;a href=&quot;https://cloud.redhat.com/blog/a-guide-to-gitops-and-secret-management-with-argocd-operator-and-sops&quot;&gt;KSOPS&lt;/a&gt;, &lt;a href=&quot;https://external-secrets.io&quot;&gt;External Secrets Operator&lt;/a&gt; etc. The method i want to talk about uses the &lt;a href=&quot;https://argocd-vault-plugin.readthedocs.io/en/stable/backends/&quot;&gt;ArgoCD Vault Plugin&lt;/a&gt; which i will abbreviate to &lt;strong&gt;AVP&lt;/strong&gt;. It supports multiple secret backends by the way. In this case, i am going to use &lt;a href=&quot;https://developer.hashicorp.com/vault/docs/auth/kubernetes&quot;&gt;Hashicorp Vault&lt;/a&gt; and the k8s integration auth method. Setting up vault is dealt with &lt;a href=&quot;https://eformat.github.io/vault-quickstart/&quot;&gt;separately&lt;/a&gt; but can be done on-cluster or off-cluster.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To get AVP working, you basically deploy the ArgoCD repo server with a ServiceAccount and use that secret to authenticate to Hashi Vault using k8s auth method. This way each ArgoCD instance uses the token associated with that service account to authenticate. Note that in OpenShift 4.11+ when creating new service accounts (SA), a service account token secret is &lt;a href=&quot;https://docs.openshift.com/container-platform/4.11/nodes/pods/nodes-pods-secrets.html#nodes-pods-secrets-creating-sa_nodes-pods-secrets&quot;&gt;no longer automatically generated.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Once done, our secrets can be easily referenced from within source code using either annotations:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;kind: Secret
+apiVersion: v1
+metadata:
+  name: example-secret
+  annotations:
+    avp.kubernetes.io/path: &quot;path/to/app-secret&quot;
+type: Opaque
+data:
+  password: &amp;lt;password-vault-key&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;or directly via the full path:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;  password: &amp;lt;path:kv/data/path/to/app-secret#password-vault-key&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can also reference the secrets directly from our ArgoCD Application definitions, here is an example of using helm (kustomize and plain yaml are also supported).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;  source:
+    repoURL: https://github.com/eformat/my-gitrepo.git
+    path: gitops/my-app/chart
+    targetRevision: main
+    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            image:
+              repository: image-registry.openshift-image-registry.svc:5000/my-namespace/my-app
+              tag: &quot;1.2.3&quot;
+            password: &amp;lt;path:kv/data/path/to/app-secret#password-vault-key&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I also use a pattern to pass down the Vault annotation path down to the helm chart from the ArgoCD Application, and to keep things clean (and you sane!) I have a Vault secret per-application (containing many KV2 - key:value pairs).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;    plugin:
+      name: argocd-vault-plugin-helm
+      env:
+        - name: HELM_VALUES
+          value: |
+            resources:
+              limits:
+                cpu: 500m         # a non secret value
+            avp:
+              secretPath: &quot;kv/data/path/to/app-secret&quot;  # use this in the annotations&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This allows you to control the &lt;strong&gt;path&lt;/strong&gt; to your secrets in Vault which can be configured by convention e.g.  &lt;strong&gt;kv/data/cluster/namespace/app&lt;/strong&gt; as an example.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_argocd_configuration_the_gory_details&quot;&gt;ArgoCD Configuration - The Gory Details&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OK, great .. but how do i get there with my Team ArgoCD ? Let&amp;#8217;s take a look in depth at the &lt;a href=&quot;https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml&quot;&gt;&lt;strong&gt;argocd-values.yaml&lt;/strong&gt;&lt;/a&gt; file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The important bit for AVP integration is to mount the token from a service account that we have created - in this case the service account is called &lt;strong&gt;argocd-repo-vault&lt;/strong&gt; and we set &lt;strong&gt;mountastoken&lt;/strong&gt; to &quot;true&quot;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next, we use an &lt;strong&gt;initContainer&lt;/strong&gt; to download the AVP golang binary and save it to a &lt;strong&gt;custom-tools&lt;/strong&gt; directory. If you are doing this disconnected, the binary needs to be made available offline.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;argocd_cr:
+  statusBadgeEnabled: true
+  repo:
+    mountsatoken: true
+    serviceaccount: argocd-repo-vault
+    volumes:
+    - name: custom-tools
+      emptyDir: {}
+    initContainers:
+    - name: download-tools
+      image: registry.access.redhat.com/ubi8/ubi-minimal:latest
+      command: [sh, -c]
+      env:
+        - name: AVP_VERSION
+          value: &quot;1.11.0&quot;
+      args:
+        - &amp;gt;-
+          curl -Lo /tmp/argocd-vault-plugin https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v\${AVP_VERSION}/argocd-vault-plugin_\${AVP_VERSION}_linux_amd64 &amp;amp;&amp;amp; chmod +x /tmp/argocd-vault-plugin &amp;amp;&amp;amp; mv /tmp/argocd-vault-plugin /custom-tools/
+      volumeMounts:
+      - mountPath: /custom-tools
+        name: custom-tools
+    volumeMounts:
+    - mountPath: /usr/local/bin/argocd-vault-plugin
+      name: custom-tools
+      subPath: argocd-vault-plugin&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We need to create the &lt;em&gt;glue&lt;/em&gt; between our ArgoCD Applications&apos; and how they call/use the AVP binary. This is done using the &lt;strong&gt;configManagementPlugins&lt;/strong&gt; stanza. Note we use three methods, one for plain YAML, once for helm charts, one for kustomize. The plugin &lt;strong&gt;plugin: name:&lt;/strong&gt; is what we reference from our ArgoCD Application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;  configManagementPlugins: |
+    - name: argocd-vault-plugin
+      generate:
+        command: [&quot;sh&quot;, &quot;-c&quot;]
+        args: [&quot;argocd-vault-plugin -s team-ci-cd:team-avp-credentials generate ./&quot;]
+    - name: argocd-vault-plugin-helm
+      init:
+        command: [sh, -c]
+        args: [&quot;helm dependency build&quot;]
+      generate:
+        command: [&quot;bash&quot;, &quot;-c&quot;]
+        args: [&apos;helm template &quot;$ARGOCD_APP_NAME&quot; -n &quot;$ARGOCD_APP_NAMESPACE&quot; -f &amp;lt;(echo &quot;$ARGOCD_ENV_HELM_VALUES&quot;) . | argocd-vault-plugin generate -s team-ci-cd:team-avp-credentials -&apos;]
+    - name: argocd-vault-plugin-kustomize
+      generate:
+        command: [&quot;sh&quot;, &quot;-c&quot;]
+        args: [&quot;kustomize build . | argocd-vault-plugin -s team-ci-cd:team-avp-credentials generate -&quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We make use of environment variables set within the AVP plugin for helm so that the namespace and helm values from the ArgoCD Application are set correctly. See the &lt;a href=&quot;https://argocd-vault-plugin.readthedocs.io/en/stable/usage/&quot;&gt;AVP documentation&lt;/a&gt; for full details of usage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One thing to note, is the &lt;strong&gt;team-ci-cd:team-avp-credentials&lt;/strong&gt; secret. This specifies &lt;em&gt;how&lt;/em&gt; the AVP binary connects and authenticates to Hashi Vault. It is a secret that you need to set up. An example as follows for a simple hashi vault in-cluster deployment:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;export AVP_TYPE=vault
+export VAULT_ADDR=https://vault-active.hashicorp.svc:8200   # vault url
+export AVP_AUTH_TYPE=k8s                              # kubernetes auth
+export AVP_K8S_ROLE=argocd-repo-vault                 # vault role (service account name)
+export VAULT_SKIP_VERIFY=true
+export AVP_MOUNT_PATH=auth/$BASE_DOMAIN-$PROJECT_NAME
+
+cat &amp;lt;&amp;lt;EOF | oc apply -n ${PROJECT_NAME} -f-
+---
+apiVersion: v1
+stringData:
+  VAULT_ADDR: &quot;${VAULT_ADDR}&quot;
+  VAULT_SKIP_VERIFY: &quot;${VAULT_SKIP_VERIFY}&quot;
+  AVP_AUTH_TYPE: &quot;${AVP_AUTH_TYPE}&quot;
+  AVP_K8S_ROLE: &quot;${AVP_K8S_ROLE}&quot;
+  AVP_TYPE: &quot;${AVP_TYPE}&quot;
+  AVP_K8S_MOUNT_PATH: &quot;${AVP_MOUNT_PATH}&quot;
+kind: Secret
+metadata:
+  name: team-avp-credentials
+  namespace: ${PROJECT_NAME}
+type: Opaque
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I am leaving out the gory details of Vault/ACL setup which are documented &lt;a href=&quot;https://eformat.github.io/vault-quickstart/&quot;&gt;elsewhere&lt;/a&gt;, however to create the auth secret from the &lt;strong&gt;argocd-repo-vault&lt;/strong&gt; in vault i use this shell script:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;export SA_TOKEN=$(oc -n ${PROJECT_NAME} get sa/${APP_NAME} -o yaml | grep ${APP_NAME}-token | awk &apos;{print $3}&apos;)
+export SA_JWT_TOKEN=$(oc -n ${PROJECT_NAME} get secret $SA_TOKEN -o jsonpath=&quot;{.data.token}&quot; | base64 --decode; echo)
+export SA_CA_CRT=$(oc -n ${PROJECT_NAME} get secret $SA_TOKEN -o jsonpath=&quot;{.data[&apos;ca\.crt&apos;]}&quot; | base64 --decode; echo)
+
+vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
+  token_reviewer_jwt=&quot;$SA_JWT_TOKEN&quot; \
+  kubernetes_host=&quot;$(oc whoami --show-server)&quot; \
+  kubernetes_ca_cert=&quot;$SA_CA_CRT&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_why_do_all_this_again&quot;&gt;Why Do All This Again ?&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The benefit of all this gory secrets configuration stuff:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;we can now store secrets safely in a backend vault at enterprise scale&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;we have all of our ArgoCD&amp;#8217;s use these secrets consistently with gitops in a multi-tenanted manner&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;we keep secrets values out of our source code&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;we can control all of this with gitops&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It also means that the platform an product teams, can manage secrets in a consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses &lt;strong&gt;namespaces&lt;/strong&gt; - you can just set the env.var into your ArgoCD Application like so.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;    plugin:
+      name: argocd-vault-plugin-kustomize
+      env:
+        - name: VAULT_NAMESPACE
+          value: &quot;my-team-apps&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Tenant team&amp;#8217;s are now fully in control of their namespaces and secrets and can get on with managing their own applications, products and tools !&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
