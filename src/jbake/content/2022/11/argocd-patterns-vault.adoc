@@ -30,9 +30,9 @@ It allows the platform team to control cluster and elevated privileges, activiti
 
 When doing multi-cluster, i usually prefer to have ArgoCD _"in the cluster"_ rather than remotely controlling a cluster. This seems better from an availability / single point of failure point of view. Of course if its a more _edge_ use case, remote cluster connections may make sense.
 
-OK, so the Tenant ArgoCD is deployed in *namespaced* mode and controls multiple team namespaces. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.
+OK, so the Tenant ArgoCD is deployed in *namespaced* mode and controls multiple namespaces belonging to a team. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.
 
-All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo.
+All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo and split later based on need or scale.
 
 It is worth pointing out that any elevated cluster RBAC permissions that are needed by the Product Teams' are done via git PR's into the platform team's gitops repo. Once configured, the Tenant team is in control of their namespaces and can get on with managing their own products and tooling.
 
@@ -44,7 +44,7 @@ There are many ways to do secrets management beyond k8s secrets - https://cloud.
 
 To get AVP working, you basically deploy the ArgoCD repo server with a ServiceAccount and use that secret to authenticate to Hashi Vault using k8s auth method. This way each ArgoCD instance uses the token associated with that service account to authenticate. Note that in OpenShift 4.11+ when creating new service accounts (SA), a service account token secret is https://docs.openshift.com/container-platform/4.11/nodes/pods/nodes-pods-secrets.html#nodes-pods-secrets-creating-sa_nodes-pods-secrets[no longer automatically generated.]
 
-Once done, our secrets can be easily referenced from within source code using either annotations:
+Once done, our app secrets can be easily referenced from within source code using either annotations:
 
 [source,yaml,options="wrap"]
 ----
@@ -66,7 +66,7 @@ or directly via the full path:
   password: <path:kv/data/path/to/app-secret#password-vault-key>
 ----
 
-We can also reference the secrets directly from our ArgoCD Application definitions, here is an example of using helm (kustomize and plain yaml are also supported).
+We can also reference the secrets directly from our ArgoCD Application definitions. Here is an example of using helm (kustomize and plain yaml are also supported).
 
 [source,yaml,options="wrap"]
 ----
@@ -85,7 +85,7 @@ We can also reference the secrets directly from our ArgoCD Application definitio
             password: <path:kv/data/path/to/app-secret#password-vault-key>
 ----
 
-I also use a pattern to pass down the Vault annotation path down to the helm chart from the ArgoCD Application, and to keep things clean (and you sane!) I have a Vault secret per-application (containing many KV2 - key:value pairs).
+I also use a pattern to pass the _vault annotation path_ down to the helm chart from the ArgoCD Application. To keep things clean (and you sane!) I normally have a Vault secret per-application (containing many KV2 - key:value pairs).
 
 [source,yaml,options="wrap"]
 ----
@@ -105,11 +105,11 @@ This allows you to control the *path* to your secrets in Vault which can be conf
 
 === ArgoCD Configuration - The Gory Details
 
-OK, great .. but how do i get there with my Team ArgoCD ? Let's take a look in depth at the https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml[*argocd-values.yaml*] file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.
+OK, great. But how do i get there with my Team ArgoCD ? Let's take a look in depth at the https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml[*argocd-values.yaml*] file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.
 
 The important bit for AVP integration is to mount the token from a service account that we have created - in this case the service account is called *argocd-repo-vault* and we set *mountastoken* to "true".
 
-Next, we use an *initContainer* to download the AVP golang binary and save it to a *custom-tools* directory. If you are doing this disconnected, the binary needs to be made available offline.
+Next, we use an *initContainer* to download the AVP go binary and save it to a *custom-tools* directory. If you are doing this disconnected, the binary needs to be made available offline.
 
 [source,yaml,options="wrap"]
 ----
@@ -140,7 +140,7 @@ argocd_cr:
       subPath: argocd-vault-plugin
 ----
 
-We need to create the _glue_ between our ArgoCD Applications' and how they call/use the AVP binary. This is done using the *configManagementPlugins* stanza. Note we use three methods, one for plain YAML, once for helm charts, one for kustomize. The plugin *plugin: name:* is what we reference from our ArgoCD Application.
+We need to create the _glue_ between our ArgoCD Applications' and how they call/use the AVP binary. This is done using the *configManagementPlugins* stanza. Note we use three methods, one for plain YAML, one for helm charts, one for kustomize. The plugin *name:* is what we reference from our ArgoCD Application.
 
 [source,yaml,options="wrap"]
 ----
@@ -193,7 +193,7 @@ type: Opaque
 EOF
 ----
 
-I am leaving out the gory details of Vault/ACL setup which are documented https://eformat.github.io/vault-quickstart/[elsewhere], however to create the auth secret from the *argocd-repo-vault* in vault i use this shell script:
+I am leaving out the gory details of Vault/ACL setup which are documented https://eformat.github.io/vault-quickstart/[elsewhere], however to create the auth secret in vault from the *argocd-repo-vault* ServiceAccount token, i use this shell script:
 
 [source,bash,options="wrap"]
 ----
@@ -207,16 +207,16 @@ vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
   kubernetes_ca_cert="$SA_CA_CRT"
 ----
 
-=== Why Do All This Again ?
+=== Why Do All of This ?
 
-The benefit of all this gory secrets configuration stuff:
+The benefit of all this gory configuration stuff:
 
 - we can now store secrets safely in a backend vault at enterprise scale
 - we have all of our ArgoCD's use these secrets consistently with gitops in a multi-tenanted manner
 - we keep secrets values out of our source code
 - we can control all of this with gitops
 
-It also means that the platform an product teams, can manage secrets in a consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses *namespaces* - you can just set the env.var into your ArgoCD Application like so.
+It also means that the platform an product teams, can manage secrets in a safely consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses *namespaces* - you can just set the env.var into your ArgoCD Application like so.
 
 [source,yaml,options="wrap"]
 ----
