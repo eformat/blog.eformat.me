@@ -76,7 +76,7 @@
         
             
                 <a href="../2022/11/argocd-patterns-vault.html"><h1>Patterns with ArgoCD - Vault</h1></a>
-                <p>03 November 2022</p>
+                <p>04 November 2022</p>
 
                 <p>Tags :
                 <a href="argocd.html">argocd</a>, <a href="gitops.html">gitops</a>, <a href="patterns.html">patterns</a>, <a href="vault.html">vault</a>, <a href="security.html">security</a>
@@ -125,10 +125,10 @@
 <p>When doing multi-cluster, i usually prefer to have ArgoCD <em>"in the cluster"</em> rather than remotely controlling a cluster. This seems better from an availability / single point of failure point of view. Of course if its a more <em>edge</em> use case, remote cluster connections may make sense.</p>
 </div>
 <div class="paragraph">
-<p>OK, so the Tenant ArgoCD is deployed in <strong>namespaced</strong> mode and controls multiple team namespaces. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.</p>
+<p>OK, so the Tenant ArgoCD is deployed in <strong>namespaced</strong> mode and controls multiple namespaces belonging to a team. For each Team, a single ArgoCD instance per cluster normally suffices. You can scale up and shard the argo controllers, run in HA - not usually necessary at team scale (100 apps) - see the argocd doco if you need to do this though. There may be multiple non-production clusters - dev, test, qa etc and then you will have multiple production clusters (prod + dr etc) - each cluster have their own ArgoCD instances per Team.</p>
 </div>
 <div class="paragraph">
-<p>All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo.</p>
+<p>All of this is controlled via gitops. A sensible code split is one git repo per team, so one for the Platform Team, one for each Product Team - i normally start with a mono repo and split later based on need or scale.</p>
 </div>
 <div class="paragraph">
 <p>It is worth pointing out that any elevated cluster RBAC permissions that are needed by the Product Teams' are done via git PR&#8217;s into the platform team&#8217;s gitops repo. Once configured, the Tenant team is in control of their namespaces and can get on with managing their own products and tooling.</p>
@@ -146,7 +146,7 @@
 <p>To get AVP working, you basically deploy the ArgoCD repo server with a ServiceAccount and use that secret to authenticate to Hashi Vault using k8s auth method. This way each ArgoCD instance uses the token associated with that service account to authenticate. Note that in OpenShift 4.11+ when creating new service accounts (SA), a service account token secret is <a href="https://docs.openshift.com/container-platform/4.11/nodes/pods/nodes-pods-secrets.html#nodes-pods-secrets-creating-sa_nodes-pods-secrets">no longer automatically generated.</a></p>
 </div>
 <div class="paragraph">
-<p>Once done, our secrets can be easily referenced from within source code using either annotations:</p>
+<p>Once done, our app secrets can be easily referenced from within source code using either annotations:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -170,7 +170,7 @@ data:
 </div>
 </div>
 <div class="paragraph">
-<p>We can also reference the secrets directly from our ArgoCD Application definitions, here is an example of using helm (kustomize and plain yaml are also supported).</p>
+<p>We can also reference the secrets directly from our ArgoCD Application definitions. Here is an example of using helm (kustomize and plain yaml are also supported).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -190,7 +190,7 @@ data:
 </div>
 </div>
 <div class="paragraph">
-<p>I also use a pattern to pass down the Vault annotation path down to the helm chart from the ArgoCD Application, and to keep things clean (and you sane!) I have a Vault secret per-application (containing many KV2 - key:value pairs).</p>
+<p>I also use a pattern to pass the <em>vault annotation path</em> down to the helm chart from the ArgoCD Application. To keep things clean (and you sane!) I normally have a Vault secret per-application (containing many KV2 - key:value pairs).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -213,13 +213,13 @@ data:
 <div class="sect2">
 <h3 id="_argocd_configuration_the_gory_details">ArgoCD Configuration - The Gory Details</h3>
 <div class="paragraph">
-<p>OK, great .. but how do i get there with my Team ArgoCD ? Let&#8217;s take a look in depth at the <a href="https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml"><strong>argocd-values.yaml</strong></a> file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.</p>
+<p>OK, great. But how do i get there with my Team ArgoCD ? Let&#8217;s take a look in depth at the <a href="https://github.com/redhat-cop/helm-charts/blob/master/charts/gitops-operator/values.yaml"><strong>argocd-values.yaml</strong></a> file you might pass into the gitops-operator helm chart to bootstrap your ArgoCD.</p>
 </div>
 <div class="paragraph">
 <p>The important bit for AVP integration is to mount the token from a service account that we have created - in this case the service account is called <strong>argocd-repo-vault</strong> and we set <strong>mountastoken</strong> to "true".</p>
 </div>
 <div class="paragraph">
-<p>Next, we use an <strong>initContainer</strong> to download the AVP golang binary and save it to a <strong>custom-tools</strong> directory. If you are doing this disconnected, the binary needs to be made available offline.</p>
+<p>Next, we use an <strong>initContainer</strong> to download the AVP go binary and save it to a <strong>custom-tools</strong> directory. If you are doing this disconnected, the binary needs to be made available offline.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -251,7 +251,7 @@ data:
 </div>
 </div>
 <div class="paragraph">
-<p>We need to create the <em>glue</em> between our ArgoCD Applications' and how they call/use the AVP binary. This is done using the <strong>configManagementPlugins</strong> stanza. Note we use three methods, one for plain YAML, once for helm charts, one for kustomize. The plugin <strong>plugin: name:</strong> is what we reference from our ArgoCD Application.</p>
+<p>We need to create the <em>glue</em> between our ArgoCD Applications' and how they call/use the AVP binary. This is done using the <strong>configManagementPlugins</strong> stanza. Note we use three methods, one for plain YAML, one for helm charts, one for kustomize. The plugin <strong>name:</strong> is what we reference from our ArgoCD Application.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -307,7 +307,7 @@ EOF</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>I am leaving out the gory details of Vault/ACL setup which are documented <a href="https://eformat.github.io/vault-quickstart/">elsewhere</a>, however to create the auth secret from the <strong>argocd-repo-vault</strong> in vault i use this shell script:</p>
+<p>I am leaving out the gory details of Vault/ACL setup which are documented <a href="https://eformat.github.io/vault-quickstart/">elsewhere</a>, however to create the auth secret in vault from the <strong>argocd-repo-vault</strong> ServiceAccount token, i use this shell script:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -323,9 +323,9 @@ vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
 </div>
 </div>
 <div class="sect2">
-<h3 id="_why_do_all_this_again">Why Do All This Again ?</h3>
+<h3 id="_why_do_all_of_this">Why Do All of This ?</h3>
 <div class="paragraph">
-<p>The benefit of all this gory secrets configuration stuff:</p>
+<p>The benefit of all this gory configuration stuff:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -344,7 +344,7 @@ vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
 </ul>
 </div>
 <div class="paragraph">
-<p>It also means that the platform an product teams, can manage secrets in a consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses <strong>namespaces</strong> - you can just set the env.var into your ArgoCD Application like so.</p>
+<p>It also means that the platform an product teams, can manage secrets in a safely consistent manner - but separately i.e. each team manages their own secrets and space in vault. This method also works if you are using the enterprise Hashi vault that uses <strong>namespaces</strong> - you can just set the env.var into your ArgoCD Application like so.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -443,7 +443,7 @@ vault write auth/$BASE_DOMAIN-${PROJECT_NAME}/config \
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 03 23:53:43 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Nov 04 02:17:45 UTC 2022</a></p>
       </div>
     </div>
     
