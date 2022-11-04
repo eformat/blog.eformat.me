@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 4 Nov 2022 02:17:45 +0000</pubDate>
-      <lastBuildDate>Fri, 4 Nov 2022 02:17:45 +0000</lastBuildDate>
+      <pubDate>Fri, 4 Nov 2022 07:45:13 +0000</pubDate>
+      <lastBuildDate>Fri, 4 Nov 2022 07:45:13 +0000</lastBuildDate>
 
       
       <item>
           <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Fri, 4 Nov 2022 02:17:27 +0000</pubDate>
+          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -86,7 +86,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Fri, 4 Nov 2022 02:17:27 +0000</pubDate>
+          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
@@ -210,7 +210,7 @@
       <item>
           <title>Patterns with ArgoCD - Vault</title>
           <link>https://blog.eformat.me/2022/11/argocd-patterns-vault.html</link>
-          <pubDate>Fri, 4 Nov 2022 02:17:27 +0000</pubDate>
+          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/argocd-patterns-vault.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
