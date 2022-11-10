@@ -1,5 +1,5 @@
 = DevOps with OpenShift Introduction
-2022-11-03
+:jbake-date: 2022-11-03
 :jbake-type: post
 :jbake-tags: devops, openshift
 :jbake-status: published

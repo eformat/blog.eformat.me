@@ -1,5 +1,5 @@
 = Patterns with ArgoCD - Vault
-2022-11-04
+:jbake-date: 2022-11-04
 :jbake-type: post
 :jbake-tags: argocd, gitops, patterns, vault, security
 :jbake-status: published

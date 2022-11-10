@@ -1,5 +1,5 @@
 = AI Constraints Programming with Quarkus and OptaPlanner
-2022-11-03
+:jbake-date: 2022-11-04
 :jbake-type: post
 :jbake-tags: quarkus, constraints, optaplanner, java
 :jbake-status: published

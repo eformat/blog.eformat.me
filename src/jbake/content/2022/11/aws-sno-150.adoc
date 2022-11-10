@@ -1,5 +1,5 @@
 = SNO in AWS for $150/mo
-2022-11-10
+:jbake-date: 2022-11-10
 :jbake-type: post
 :jbake-tags: openshift,aws,sno,cost
 :jbake-status: published
