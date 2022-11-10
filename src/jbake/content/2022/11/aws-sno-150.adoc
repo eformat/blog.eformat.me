@@ -227,6 +227,16 @@ aws elbv2 delete-target-group \
 --target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067
 ----
 
+* Use Host Network for ingress
++
+FIXME - extra step
++
+[source,bash,options="wrap"]
+----
+oc -n openshift-ingress-operator patch ingresscontrollers/default --type=merge --patch='{"spec":{"endpointPublishingStrategy":{"type":"HostNetwork","hostNetwork":{"httpPort": 80, "httpsPort": 443, "protocol": "TCP", "statsPort": 1936}}}}'
+oc -n openshift-ingress delete services/router-default
+----
+
 * Restart SNO to ensure it still works !
 
 == Convert SNO to SPOT
