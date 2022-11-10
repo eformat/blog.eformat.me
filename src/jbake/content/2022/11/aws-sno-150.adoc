@@ -1,0 +1,283 @@
+= SNO in AWS for $150/mo
+2022-11-10
+:jbake-type: post
+:jbake-tags: openshift,aws,sno,cost
+:jbake-status: published
+
+== So you want to demo OpenShift like a boss ...
+
+[[money]]
+image:/2022/11/100-unsplash.jpg["Money",640,480]
+
+What is the cheapest way to run OpenShift in the public cloud ?
+
+Behold .. the awesomeness-ness of SNO (Single Node OpenShift) on persistent https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html[spot in AWS]. A Spot Instance is an instance that uses spare EC2 capacity that is available for a lot less than the On-Demand price. How much less ? well.. you can https://aws.amazon.com/ec2/spot/pricing[check it out here] but normally 70% less ec2 cost. Just get used to some interruptions 😶‍🌫️.
+
+For installing and demoing _anything_ in OpenShift you will normally need a bare minimum of 8vCPU and 32 GB RAM for SNO which may get you close to under the $100 mark 😲.
+
+[width="50%",cols=">s,^m,e",frame="topbot",options="header,footer"]
+|==========================
+|      2+|Price
+| m6a.2xlarge       | $0.1658 per Hour  | $120
+| GP3 volumes       | approx | $10
+| ELB+EIP       | approx  | $20
+| Total: | |$150
+|==========================
+
+But others could suit your need better:
+
+- c5n.4xlarge - 16 vCPU, 42 GB RAM
+- m6a.2xlarge - 8 vCPU, 32 GB RAM
+- r6i.2xlarge - 8 vCPU, 64 GB RAM
+
+Prices will vary over time ! it is spot after all. The rate of instance https://aws.amazon.com/ec2/spot/instance-advisor[interruption] also varies by region and instance type, so I pick and choose based on latency to where I work from.
+
+So, how do we get there ?
+
+== Configuring and Installing OpenShift
+
+You can https://docs.openshift.com/container-platform/4.11/installing/installing_sno/install-sno-installing-sno.html[check the docs] for configuring the install.
+
+[source,bash,options="wrap"]
+----
+$ openshift-install create install-config
+----
+
+You want to install SNO, so your config should look similar to this:
+
+[source,bash,options="wrap"]
+----
+apiVersion: v1
+baseDomain: <your base domain>
+compute:
+- name: worker
+  replicas: 0
+controlPlane:
+  name: master
+  replicas: 1
+  architecture: amd64
+  hyperthreading: Enabled
+  platform:
+    aws:
+      type: c5n.4xlarge
+      rootVolume:
+        size: 250
+        type: gp3
+metadata:
+  name: sno
+platform:
+  aws:
+    region: <your region>
+----
+
+You want a single master, choose how big you want your root volume and instance size and which region to install to. Personally I use https://github.com/openshift/hive/blob/master/docs/clusterpools.md[Hive and ClusterPools] from an SNO instance in my home lab to install all my public cloud clusters, that way I can easily control then via configuration and https://github.com/openshift/hive/blob/master/docs/hibernating-clusters.md[hibernate] them when I want ! You can also just install via the cli of course:
+
+[source,bash,options="wrap"]
+----
+$ openshift-install create cluster
+----
+
+== Adjusting SNO to remove all the costly networking bits!
+
+When you install SNO, it installs a bunch of stuff you may not want in a demo/lab environment. With a single node, the load balancers and the private routing are usually not necessary at all. It's always possible to put the private routing and subnets back if you need to add workers later or just reinstall.
+
+I am going to include the aws cli commands as guidance, they need a bit more polish to make them fully scriptable, but we're working on it ! This saves you approx~ $120/mo for the 3 NAT gateways, $40/mo for 2 API load balancers and $10/mo for 2 EIP's. I will keep the router ELB.
+
+* Update Master Security Group: Allow 6443 (TCP)
++
+[source,bash,options="wrap"]
+----
+region=<your aws region>
+instance_id=<your instance id>
+master_sg_name=<your cluster>-sno-master-sg
+
+sg_master=$(aws ec2 describe-security-groups \
+  --region=${region} \
+  --query "SecurityGroups[].GroupId" \
+  --filters "Name=vpc-id,Values=${vpc}" \
+  --filters "Name=tag-value,Values=${master_sg_name}" | jq -r .[0])
+
+aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 6443, "ToPort":6443, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]'
+----
+
+* Update Master Security Group: Allow 30000 to 32767 (TCP & UDP) from 0.0.0.0/0 for NodePort services
++
+[source,bash,options="wrap"]
+----
+aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 30000, "ToPort":32767, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "udp", "FromPort": 30000, "ToPort":32767, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]
+----
+
+* Add Security Groups that were attached to Routing ELB to master
++
+[source,bash,options="wrap"]
+----
+aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 443, "ToPort":443, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "tcp", "FromPort": 80, "ToPort":80, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "icmp", "FromPort": 8, "ToPort": -1,"IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]'
+----
+
+* Attach a new public elastic IP address
++
+[source,bash,options="wrap"]
+----
+eip=$(aws ec2 allocate-address --domain vpc --region=${region})
+
+aws ec2 associate-address \
+--region=${region} \
+--allocation-id $(echo ${eip} | jq -r '.AllocationId') \
+--instance-id ${instance_id}
+----
+
+* Update all subnets to route through IGW (using public route table)
++
+[source,bash,options="wrap"]
+----
+# update public route table and add private subnets to route through igw (using public route table), public subnets already route that way
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=${vpc}" --region=${region} > /tmp/baz
+
+# inspect /tmp/baz to get the right id's, update them individually
+aws ec2 replace-route-table-association \
+--association-id rtbassoc-<id> \
+--route-table-id rtb-<id for igw> \
+--region=${region}
+----
+
+* Route53: Change API, APPS - A record to elastic IP address
+* Route53: Change internal API, APPS - A records to private IP address of instance
++
+I'm just going to list the generic command here, rinse and repeat for each of the zone records (four times, [int, ext] - for [*.apps and api]):
++
+[source,bash,options="wrap"]
+----
+aws route53 list-hosted-zones
+
+# get your hosted zone id's
+hosted_zone=/hostedzone/<zone id>
+
+# use the private ip address for the internal zone
+cat << EOF > /tmp/route53_policy1
+{
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "api.<your cluster domain>",
+                  "Type": "A",
+                  "TTL": 300,
+                  "ResourceRecords": [
+                    {
+                      "Value": "$(echo $eip | jq -r '.PublicIp')"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+EOF
+
+aws route53 change-resource-record-sets \
+--region=${region} \
+--hosted-zone-id $(echo ${hosted_zone} | sed 's/\/hostedzone\///g') \
+--change-batch file:///tmp/route53_policy1
+----
+
+* Delete NAT gateways
++
+This will delete all your nat gateways, adjust to suit
++
+[source,bash,options="wrap"]
+----
+for i in `aws ec2 describe-nat-gateways --region=${region} --query="NatGateways[].NatGatewayId" --output text | tr '\n' ' '`; do aws ec2 delete-nat-gateway --nat-gateway-id ${i} --region=${region}; done
+----
+
+* Release public IP addresses (from NAT gateways)
++
+There will be two public EIP's you can now release:
++
+[source,bash,options="wrap"]
+----
+aws ec2 release-address \
+--region=${region} \
+--public-ip <public ip address>
+----
+
+* Delete API load balancers (ext, int)
++
+This will delete all your api load balancers, adjust to suit
++
+[source,bash,options="wrap"]
+----
+for i in `aws elb describe-load-balancers --region=${region} --query="LoadBalancerDescriptions[].LoadBalancerName" --output text | tr '\n' ' '`; do aws elb delete-load-balancer --region=${region} --load-balancer-name ${i}; done
+----
+
+* Delete API load balancer target groups
++
+FIXME - need to look these up
++
+[source,bash,options="wrap"]
+----
+aws elbv2 delete-target-group \
+--target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067
+----
+
+* Restart SNO to ensure it still works !
+
+== Convert SNO to SPOT
+
+This has the effect of creating a spot request which will be permanent and only stop the instance should the price or capacity not be met temporarily. We're using https://pythonawesome.com/a-tool-to-convert-aws-ec2-instances-back-and-forth-between-on-demand[this script] to convert the SNO instance:
+
+[source,bash,options="wrap"]
+----
+$ ./ec2-spot-converter --stop-instance --review-conversion-result --instance-id <your instance id>
+----
+
+This will take a bit of time to run and gives good debugging info. You can delete any temporary ami's and snapshots it creates.
+
+== A little work in progress ...
+
+The script changes your instance id to a new one during the conversion. There is _one_ issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:
+
+[source,bash,options="wrap"]
+----
+# Check the router ELB to ensure the new instance is registered there.
+# Re-attach the new instance - need to do each restart until workaround found !
+aws elb register-instances-with-load-balancer \
+--load-balancer-name <router elb id> \
+--instances <your new converted instance id> \
+--region=${region}
+----
+
+To make this survive a restart, we need to change the aws service provider id by hand on disk.
+
+[source,bash,options="wrap"]
+----
+oc debug node/<your node name>.compute.internal
+chroot /host
+cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
+
+# the file will look like this with your region and instance
+[Service]
+Environment="KUBELET_PROVIDERID=aws:///<region>/<your original instance id>"
+
+# edit this file using vi and change <your original instance id> -> <your new converted instance id>
+
+# restart the service
+systemctl restart aws-kubelet-providerid.service
+
+# restart SNO
+----
+
+I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞
+
+== Profit !
+
+💸💸💸 You should now be off to the races 🏇🏻 with your cheap-as SNO running on Spot.
+
+The next steps - normally I would add a Lets Encrypt Cert, add users and configure the LVM Operator for thin-lvm based storage class. That i will leave those steps for another blog. Enjoy. 🤑
