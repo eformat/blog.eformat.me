@@ -13,7 +13,7 @@
         <loc>https://blog.eformat.me/tags/gitops.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -27,14 +27,14 @@
         <loc>https://blog.eformat.me/tags/argocd.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
         <loc>https://blog.eformat.me/tags/patterns.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -48,21 +48,21 @@
         <loc>https://blog.eformat.me/tags/quarkus.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
         <loc>https://blog.eformat.me/tags/optaplanner.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
         <loc>https://blog.eformat.me/tags/constraints.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -83,7 +83,7 @@
         <loc>https://blog.eformat.me/tags/security.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -97,7 +97,7 @@
         <loc>https://blog.eformat.me/tags/java.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -118,7 +118,7 @@
         <loc>https://blog.eformat.me/tags/devops.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-03</lastmod>
     </url>
 
     <url>
@@ -132,7 +132,7 @@
         <loc>https://blog.eformat.me/tags/vault.html</loc>
         
 
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
     </url>
 
     <url>
@@ -144,23 +144,23 @@
 
 
     <url>
-        <loc>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</loc>
-        <lastmod>2022-11-10</lastmod>
-    </url>
-
-    <url>
-        <loc>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</loc>
-        <lastmod>2022-11-10</lastmod>
-    </url>
-
-    <url>
         <loc>https://blog.eformat.me/2022/11/aws-sno-150.html</loc>
         <lastmod>2022-11-10</lastmod>
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</loc>
+        <lastmod>2022-11-04</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/2022/11/argocd-patterns-vault.html</loc>
-        <lastmod>2022-11-10</lastmod>
+        <lastmod>2022-11-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</loc>
+        <lastmod>2022-11-03</lastmod>
     </url>
 
     <url>

@@ -81,8 +81,8 @@
                             <meta itemprop="name" content="Mike Hepburn"/>
                         </div>
                         <meta itemprop="inLanguage" content="en-US"/>
-                        <a itemprop="url" href="2022/11/optaplanner-quarkus.html">
-                            <h1 itemprop="name">AI Constraints Programming with Quarkus and OptaPlanner</h1>
+                        <a itemprop="url" href="2022/11/aws-sno-150.html">
+                            <h1 itemprop="name">SNO in AWS for $150/mo</h1>
                         </a>
                         <p>
                             <time itemprop="datePublished"
@@ -92,81 +92,390 @@
                         </p>
 
                         <p>Tags :
-                            <meta itemprop="keywords" content="quarkus,constraints,optaplanner,java"/>
-                            <a href="tags/quarkus.html">quarkus</a>, <a href="tags/constraints.html">constraints</a>, <a href="tags/optaplanner.html">optaplanner</a>, <a href="tags/java.html">java</a>
+                            <meta itemprop="keywords" content="openshift,aws,sno,cost"/>
+                            <a href="tags/openshift.html">openshift</a>, <a href="tags/aws.html">aws</a>, <a href="tags/sno.html">sno</a>, <a href="tags/cost.html">cost</a>
                         </p>
 
-                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/optaplanner-quarkus.html" data-text="AI Constraints Programming with Quarkus and OptaPlanner" data-via="eformat" data-lang="en">Tweeter</a-->
+                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/aws-sno-150.html" data-text="SNO in AWS for $150/mo" data-via="eformat" data-lang="en">Tweeter</a-->
                         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/optaplanner-quarkus.html"></div>
+                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/aws-sno-150.html"></div>
 
                         <div itemprop="blogPost">
                             <p><div class="sect1">
-<h2 id="_ai_on_quarkus_i_love_it_when_an_optaplan_comes_together">AI on Quarkus: I love it when an OptaPlan comes together</h2>
+<h2 id="_so_you_want_to_demo_openshift_like_a_boss">So you want to demo OpenShift like a boss &#8230;&#8203;</h2>
+<div class="sectionbody">
+<div id="money" class="paragraph">
+<p><span class="image"><img src="/2022/11/100-unsplash.jpg" alt="Money" width="640" height="480"></span></p>
+</div>
+<div class="paragraph">
+<p>What is the cheapest way to run OpenShift in the public cloud ?</p>
+</div>
+<div class="paragraph">
+<p>Behold .. the awesomeness-ness of SNO (Single Node OpenShift) on persistent <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html">spot in AWS</a>. A Spot Instance is an instance that uses spare EC2 capacity that is available for a lot less than the On-Demand price. How much less ? well.. you can <a href="https://aws.amazon.com/ec2/spot/pricing">check it out here</a> but normally 70% less ec2 cost. Just get used to some interruptions 😶‍🌫️.</p>
+</div>
+<div class="paragraph">
+<p>For installing and demoing <em>anything</em> in OpenShift you will normally need a bare minimum of 8vCPU and 32 GB RAM for SNO which may get you close to under the $100 mark 😲.</p>
+</div>
+<table class="tableblock frame-ends grid-all" style="width: 50%;">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-right valign-top"></th>
+<th class="tableblock halign-center valign-top" colspan="2">Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><strong>m6a.2xlarge</strong></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>$0.1658 per Hour</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>$120</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><strong>GP3 volumes</strong></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>approx</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>$10</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><strong>ELB+EIP</strong></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>approx</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>$20</em></p></td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><strong>Total:</strong></p></td>
+<td class="tableblock halign-center valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>$150</em></p></td>
+</tr>
+</tfoot>
+</table>
+<div class="paragraph">
+<p>But others could suit your need better:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>c5n.4xlarge - 16 vCPU, 42 GB RAM</p>
+</li>
+<li>
+<p>m6a.2xlarge - 8 vCPU, 32 GB RAM</p>
+</li>
+<li>
+<p>r6i.2xlarge - 8 vCPU, 64 GB RAM</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Prices will vary over time ! it is spot after all. The rate of instance <a href="https://aws.amazon.com/ec2/spot/instance-advisor">interruption</a> also varies by region and instance type, so I pick and choose based on latency to where I work from.</p>
+</div>
+<div class="paragraph">
+<p>So, how do we get there ?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuring_and_installing_openshift">Configuring and Installing OpenShift</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>I have been meaning to look at <a href="https://www.optaplanner.org/">OptaPlanner</a> for ages. All i can say is <em>"Sorry Geoffrey De Smet, you are a goddamn genius and i should have played with OptaPlanner way sooner".</em></p>
+<p>You can <a href="https://docs.openshift.com/container-platform/4.11/installing/installing_sno/install-sno-installing-sno.html">check the docs</a> for configuring the install.</p>
 </div>
-<div class="paragraph">
-<p>So, i watched this video to see how to get started.</p>
-</div>
-<div class="videoblock">
+<div class="listingblock">
 <div class="content">
-<iframe src="https://www.youtube.com/embed/3N3NoDs3Ylc?rel=0" frameborder="0" allowfullscreen></iframe>
+<pre class="prettyprint highlight"><code data-lang="bash">$ openshift-install create install-config</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>So much fun ! 😁 to code.</p>
+<p>You want to install SNO, so your config should look similar to this:</p>
 </div>
-<div id="lightbox"></div>
-<div class="imageblock id="quarkus-school-timetabling-screenshot">
-  <img src="/2022/11/quarkus-school-timetabling-screenshot.png" class="zoom">
-  <div class="title">Figure - Quarkus School Timetable</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">apiVersion: v1
+baseDomain: &lt;your base domain&gt;
+compute:
+- name: worker
+  replicas: 0
+controlPlane:
+  name: master
+  replicas: 1
+  architecture: amd64
+  hyperthreading: Enabled
+  platform:
+    aws:
+      type: c5n.4xlarge
+      rootVolume:
+        size: 250
+        type: gp3
+metadata:
+  name: sno
+platform:
+  aws:
+    region: &lt;your region&gt;</code></pre>
 </div>
-<div class="paragraph">
-<p>There were a couple of long learnt lessons i remembered whilst playing with the code.</p>
-</div>
-<div class="paragraph">
-<p>(1) Domain Driven Design</p>
-</div>
-<div class="paragraph">
-<p>To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keeps giving - DDD (and UML) is perfect to help you out here.</p>
-</div>
-<div id="lightbox"></div>
-<div class="imageblock id="ddd-school-timetable-classes">
-  <img src="/2022/11/ddd-school-timetable-classes.png" class="zoom">
-  <div class="title">Figure - Class Hierarchy</div>
-</div>
-<div class="paragraph">
-<p>You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.</p>
-</div>
-<div class="paragraph">
-<p>(2) Constraints Programming</p>
-</div>
-<div class="paragraph">
-<p>I went looking for some code i helped write some 15 years ago ! A <a href="https://en.wikipedia.org/wiki/Constraint_programming">Constraint</a> based programming model we had written in C++</p>
-</div>
-<script src="https://gist.github.com/eformat/87efba0e2ec717ff077852c5924766ec.js"></script>
-<div class="paragraph">
-<p>We had a whole bunch of Production classes used for calculating different trades types and their values. You added these <em>productions</em> into a solver class heirarcy and if you had the right <a href="https://en.wikipedia.org/wiki/Degrees_of_freedom">degrees of freedom</a> your trade calculation would be successful. The beauty of it was the solver would spit out any parameter you had not specified, as long as it was possible to calculate it based on the production rules.</p>
 </div>
 <div class="paragraph">
-<p>OptaPlanner viscerally reminded me of that code and experience, and started me thinking about how to use it for a similar use case.</p>
+<p>You want a single master, choose how big you want your root volume and instance size and which region to install to. Personally I use <a href="https://github.com/openshift/hive/blob/master/docs/clusterpools.md">Hive and ClusterPools</a> from an SNO instance in my home lab to install all my public cloud clusters, that way I can easily control then via configuration and <a href="https://github.com/openshift/hive/blob/master/docs/hibernating-clusters.md">hibernate</a> them when I want ! You can also just install via the cli of course:</p>
 </div>
-<script src="https://gist.github.com/eformat/6551fe9434bb0a810321c83bd07adee2.js"></script>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ openshift-install create cluster</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adjusting_sno_to_remove_all_the_costly_networking_bits">Adjusting SNO to remove all the costly networking bits!</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>I am now a fan 🥰</p>
+<p>When you install SNO, it installs a bunch of stuff you may not want in a demo/lab environment. With a single node, the load balancers and the private routing are usually not necessary at all. It&#8217;s always possible to put the private routing and subnets back if you need to add workers later or just reinstall.</p>
 </div>
 <div class="paragraph">
-<p>One last lesson from the OptaPlanner crew was their use of a a new static doc-generation system, their docs are a thing of beauty i have to say, <a href="https://jbake.org">JBake</a> which I am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.</p>
+<p>I am going to include the aws cli commands as guidance, they need a bit more polish to make them fully scriptable, but we&#8217;re working on it ! This saves you approx~ $120/mo for the 3 NAT gateways, $40/mo for 2 API load balancers and $10/mo for 2 EIP&#8217;s. I will keep the router ELB.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Update Master Security Group: Allow 6443 (TCP)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">region=&lt;your aws region&gt;
+instance_id=&lt;your instance id&gt;
+master_sg_name=&lt;your cluster&gt;-sno-master-sg
+
+sg_master=$(aws ec2 describe-security-groups \
+  --region=${region} \
+  --query "SecurityGroups[].GroupId" \
+  --filters "Name=vpc-id,Values=${vpc}" \
+  --filters "Name=tag-value,Values=${master_sg_name}" | jq -r .[0])
+
+aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 6443, "ToPort":6443, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update Master Security Group: Allow 30000 to 32767 (TCP &amp; UDP) from 0.0.0.0/0 for NodePort services</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 30000, "ToPort":32767, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "udp", "FromPort": 30000, "ToPort":32767, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add Security Groups that were attached to Routing ELB to master</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions '[{"IpProtocol": "tcp", "FromPort": 443, "ToPort":443, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "tcp", "FromPort": 80, "ToPort":80, "IpRanges": [{"CidrIp": "0.0.0.0/0"}]},{"IpProtocol": "icmp", "FromPort": 8, "ToPort": -1,"IpRanges": [{"CidrIp": "0.0.0.0/0"}]}]'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Attach a new public elastic IP address</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">eip=$(aws ec2 allocate-address --domain vpc --region=${region})
+
+aws ec2 associate-address \
+--region=${region} \
+--allocation-id $(echo ${eip} | jq -r '.AllocationId') \
+--instance-id ${instance_id}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Update all subnets to route through IGW (using public route table)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash"># update public route table and add private subnets to route through igw (using public route table), public subnets already route that way
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=${vpc}" --region=${region} &gt; /tmp/baz
+
+# inspect /tmp/baz to get the right id's, update them individually
+aws ec2 replace-route-table-association \
+--association-id rtbassoc-&lt;id&gt; \
+--route-table-id rtb-&lt;id for igw&gt; \
+--region=${region}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Route53: Change API, APPS - A record to elastic IP address</p>
+</li>
+<li>
+<p>Route53: Change internal API, APPS - A records to private IP address of instance</p>
+<div class="paragraph">
+<p>I&#8217;m just going to list the generic command here, rinse and repeat for each of the zone records (four times, [int, ext] - for [*.apps and api]):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws route53 list-hosted-zones
+
+# get your hosted zone id's
+hosted_zone=/hostedzone/&lt;zone id&gt;
+
+# use the private ip address for the internal zone
+cat &lt;&lt; EOF &gt; /tmp/route53_policy1
+{
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "api.&lt;your cluster domain&gt;",
+                  "Type": "A",
+                  "TTL": 300,
+                  "ResourceRecords": [
+                    {
+                      "Value": "$(echo $eip | jq -r '.PublicIp')"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+EOF
+
+aws route53 change-resource-record-sets \
+--region=${region} \
+--hosted-zone-id $(echo ${hosted_zone} | sed 's/\/hostedzone\///g') \
+--change-batch file:///tmp/route53_policy1</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Delete NAT gateways</p>
+<div class="paragraph">
+<p>This will delete all your nat gateways, adjust to suit</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">for i in `aws ec2 describe-nat-gateways --region=${region} --query="NatGateways[].NatGatewayId" --output text | tr '\n' ' '`; do aws ec2 delete-nat-gateway --nat-gateway-id ${i} --region=${region}; done</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Release public IP addresses (from NAT gateways)</p>
+<div class="paragraph">
+<p>There will be two public EIP&#8217;s you can now release:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws ec2 release-address \
+--region=${region} \
+--public-ip &lt;public ip address&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Delete API load balancers (ext, int)</p>
+<div class="paragraph">
+<p>This will delete all your api load balancers, adjust to suit</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">for i in `aws elb describe-load-balancers --region=${region} --query="LoadBalancerDescriptions[].LoadBalancerName" --output text | tr '\n' ' '`; do aws elb delete-load-balancer --region=${region} --load-balancer-name ${i}; done</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Delete API load balancer target groups</p>
+<div class="paragraph">
+<p>FIXME - need to look these up</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws elbv2 delete-target-group \
+--target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restart SNO to ensure it still works !</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_convert_sno_to_spot">Convert SNO to SPOT</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This has the effect of creating a spot request which will be permanent and only stop the instance should the price or capacity not be met temporarily. We&#8217;re using <a href="https://pythonawesome.com/a-tool-to-convert-aws-ec2-instances-back-and-forth-between-on-demand">this script</a> to convert the SNO instance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ ./ec2-spot-converter --stop-instance --review-conversion-result --instance-id &lt;your instance id&gt;</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>OptaPlanner Quickstarts Code - <a href="https://github.com/kiegroup/optaplanner-quickstarts" class="bare">https://github.com/kiegroup/optaplanner-quickstarts</a></p>
+<p>This will take a bit of time to run and gives good debugging info. You can delete any temporary ami&#8217;s and snapshots it creates.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_little_work_in_progress">A little work in progress &#8230;&#8203;</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The script changes your instance id to a new one during the conversion. There is <em>one</em> issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash"># Check the router ELB to ensure the new instance is registered there.
+# Re-attach the new instance - need to do each restart until workaround found !
+aws elb register-instances-with-load-balancer \
+--load-balancer-name &lt;router elb id&gt; \
+--instances &lt;your new converted instance id&gt; \
+--region=${region}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To make this survive a restart, we need to change the aws service provider id by hand on disk.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc debug node/&lt;your node name&gt;.compute.internal
+chroot /host
+cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
+
+# the file will look like this with your region and instance
+[Service]
+Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance id&gt;"
+
+# edit this file using vi and change &lt;your original instance id&gt; -&gt; &lt;your new converted instance id&gt;
+
+# restart the service
+systemctl restart aws-kubelet-providerid.service
+
+# restart SNO</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_profit">Profit !</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>💸💸💸 You should now be off to the races 🏇🏻 with your cheap-as SNO running on Spot.</p>
+</div>
+<div class="paragraph">
+<p>The next steps - normally I would add a Lets Encrypt Cert, add users and configure the LVM Operator for thin-lvm based storage class. That i will leave those steps for another blog. Enjoy. 🤑</p>
 </div>
 </div>
 </div></p>
                         </div>
-                        <p><a itemprop="discussionUrl" href="2022/11/optaplanner-quarkus.html#disqus_thread">Comments</a></p>
+                        <p><a itemprop="discussionUrl" href="2022/11/aws-sno-150.html#disqus_thread">Comments</a></p>
 
                     </div>
                 
@@ -247,7 +556,7 @@
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 10 05:09:14 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 10 05:32:06 UTC 2022</a></p>
       </div>
     </div>
     
