@@ -291,3 +291,11 @@ I will update this blog if we get a better way to manage this instance id thing 
 💸💸💸 You should now be off to the races 🏇🏻 with your cheap-as SNO running on Spot.
 
 The next steps - normally I would add a Lets Encrypt Cert, add users and configure the LVM Operator for thin-lvm based storage class. That i will leave those steps for another blog. Enjoy. 🤑
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="sre-cluster-argo-team-namespaced">
+  <img src="/2022/11/sno-aws.png" class="zoom">
+  <div class="title">SNO for $150 in AWS on c5n.4xlarge</div>
+</div>
+++++
