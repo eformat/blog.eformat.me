@@ -384,6 +384,18 @@ aws route53 change-resource-record-sets \
 </div>
 </li>
 <li>
+<p>Use Host Network for ingress</p>
+<div class="paragraph">
+<p>FIXME - extra step</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc -n openshift-ingress-operator patch ingresscontrollers/default --type=merge --patch='{"spec":{"endpointPublishingStrategy":{"type":"HostNetwork","hostNetwork":{"httpPort": 80, "httpsPort": 443, "protocol": "TCP", "statsPort": 1936}}}}'
+oc -n openshift-ingress delete services/router-default</code></pre>
+</div>
+</div>
+</li>
+<li>
 <p>Restart SNO to ensure it still works !</p>
 </li>
 </ul>
@@ -726,7 +738,7 @@ systemctl restart aws-kubelet-providerid.service
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 10 05:32:06 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 10 05:47:28 UTC 2022</a></p>
       </div>
     </div>
     

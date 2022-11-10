@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 10 Nov 2022 05:32:05 +0000</pubDate>
-      <lastBuildDate>Thu, 10 Nov 2022 05:32:05 +0000</lastBuildDate>
+      <pubDate>Thu, 10 Nov 2022 05:47:28 +0000</pubDate>
+      <lastBuildDate>Thu, 10 Nov 2022 05:47:28 +0000</lastBuildDate>
 
       
       <item>
@@ -310,6 +310,18 @@ aws route53 change-resource-record-sets \
 &lt;div class=&quot;content&quot;&gt;
 &lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws elbv2 delete-target-group \
 --target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use Host Network for ingress&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;FIXME - extra step&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc -n openshift-ingress-operator patch ingresscontrollers/default --type=merge --patch=&apos;{&quot;spec&quot;:{&quot;endpointPublishingStrategy&quot;:{&quot;type&quot;:&quot;HostNetwork&quot;,&quot;hostNetwork&quot;:{&quot;httpPort&quot;: 80, &quot;httpsPort&quot;: 443, &quot;protocol&quot;: &quot;TCP&quot;, &quot;statsPort&quot;: 1936}}}}&apos;
+oc -n openshift-ingress delete services/router-default&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/li&gt;
