@@ -6,14 +6,14 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 4 Nov 2022 07:45:13 +0000</pubDate>
-      <lastBuildDate>Fri, 4 Nov 2022 07:45:13 +0000</lastBuildDate>
+      <pubDate>Thu, 10 Nov 2022 05:09:14 +0000</pubDate>
+      <lastBuildDate>Thu, 10 Nov 2022 05:09:14 +0000</lastBuildDate>
 
       
       <item>
           <title>AI Constraints Programming with Quarkus and OptaPlanner</title>
           <link>https://blog.eformat.me/2022/11/optaplanner-quarkus.html</link>
-          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
+          <pubDate>Thu, 10 Nov 2022 05:09:03 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/optaplanner-quarkus.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
@@ -86,7 +86,7 @@
       <item>
           <title>DevOps with OpenShift Introduction</title>
           <link>https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</link>
-          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
+          <pubDate>Thu, 10 Nov 2022 05:09:03 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/devops-with-openshift-5yr.html</guid>
           <description>
               &lt;div class=&quot;sect1 pagenumrestart&quot;&gt;
@@ -208,9 +208,391 @@
       </item>
       
       <item>
+          <title>SNO in AWS for $150/mo</title>
+          <link>https://blog.eformat.me/2022/11/aws-sno-150.html</link>
+          <pubDate>Thu, 10 Nov 2022 05:09:03 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/aws-sno-150.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_so_you_want_to_demo_openshift_like_a_boss&quot;&gt;So you want to demo OpenShift like a boss &amp;#8230;&amp;#8203;&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div id=&quot;money&quot; class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;span class=&quot;image&quot;&gt;&lt;img src=&quot;/2022/11/100-unsplash.jpg&quot; alt=&quot;Money&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;What is the cheapest way to run OpenShift in the public cloud ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Behold .. the awesomeness-ness of SNO (Single Node OpenShift) on persistent &lt;a href=&quot;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html&quot;&gt;spot in AWS&lt;/a&gt;. A Spot Instance is an instance that uses spare EC2 capacity that is available for a lot less than the On-Demand price. How much less ? well.. you can &lt;a href=&quot;https://aws.amazon.com/ec2/spot/pricing&quot;&gt;check it out here&lt;/a&gt; but normally 70% less ec2 cost. Just get used to some interruptions 😶‍🌫️.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For installing and demoing &lt;em&gt;anything&lt;/em&gt; in OpenShift you will normally need a bare minimum of 8vCPU and 32 GB RAM for SNO which may get you close to under the $100 mark 😲.&lt;/p&gt;
+&lt;/div&gt;
+&lt;table class=&quot;tableblock frame-ends grid-all&quot; style=&quot;width: 50%;&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 33.3333%;&quot;&gt;
+&lt;col style=&quot;width: 33.3333%;&quot;&gt;
+&lt;col style=&quot;width: 33.3334%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-right valign-top&quot;&gt;&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-center valign-top&quot; colspan=&quot;2&quot;&gt;Price&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-right valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;strong&gt;m6a.2xlarge&lt;/strong&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-center valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;$0.1658 per Hour&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;em&gt;$120&lt;/em&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-right valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;strong&gt;GP3 volumes&lt;/strong&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-center valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;approx&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;em&gt;$10&lt;/em&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-right valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;strong&gt;ELB+EIP&lt;/strong&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-center valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;approx&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;em&gt;$20&lt;/em&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-right valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;strong&gt;Total:&lt;/strong&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-center valign-top&quot;&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;em&gt;$150&lt;/em&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;But others could suit your need better:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;c5n.4xlarge - 16 vCPU, 42 GB RAM&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;m6a.2xlarge - 8 vCPU, 32 GB RAM&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;r6i.2xlarge - 8 vCPU, 64 GB RAM&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Prices will vary over time ! it is spot after all. The rate of instance &lt;a href=&quot;https://aws.amazon.com/ec2/spot/instance-advisor&quot;&gt;interruption&lt;/a&gt; also varies by region and instance type, so I pick and choose based on latency to where I work from.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, how do we get there ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_configuring_and_installing_openshift&quot;&gt;Configuring and Installing OpenShift&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can &lt;a href=&quot;https://docs.openshift.com/container-platform/4.11/installing/installing_sno/install-sno-installing-sno.html&quot;&gt;check the docs&lt;/a&gt; for configuring the install.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ openshift-install create install-config&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You want to install SNO, so your config should look similar to this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;apiVersion: v1
+baseDomain: &amp;lt;your base domain&amp;gt;
+compute:
+- name: worker
+  replicas: 0
+controlPlane:
+  name: master
+  replicas: 1
+  architecture: amd64
+  hyperthreading: Enabled
+  platform:
+    aws:
+      type: c5n.4xlarge
+      rootVolume:
+        size: 250
+        type: gp3
+metadata:
+  name: sno
+platform:
+  aws:
+    region: &amp;lt;your region&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You want a single master, choose how big you want your root volume and instance size and which region to install to. Personally I use &lt;a href=&quot;https://github.com/openshift/hive/blob/master/docs/clusterpools.md&quot;&gt;Hive and ClusterPools&lt;/a&gt; from an SNO instance in my home lab to install all my public cloud clusters, that way I can easily control then via configuration and &lt;a href=&quot;https://github.com/openshift/hive/blob/master/docs/hibernating-clusters.md&quot;&gt;hibernate&lt;/a&gt; them when I want ! You can also just install via the cli of course:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ openshift-install create cluster&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_adjusting_sno_to_remove_all_the_costly_networking_bits&quot;&gt;Adjusting SNO to remove all the costly networking bits!&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When you install SNO, it installs a bunch of stuff you may not want in a demo/lab environment. With a single node, the load balancers and the private routing are usually not necessary at all. It&amp;#8217;s always possible to put the private routing and subnets back if you need to add workers later or just reinstall.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I am going to include the aws cli commands as guidance, they need a bit more polish to make them fully scriptable, but we&amp;#8217;re working on it ! This saves you approx~ $120/mo for the 3 NAT gateways, $40/mo for 2 API load balancers and $10/mo for 2 EIP&amp;#8217;s. I will keep the router ELB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Update Master Security Group: Allow 6443 (TCP)&lt;/p&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;region=&amp;lt;your aws region&amp;gt;
+instance_id=&amp;lt;your instance id&amp;gt;
+master_sg_name=&amp;lt;your cluster&amp;gt;-sno-master-sg
+
+sg_master=$(aws ec2 describe-security-groups \
+  --region=${region} \
+  --query &quot;SecurityGroups[].GroupId&quot; \
+  --filters &quot;Name=vpc-id,Values=${vpc}&quot; \
+  --filters &quot;Name=tag-value,Values=${master_sg_name}&quot; | jq -r .[0])
+
+aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions &apos;[{&quot;IpProtocol&quot;: &quot;tcp&quot;, &quot;FromPort&quot;: 6443, &quot;ToPort&quot;:6443, &quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]}]&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update Master Security Group: Allow 30000 to 32767 (TCP &amp;amp; UDP) from 0.0.0.0/0 for NodePort services&lt;/p&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions &apos;[{&quot;IpProtocol&quot;: &quot;tcp&quot;, &quot;FromPort&quot;: 30000, &quot;ToPort&quot;:32767, &quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]},{&quot;IpProtocol&quot;: &quot;udp&quot;, &quot;FromPort&quot;: 30000, &quot;ToPort&quot;:32767, &quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]}]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add Security Groups that were attached to Routing ELB to master&lt;/p&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws ec2 authorize-security-group-ingress \
+--region=${region} \
+--group-id ${sg_master} \
+--ip-permissions &apos;[{&quot;IpProtocol&quot;: &quot;tcp&quot;, &quot;FromPort&quot;: 443, &quot;ToPort&quot;:443, &quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]},{&quot;IpProtocol&quot;: &quot;tcp&quot;, &quot;FromPort&quot;: 80, &quot;ToPort&quot;:80, &quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]},{&quot;IpProtocol&quot;: &quot;icmp&quot;, &quot;FromPort&quot;: 8, &quot;ToPort&quot;: -1,&quot;IpRanges&quot;: [{&quot;CidrIp&quot;: &quot;0.0.0.0/0&quot;}]}]&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Attach a new public elastic IP address&lt;/p&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;eip=$(aws ec2 allocate-address --domain vpc --region=${region})
+
+aws ec2 associate-address \
+--region=${region} \
+--allocation-id $(echo ${eip} | jq -r &apos;.AllocationId&apos;) \
+--instance-id ${instance_id}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update all subnets to route through IGW (using public route table)&lt;/p&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;# update public route table and add private subnets to route through igw (using public route table), public subnets already route that way
+aws ec2 describe-route-tables --filters &quot;Name=vpc-id,Values=${vpc}&quot; --region=${region} &amp;gt; /tmp/baz
+
+# inspect /tmp/baz to get the right id&apos;s, update them individually
+aws ec2 replace-route-table-association \
+--association-id rtbassoc-&amp;lt;id&amp;gt; \
+--route-table-id rtb-&amp;lt;id for igw&amp;gt; \
+--region=${region}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Route53: Change API, APPS - A record to elastic IP address&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Route53: Change internal API, APPS - A records to private IP address of instance&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I&amp;#8217;m just going to list the generic command here, rinse and repeat for each of the zone records (four times, [int, ext] - for [*.apps and api]):&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws route53 list-hosted-zones
+
+# get your hosted zone id&apos;s
+hosted_zone=/hostedzone/&amp;lt;zone id&amp;gt;
+
+# use the private ip address for the internal zone
+cat &amp;lt;&amp;lt; EOF &amp;gt; /tmp/route53_policy1
+{
+            &quot;Changes&quot;: [
+              {
+                &quot;Action&quot;: &quot;UPSERT&quot;,
+                &quot;ResourceRecordSet&quot;: {
+                  &quot;Name&quot;: &quot;api.&amp;lt;your cluster domain&amp;gt;&quot;,
+                  &quot;Type&quot;: &quot;A&quot;,
+                  &quot;TTL&quot;: 300,
+                  &quot;ResourceRecords&quot;: [
+                    {
+                      &quot;Value&quot;: &quot;$(echo $eip | jq -r &apos;.PublicIp&apos;)&quot;
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+EOF
+
+aws route53 change-resource-record-sets \
+--region=${region} \
+--hosted-zone-id $(echo ${hosted_zone} | sed &apos;s/\/hostedzone\///g&apos;) \
+--change-batch file:///tmp/route53_policy1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Delete NAT gateways&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will delete all your nat gateways, adjust to suit&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;for i in `aws ec2 describe-nat-gateways --region=${region} --query=&quot;NatGateways[].NatGatewayId&quot; --output text | tr &apos;\n&apos; &apos; &apos;`; do aws ec2 delete-nat-gateway --nat-gateway-id ${i} --region=${region}; done&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Release public IP addresses (from NAT gateways)&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There will be two public EIP&amp;#8217;s you can now release:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws ec2 release-address \
+--region=${region} \
+--public-ip &amp;lt;public ip address&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Delete API load balancers (ext, int)&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will delete all your api load balancers, adjust to suit&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;for i in `aws elb describe-load-balancers --region=${region} --query=&quot;LoadBalancerDescriptions[].LoadBalancerName&quot; --output text | tr &apos;\n&apos; &apos; &apos;`; do aws elb delete-load-balancer --region=${region} --load-balancer-name ${i}; done&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Delete API load balancer target groups&lt;/p&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;FIXME - need to look these up&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws elbv2 delete-target-group \
+--target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Restart SNO to ensure it still works !&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_convert_sno_to_spot&quot;&gt;Convert SNO to SPOT&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This has the effect of creating a spot request which will be permanent and only stop the instance should the price or capacity not be met temporarily. We&amp;#8217;re using &lt;a href=&quot;https://pythonawesome.com/a-tool-to-convert-aws-ec2-instances-back-and-forth-between-on-demand&quot;&gt;this script&lt;/a&gt; to convert the SNO instance:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ ./ec2-spot-converter --stop-instance --review-conversion-result --instance-id &amp;lt;your instance id&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will take a bit of time to run and gives good debugging info. You can delete any temporary ami&amp;#8217;s and snapshots it creates.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_a_little_work_in_progress&quot;&gt;A little work in progress &amp;#8230;&amp;#8203;&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The script changes your instance id to a new one during the conversion. There is &lt;em&gt;one&lt;/em&gt; issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;# Check the router ELB to ensure the new instance is registered there.
+# Re-attach the new instance - need to do each restart until workaround found !
+aws elb register-instances-with-load-balancer \
+--load-balancer-name &amp;lt;router elb id&amp;gt; \
+--instances &amp;lt;your new converted instance id&amp;gt; \
+--region=${region}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To make this survive a restart, we need to change the aws service provider id by hand on disk.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc debug node/&amp;lt;your node name&amp;gt;.compute.internal
+chroot /host
+cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
+
+# the file will look like this with your region and instance
+[Service]
+Environment=&quot;KUBELET_PROVIDERID=aws:///&amp;lt;region&amp;gt;/&amp;lt;your original instance id&amp;gt;&quot;
+
+# edit this file using vi and change &amp;lt;your original instance id&amp;gt; -&amp;gt; &amp;lt;your new converted instance id&amp;gt;
+
+# restart the service
+systemctl restart aws-kubelet-providerid.service
+
+# restart SNO&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_profit&quot;&gt;Profit !&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;💸💸💸 You should now be off to the races 🏇🏻 with your cheap-as SNO running on Spot.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The next steps - normally I would add a Lets Encrypt Cert, add users and configure the LVM Operator for thin-lvm based storage class. That i will leave those steps for another blog. Enjoy. 🤑&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
+      
+      <item>
           <title>Patterns with ArgoCD - Vault</title>
           <link>https://blog.eformat.me/2022/11/argocd-patterns-vault.html</link>
-          <pubDate>Fri, 4 Nov 2022 07:44:58 +0000</pubDate>
+          <pubDate>Thu, 10 Nov 2022 05:09:03 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2022/11/argocd-patterns-vault.html</guid>
           <description>
               &lt;div class=&quot;sect1&quot;&gt;
