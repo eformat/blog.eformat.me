@@ -296,6 +296,6 @@ The next steps - normally I would add a Lets Encrypt Cert, add users and configu
 <div id="lightbox"></div>
 <div class="imageblock id="sre-cluster-argo-team-namespaced">
   <img src="/2022/11/sno-aws.png" class="zoom">
-  <div class="title">SNO for $150 in AWS on c5n.4xlarge</div>
+  <div class="title">SNO for $150/mo in AWS on c5n.4xlarge</div>
 </div>
 ++++
