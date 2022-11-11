@@ -252,7 +252,7 @@ This will take a bit of time to run and gives good debugging info. You can delet
 
 == A little work in progress ...
 
-The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.
+The conversion script changes your instance id to a new one during the conversion. This stops the instance from registering in the router ELB properly. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.
 
 * Update the machine api object
 
@@ -285,6 +285,16 @@ oc delete node <your node name>
 ----
 
 * Restart SNO
+
+You can check the instance is correctly registered to the ELB.
+
+[source,bash,options="wrap"]
+----
+aws elb describe-load-balancers \
+--region=${region} \
+--query="LoadBalancerDescriptions[].Instances" \
+--output text
+----
 
 I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞
 
