@@ -437,7 +437,7 @@ oc -n openshift-ingress delete services/router-default</code></pre>
 <h2 id="_a_little_work_in_progress">A little work in progress &#8230;&#8203;</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.</p>
+<p>The conversion script changes your instance id to a new one during the conversion. This stops the instance from registering in the router ELB properly. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -490,6 +490,17 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
 <p>Restart SNO</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>You can check the instance is correctly registered to the ELB.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">aws elb describe-load-balancers \
+--region=${region} \
+--query="LoadBalancerDescriptions[].Instances" \
+--output text</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞</p>
@@ -594,7 +605,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Nov 11 22:35:27 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Nov 11 22:42:33 UTC 2022</a></p>
       </div>
     </div>
     

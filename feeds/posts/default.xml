@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 11 Nov 2022 22:35:27 +0000</pubDate>
-      <lastBuildDate>Fri, 11 Nov 2022 22:35:27 +0000</lastBuildDate>
+      <pubDate>Fri, 11 Nov 2022 22:42:33 +0000</pubDate>
+      <lastBuildDate>Fri, 11 Nov 2022 22:42:33 +0000</lastBuildDate>
 
       
       <item>
@@ -352,7 +352,7 @@ oc -n openshift-ingress delete services/router-default&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&quot;_a_little_work_in_progress&quot;&gt;A little work in progress &amp;#8230;&amp;#8203;&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.&lt;/p&gt;
+&lt;p&gt;The conversion script changes your instance id to a new one during the conversion. This stops the instance from registering in the router ELB properly. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;ulist&quot;&gt;
 &lt;ul&gt;
@@ -405,6 +405,17 @@ Environment=&quot;KUBELET_PROVIDERID=aws:///&amp;lt;region&amp;gt;/&amp;lt;your 
 &lt;p&gt;Restart SNO&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can check the instance is correctly registered to the ELB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;aws elb describe-load-balancers \
+--region=${region} \
+--query=&quot;LoadBalancerDescriptions[].Instances&quot; \
+--output text&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞&lt;/p&gt;
