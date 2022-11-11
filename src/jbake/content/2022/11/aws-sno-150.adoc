@@ -252,23 +252,21 @@ This will take a bit of time to run and gives good debugging info. You can delet
 
 == A little work in progress ...
 
-The script changes your instance id to a new one during the conversion. There is _one_ issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:
+The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.
+
+* Update the machine api object
 
 [source,bash,options="wrap"]
 ----
-# Check the router ELB to ensure the new instance is registered there.
-# Re-attach the new instance - need to do each restart until workaround found !
-aws elb register-instances-with-load-balancer \
---load-balancer-name <router elb id> \
---instances <your new converted instance id> \
---region=${region}
+oc edit machine -n openshift-machine-api
+# change your .spec.providerID to <your new converted instance id>
 ----
 
-To make this survive a restart, we need to change the aws service provider id by hand on disk.
+* To make this survive a restart, we need to change the aws service provider id by hand on disk.
 
 [source,bash,options="wrap"]
 ----
-oc debug node/<your node name>.compute.internal
+oc debug node/<your node name>
 chroot /host
 cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 
@@ -277,12 +275,16 @@ cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 Environment="KUBELET_PROVIDERID=aws:///<region>/<your original instance id>"
 
 # edit this file using vi and change <your original instance id> -> <your new converted instance id>
-
-# restart the service
-systemctl restart aws-kubelet-providerid.service
-
-# restart SNO
 ----
+
+* Delete the node ! the kubelet will re-register itself on reboot # restart the service
+
+[source,bash,options="wrap"]
+----
+oc delete node <your node name>
+----
+
+* Restart SNO
 
 I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞
 
