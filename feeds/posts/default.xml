@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 10 Nov 2022 23:25:17 +0000</pubDate>
-      <lastBuildDate>Thu, 10 Nov 2022 23:25:17 +0000</lastBuildDate>
+      <pubDate>Fri, 11 Nov 2022 22:35:27 +0000</pubDate>
+      <lastBuildDate>Fri, 11 Nov 2022 22:35:27 +0000</lastBuildDate>
 
       
       <item>
@@ -352,24 +352,31 @@ oc -n openshift-ingress delete services/router-default&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&quot;_a_little_work_in_progress&quot;&gt;A little work in progress &amp;#8230;&amp;#8203;&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The script changes your instance id to a new one during the conversion. There is &lt;em&gt;one&lt;/em&gt; issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:&lt;/p&gt;
+&lt;p&gt;The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Update the machine api object&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;# Check the router ELB to ensure the new instance is registered there.
-# Re-attach the new instance - need to do each restart until workaround found !
-aws elb register-instances-with-load-balancer \
---load-balancer-name &amp;lt;router elb id&amp;gt; \
---instances &amp;lt;your new converted instance id&amp;gt; \
---region=${region}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc edit machine -n openshift-machine-api
+# change your .spec.providerID to &amp;lt;your new converted instance id&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class=&quot;paragraph&quot;&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
 &lt;p&gt;To make this survive a restart, we need to change the aws service provider id by hand on disk.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc debug node/&amp;lt;your node name&amp;gt;.compute.internal
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc debug node/&amp;lt;your node name&amp;gt;
 chroot /host
 cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 
@@ -377,13 +384,27 @@ cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 [Service]
 Environment=&quot;KUBELET_PROVIDERID=aws:///&amp;lt;region&amp;gt;/&amp;lt;your original instance id&amp;gt;&quot;
 
-# edit this file using vi and change &amp;lt;your original instance id&amp;gt; -&amp;gt; &amp;lt;your new converted instance id&amp;gt;
-
-# restart the service
-systemctl restart aws-kubelet-providerid.service
-
-# restart SNO&lt;/code&gt;&lt;/pre&gt;
+# edit this file using vi and change &amp;lt;your original instance id&amp;gt; -&amp;gt; &amp;lt;your new converted instance id&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Delete the node ! the kubelet will re-register itself on reboot # restart the service&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc delete node &amp;lt;your node name&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Restart SNO&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞&lt;/p&gt;

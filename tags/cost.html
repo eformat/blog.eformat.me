@@ -422,24 +422,31 @@ oc -n openshift-ingress delete services/router-default</code></pre>
 <h2 id="_a_little_work_in_progress">A little work in progress &#8230;&#8203;</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The script changes your instance id to a new one during the conversion. There is <em>one</em> issue we have not yet got a proper workaround for. When the kubelet first registers itself as a node, the initial instance id is set in config in etcd. This causes the new instance to not properly associate with the router ELB. We can re-register the new id:</p>
+<p>The conversion script changes your instance id to a new one during the conversion. So we need to update the instance id in a few places in SNO - for now we need to do the following steps.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Update the machine api object</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash"># Check the router ELB to ensure the new instance is registered there.
-# Re-attach the new instance - need to do each restart until workaround found !
-aws elb register-instances-with-load-balancer \
---load-balancer-name &lt;router elb id&gt; \
---instances &lt;your new converted instance id&gt; \
---region=${region}</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">oc edit machine -n openshift-machine-api
+# change your .spec.providerID to &lt;your new converted instance id&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
+<div class="ulist">
+<ul>
+<li>
 <p>To make this survive a restart, we need to change the aws service provider id by hand on disk.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc debug node/&lt;your node name&gt;.compute.internal
+<pre class="prettyprint highlight"><code data-lang="bash">oc debug node/&lt;your node name&gt;
 chroot /host
 cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 
@@ -447,13 +454,27 @@ cat /etc/systemd/system/kubelet.service.d/20-aws-providerid.conf
 [Service]
 Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance id&gt;"
 
-# edit this file using vi and change &lt;your original instance id&gt; -&gt; &lt;your new converted instance id&gt;
-
-# restart the service
-systemctl restart aws-kubelet-providerid.service
-
-# restart SNO</code></pre>
+# edit this file using vi and change &lt;your original instance id&gt; -&gt; &lt;your new converted instance id&gt;</code></pre>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Delete the node ! the kubelet will re-register itself on reboot # restart the service</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc delete node &lt;your node name&gt;</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Restart SNO</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>I will update this blog if we get a better way to manage this instance id thing over time 🤞🤞🤞</p>
@@ -567,7 +588,7 @@ systemctl restart aws-kubelet-providerid.service
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Nov 10 23:25:18 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Nov 11 22:35:27 UTC 2022</a></p>
       </div>
     </div>
     
