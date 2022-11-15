@@ -34,6 +34,8 @@ Prices will vary over time ! it is spot after all. The rate of instance https://
 
 So, how do we get there ?
 
+💥 *UPDATE* - Checkout the automation here - https://github.com/eformat/sno-for-100 💥
+
 == Configuring and Installing OpenShift
 
 You can https://docs.openshift.com/container-platform/4.11/installing/installing_sno/install-sno-installing-sno.html[check the docs] for configuring the install.
