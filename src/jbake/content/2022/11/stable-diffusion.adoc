@@ -224,7 +224,7 @@ Then we can build the container using podman. There is a `Makefile` to make your
 make build
 ----
 
-Then we can run it using podman. Note you have to mount the `download/data` folder so set `DATA_DIR=`pwd`/download/data` appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).
+Then we can run it using podman. Note: you have to mount the `download/data` folder so set `DATA_DIR=<full path>/download/data` appropriately. We also run the pod as privileged which should not ne strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).
 
 [source,bash,options="wrap"]
 ----
