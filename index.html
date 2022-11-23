@@ -167,7 +167,7 @@ GRUB_CMDLINE_LINUX="i915.modeset=1 quiet rhgb intel_iommu=on modprobe.blacklist=
 <p>Make sure to recreate your (in my case UEFI) bootloader <code>grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg</code> if you change any of these.</p>
 </div>
 <div class="paragraph">
-<p>Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I&#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, <code>dnf erase nvidia*</code> is your best bet. Start from a clean state.</p>
+<p>Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I&#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my advice, if you are starting with a broken system, <code>dnf erase nvidia*</code> is your best bet. Start from a clean state.</p>
 </div>
 <div class="paragraph">
 <p>For fc36, use the f35 repo. There is also a f36 repo <a href="https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7">that is known not to work!</a>. Why is this? i don&#8217;t know, i have not debugged the C/C++ yet, but <code>dkms</code> will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).</p>
@@ -524,7 +524,7 @@ quay.io/eformat/sd-auto:14-02</code></pre>
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 23 07:49:54 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 23 08:42:22 UTC 2022</a></p>
       </div>
     </div>
     

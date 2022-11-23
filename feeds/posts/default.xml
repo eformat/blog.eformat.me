@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 23 Nov 2022 07:49:54 +0000</pubDate>
-      <lastBuildDate>Wed, 23 Nov 2022 07:49:54 +0000</lastBuildDate>
+      <pubDate>Wed, 23 Nov 2022 08:42:22 +0000</pubDate>
+      <lastBuildDate>Wed, 23 Nov 2022 08:42:22 +0000</lastBuildDate>
 
       
       <item>
@@ -82,7 +82,7 @@ GRUB_CMDLINE_LINUX=&quot;i915.modeset=1 quiet rhgb intel_iommu=on modprobe.black
 &lt;p&gt;Make sure to recreate your (in my case UEFI) bootloader &lt;code&gt;grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg&lt;/code&gt; if you change any of these.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I&amp;#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, &lt;code&gt;dnf erase nvidia*&lt;/code&gt; is your best bet. Start from a clean state.&lt;/p&gt;
+&lt;p&gt;Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I&amp;#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my advice, if you are starting with a broken system, &lt;code&gt;dnf erase nvidia*&lt;/code&gt; is your best bet. Start from a clean state.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;For fc36, use the f35 repo. There is also a f36 repo &lt;a href=&quot;https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7&quot;&gt;that is known not to work!&lt;/a&gt;. Why is this? i don&amp;#8217;t know, i have not debugged the C/C++ yet, but &lt;code&gt;dkms&lt;/code&gt; will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).&lt;/p&gt;
