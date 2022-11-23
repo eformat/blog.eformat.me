@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2022-11-15</lastmod>
+        <lastmod>2022-11-23</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2022-11-15</lastmod>
+        <lastmod>2022-11-23</lastmod>
     </url>
 
     <url>
@@ -21,6 +21,13 @@
         
 
         <lastmod>2022-11-10</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/stable diffusion.html</loc>
+        
+
+        <lastmod>2022-11-23</lastmod>
     </url>
 
     <url>
@@ -52,6 +59,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/aiml.html</loc>
+        
+
+        <lastmod>2022-11-23</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/optaplanner.html</loc>
         
 
@@ -63,6 +77,13 @@
         
 
         <lastmod>2022-11-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/gpu.html</loc>
+        
+
+        <lastmod>2022-11-23</lastmod>
     </url>
 
     <url>
@@ -115,6 +136,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/fedora.html</loc>
+        
+
+        <lastmod>2022-11-23</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/devops.html</loc>
         
 
@@ -142,6 +170,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2022/11/stable-diffusion.html</loc>
+        <lastmod>2022-11-23</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2022/11/aws-sno-150.html</loc>

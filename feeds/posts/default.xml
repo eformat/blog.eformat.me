@@ -6,9 +6,349 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Tue, 15 Nov 2022 00:08:07 +0000</pubDate>
-      <lastBuildDate>Tue, 15 Nov 2022 00:08:07 +0000</lastBuildDate>
+      <pubDate>Wed, 23 Nov 2022 07:10:48 +0000</pubDate>
+      <lastBuildDate>Wed, 23 Nov 2022 07:10:48 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Stable Diffusion for Fedora Core</title>
+          <link>https://blog.eformat.me/2022/11/stable-diffusion.html</link>
+          <pubDate>Wed, 23 Nov 2022 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/11/stable-diffusion.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_stable_diffusion_for_fedora_core&quot;&gt;Stable Diffusion for Fedora Core&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you have not heard about it, &lt;code&gt;Stable Diffusion&lt;/code&gt; is a text to image ML model (&lt;a href=&quot;https://stability.ai/blog/stable-diffusion-public-release&quot; class=&quot;bare&quot;&gt;https://stability.ai/blog/stable-diffusion-public-release&lt;/a&gt;). I wanted to demo a GPU with podman and OCI like a pro and I don&amp;#8217;t want to use to the awesome but boring &lt;code&gt;docker.io/nvidia/samples:vectoradd-cuda11.2.1&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Watching numbers add .. erm, yeah. This is 2022!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So let&amp;#8217;s see if we can build this Stable Diffusion on fedora core. The setup is &lt;em&gt;painfull&lt;/em&gt; .. i warn you now. But &lt;em&gt;its worth the effort&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_getting_setup&quot;&gt;Getting Setup&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have a 4 (nearly 5 ?) year old work laptop a &lt;code&gt;dell-xps-15&lt;/code&gt;. It has been a real workhorse ! But, if you have been running fedora for as long as i have, you will know that running NVIDIA graphics has been .. well, torturous to say the least over the years. Things have gotten &lt;em&gt;way better&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;linus-nvidia&quot; class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;span class=&quot;image&quot;&gt;&lt;img src=&quot;/2022/11/linus-nvidia.jpg&quot; alt=&quot;Linus &quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So strap yourself in ! At least these days, NVIDIA play very nicely in the Open Source community, so hopefully you will not need to &lt;em&gt;&quot;do a Linus&quot;&lt;/em&gt; as i have one many times over the years.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Here&amp;#8217;s my hardware devices:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ lspci | egrep -i &apos;vga|nvidia&apos;
+00:02.0 VGA compatible controller: Intel Corporation HD Graphics 630 (rev 04)
+01:00.0 3D controller: NVIDIA Corporation GP107M [GeForce GTX 1050 Mobile] (rev a1)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Its worth noting that i run my display with the perfectly acceptable intel i915 gpu (on the mother board). For one thing, it runs a lot cooler than the NVIDIA card, so less noisy overall as the fans don&amp;#8217;t scream. You can blacklist the nvidia drivers then &lt;code&gt;dracut -f&lt;/code&gt; the boot image:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ cat /etc/modprobe.d/blacklist_video.conf
+blacklist nouveau
+blacklist lbm-nouveau
+blacklist nvidia-current
+alias nvidia nvidia_drm nvidia_modeset nvidia_current_updates
+alias nouveau off
+alias lbm-nouveau off&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OR, you can set up the Kernel to boot using &lt;code&gt;i915.modeset&lt;/code&gt; and blacklist there as well. I also blacklist the default &lt;code&gt;nouveau&lt;/code&gt; driver because, err - it runs like a dog! You never want to use it when you have other options, like two perfectly good graphics card drivers to choose from!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ cat /etc/default/grub
+GRUB_CMDLINE_LINUX=&quot;i915.modeset=1 quiet rhgb intel_iommu=on modprobe.blacklist=nouveau,nvidia,nvidia_drm,nvidia_modeset rd.driver.blacklist=nouveau&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One other thing i find very handy, is to run graphics using the intel gpu, and then use the NVIDIA gpu for AIML, or to pass through via PCI to OpenShift SNO running in &lt;code&gt;libvirt&lt;/code&gt;, so i set &lt;code&gt;intel_iommu=on&lt;/code&gt; as well for good measure. This seems to confuse people, but if you want to pci passthrough the device to libvirt &amp;#8230;&amp;#8203; you &lt;strong&gt;cannot&lt;/strong&gt; share it ! i.e. don&amp;#8217;t run you main monitor using the NVIDIA card, and expect to share it with a VM using pci-passthrough.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Make sure to recreate your (in my case UEFI) bootloader &lt;code&gt;grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg&lt;/code&gt; if you change any of these.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You are not done. What you need now is running NVIDIA and CUDA drivers for your operating system. I&amp;#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, &lt;code&gt;dnf erase nvidia*&lt;/code&gt; is your best bet. Start from a clean state.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For fc36, use the f35 repo. There is also a f36 repo &lt;a href=&quot;https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7&quot;&gt;that is known not to work!&lt;/a&gt;. Why is this? i don&amp;#8217;t know, i have not debugged the C/C++ yet, but &lt;code&gt;dkms&lt;/code&gt; will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/fedora35/x86_64/cuda-fedora35.repo
+dnf -y module install nvidia-driver:latest-dkms
+dnf -y install cuda&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now, you will also need (cuDNN) which is a GPU-accelerated library of primitives for deep neural networks. The easiest way i found to install this is to grab the local repo as rpm and install it. You &lt;a href=&quot;https://developer.nvidia.com/rdp/cudnn-archive&quot;&gt;download it here from nvidia&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;dnf -y install cudnn-local-repo-rhel8-8.5.0.96-1.0-1
+tree /var/cudnn-local-repo-rhel8-8.5.0.96/
+dnf install -y /var/cudnn-local-repo-rhel8-8.5.0.96/libcudnn8-8.5.0.96-1.cuda11.7.x86_64.rpm
+dnf erase cudnn-local-repo-rhel8-8.5.0.96-1.0-1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Once you have &lt;code&gt;libcudnn&lt;/code&gt; installed, you can uninstall the local repo. There may be a better way, but 🤷&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I use a simple shell script to load my nvidia driver when i need it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ cat ~/bin/nvidia.sh
+#!/bin/bash
+# we have these blacklisted on boot so we can load i915
+sudo dkms status
+sudo modprobe nvidia_drm modeset=1 nvidia_modeset nvidia
+sudo ldconfig&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For &lt;code&gt;podman&lt;/code&gt;, you will need to do the following&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;install nvidia drivers as abive, make sure nvidia-smi works on the host (see testing in next section)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Install &lt;code&gt;nvidia-container-toolkit&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;curl -s -L https://nvidia.github.io/libnvidia-container/rhel8.6/libnvidia-container.repo | sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+dnf install -y nvidia-container-toolkit&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Modify &lt;code&gt;/etc/nvidia-container-runtime/config.toml&lt;/code&gt; and change these values (needed because of &lt;code&gt;cgroupsv2&lt;/code&gt; and the dsire to run pod rootless if possible)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;[nvidia-container-cli]
+#no-cgroups = false
+no-cgroups = true
+#user = root:video
+user = &quot;root:root&quot;
+[nvidia-container-runtime]
+#debug = &quot;/var/log/nvidia-container-runtime.log&quot;
+debug = &quot;~/./local/nvidia-container-runtime.log&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You should be good to go.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_test_your_local_setup&quot;&gt;Test Your Local Setup&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Let&amp;#8217;s some things work. Needless to say if any of these fail, you are going to have to debug and fix them!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This is always my first check, from your shell:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ nvidia-smi
+
+Wed Nov 23 05:21:19 2022
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 520.61.05    Driver Version: 520.61.05    CUDA Version: 11.8     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  Off  | 00000000:01:00.0 Off |                  N/A |
+| N/A   56C    P8    N/A /  N/A |      0MiB /  4096MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If podman setup correctly this will also work in a pod (note this is rootless and done as my normal user):&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;podman run --rm --security-opt=label=disable \
+--hooks-dir=/usr/share/containers/oci/hooks.d/ \
+docker.io/nvidia/cuda:11.2.2-base-ubi8 \
+/usr/bin/nvidia-smi&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can now check that a python container will find our GPU and CUDA setup correctly. Stable Diffusion uses the &lt;a href=&quot;http://torch.ch/&quot;&gt;torch&lt;/a&gt; library, but if things don&amp;#8217;t work tensorflow gives you a lot more details about any failure (libraries, cuda version mismatch etc). It is worth pointing out you &lt;strong&gt;must&lt;/strong&gt; have the same CUDA libs in both places (your host and image), so make sure you do! (see the Dockerfile for Stable Diffusion later on).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;podman run --rm -it --privileged \
+--security-opt=label=disable \
+--hooks-dir=/usr/share/containers/oci/hooks.d/ \
+docker.io/tensorflow/tensorflow:latest-gpu&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You should be able to check that the &lt;code&gt;nvidia&lt;/code&gt; device is available in the pod:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;root@3e8c8ba4e6fb:/# ls -lart /dev/nvidia0
+crw-rw-rw-. 1 nobody nogroup 195, 0 Nov 23 01:26 /dev/nvidia0&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then check that tensorflow can see your GPU, this will give you detailed messages if it cannot find your drivers and libraries:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;root@3e8c8ba4e6fb:/# python3.8
+Python 3.8.10 (default, Jun 22 2022, 20:18:18)
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&amp;gt;&amp;gt;&amp;gt; import tensorflow as tf
+2022-11-23 06:37:46.901772: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+...
+2022-11-23 06:37:52.706585: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1613] Created device /device:GPU:0 with 3364 MB memory:  -&amp;gt; device: 0, name: NVIDIA GeForce GTX 1050, pci bus id: 0000:01:00.0, compute capability: 6.1
+&apos;/device:GPU:0&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The last line &lt;code&gt;&apos;/device:GPU:0&apos;&lt;/code&gt; is good. Now, we can also check torch works (you can leave this check till later, once you have built or pulled the image)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ pip3.8 install torch --user
+$ python3.8 -c &quot;import torch; print(torch.cuda.is_available())&quot;
+True&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If that returns False, then something is amiss.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_build_the_stable_diffusion_image&quot;&gt;Build the Stable Diffusion Image&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OK, the instructions from here should be straight forward and i have &lt;a href=&quot;https://github.com/eformat/stable-diffusion/&quot;&gt;put the instructions in a git repo here&lt;/a&gt;. You will need some time and storage available! The AI model downloads use approx (12GB) of local disk 😲 and we use the &lt;code&gt;aria2&lt;/code&gt; torrent client to grab all the bits needed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Download the data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;dnf -q install aria2
+./download.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then we can build the container using podman. There is a &lt;code&gt;Makefile&lt;/code&gt; to make you life easier.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;make build&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then we can run it using podman. Note you have to mount the &lt;code&gt;download/data&lt;/code&gt; folder - set &lt;code&gt;export DATA_DIR=/&amp;lt;your directory&amp;gt;/stable-diffusion/download/data&lt;/code&gt; appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;podman run --privileged -it -p 7860:7860 -e CLI_ARGS=&quot;--allow-code --medvram --xformers&quot; \
+-v $DATA_DIR:/data:Z \
+--security-opt=label=disable \
+--hooks-dir=/usr/share/containers/oci/hooks.d/ \
+quay.io/eformat/sd-auto:14-02&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_demo_it&quot;&gt;Demo It!&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Browse to &lt;code&gt;&lt;a href=&quot;http://0.0.0.0:7860/&quot; class=&quot;bare&quot;&gt;http://0.0.0.0:7860/&lt;/a&gt;&lt;/code&gt; and type in some text. In this example i was using:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;text&quot;&gt;forest wanderer by dominic mayer, anthony jones, Loish, painterly style by Gerald parel, craig mullins, marc simonetti, mike mignola, flat colors illustration, bright and colorful, high contrast, Mythology, cinematic, detailed, atmospheric, epic , concept art, Matte painting, Lord of the rings, Game of Thrones, shafts of lighting, mist, , photorealistic, concept art, volumetric light, cinematic epic + rule of thirds&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You should get this sort if image generated!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;span class=&quot;image&quot;&gt;&lt;img src=&quot;/2022/11/tmpcgvezq90.png&quot; alt=&quot;Image &quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can also see the python process running using your GPU by running:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;text&quot;&gt;$ nvidia-smi pmon&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Which you can see with the application and shell side by side here.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;ddd-school-timetable-classes&quot;&gt;
+  &lt;img src=&quot;/2022/11/stable-diffusion.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;div class=&quot;title&quot;&gt;Figure - Class Hierarchy&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🎉🎉 Enjoy 🎉🎉&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_attribution&quot;&gt;Attribution&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Code was forked with 💕 from here. Check it out if you want to build other UI&amp;#8217;s to demo with.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/AbdBarho/stable-diffusion-webui-docker&quot; class=&quot;bare&quot;&gt;https://github.com/AbdBarho/stable-diffusion-webui-docker&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>SNO in AWS for $150/mo</title>
