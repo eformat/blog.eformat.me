@@ -6,20 +6,20 @@
 
 == Stable Diffusion for Fedora Core
 
-If you have not heard about it, `Stable Diffusion` is a text to image ML model (https://stability.ai/blog/stable-diffusion-public-release). I wanted to demo a GPU with podman and OCI like a pro and I don't want to use to the awesome but boring `docker.io/nvidia/samples:vectoradd-cuda11.2.1`
+If you have not heard about it, `Stable Diffusion` https://stability.ai/blog/stable-diffusion-public-release[is a text to image ML model generator]. I wanted to demo a GPU with podman and OCI like a pro and I don't want to use to the awesome but boring `docker.io/nvidia/samples:vectoradd-cuda11.2.1`
 
-Watching numbers add .. erm, yeah. This is 2022!
+Watching numbers add .. erm, yeah. This is 2022 baby!
 
-So let's see if we can build this Stable Diffusion on fedora core. The setup is _painfull_ .. i warn you now. But _its worth the effort_.
+So let's see if we can build this `Stable Diffusion` thing on fedora. The setup is _painfull_ .. I warn you now. But _its worth the effort_ - trust me...
 
 == Getting Setup
 
-I have a 4 (nearly 5 ?) year old work laptop a `dell-xps-15`. It has been a real workhorse ! But, if you have been running fedora for as long as i have, you will know that running NVIDIA graphics has been .. well, torturous to say the least over the years. Things have gotten _way better_.
+I have a 4 (nearly 5 ?) year old work laptop - a `dell-xps-15`. It has been a real workhorse 🐴 ! But, if you have been running fedora for as long as i have, you will know that running NVIDIA graphics has been .. well, torturous to say the least over the years. Things have gotten _way better_.
 
 [[linus-nvidia]]
 image:/2022/11/linus-nvidia.jpg["Linus ",640,480]
 
-So strap yourself in ! At least these days, NVIDIA play very nicely in the Open Source community, so hopefully you will not need to _"do a Linus"_ as i have one many times over the years.
+So strap yourself in ! At least these days, NVIDIA play very nicely in the Open Source community, so hopefully you will not need to _"do a Linus"_ as we probably all have over the years.
 
 Here's my hardware devices:
 
@@ -30,7 +30,7 @@ $ lspci | egrep -i 'vga|nvidia'
 01:00.0 3D controller: NVIDIA Corporation GP107M [GeForce GTX 1050 Mobile] (rev a1)
 ----
 
-Its worth noting that i run my display with the perfectly acceptable intel i915 gpu (on the mother board). For one thing, it runs a lot cooler than the NVIDIA card, so less noisy overall as the fans don't scream. You can blacklist the nvidia drivers then `dracut -f` the boot image:
+Its worth noting that i run my display with the perfectly acceptable *intel i915 gpu* (on the mother board). For one thing, it runs a lot cooler than the NVIDIA card, so less noisy overall as the fans don't scream. You can blacklist the nvidia drivers then `dracut -f` the boot image:
 
 [source,bash,options="wrap"]
 ----
@@ -43,7 +43,7 @@ alias nouveau off
 alias lbm-nouveau off
 ----
 
-OR, you can set up the Kernel to boot using `i915.modeset` and blacklist there as well. I also blacklist the default `nouveau` driver because, err - it runs like a dog! You never want to use it when you have other options, like two perfectly good graphics card drivers to choose from!
+OR, you can set up the kernel to boot using `i915.modeset` and blacklist there as well. I also blacklist the default `nouveau` driver because, err - it runs like a dog! You never want to use it when you have other options, like two perfectly good graphics card drivers to choose from!
 
 [source,bash,options="wrap"]
 ----
@@ -51,11 +51,11 @@ $ cat /etc/default/grub
 GRUB_CMDLINE_LINUX="i915.modeset=1 quiet rhgb intel_iommu=on modprobe.blacklist=nouveau,nvidia,nvidia_drm,nvidia_modeset rd.driver.blacklist=nouveau"
 ----
 
-One other thing i find very handy, is to run graphics using the intel gpu, and then use the NVIDIA gpu for AIML, or to pass through via PCI to OpenShift SNO running in `libvirt`, so i set `intel_iommu=on` as well for good measure. This seems to confuse people, but if you want to pci passthrough the device to libvirt ... you *cannot* share it ! i.e. don't run you main monitor using the NVIDIA card, and expect to share it with a VM using pci-passthrough.
+One other thing i find very handy, is to run graphics using the intel gpu, and then use the NVIDIA gpu for AIML, or to pass through via PCI to OpenShift SNO running in `libvirt`, so i set `intel_iommu=on` as well for good measure. This seems to confuse people, but if you want to pci passthrough the device to libvirt ... you *cannot* share it ! i.e. don't run your main monitor using the NVIDIA card, and expect to share it with a VM using pci-passthrough.
 
 Make sure to recreate your (in my case UEFI) bootloader `grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg` if you change any of these.
 
-You are not done. What you need now is running NVIDIA and CUDA drivers for your operating system. I'm running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, `dnf erase nvidia*` is your best bet. Start from a clean state.
+Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I'm running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, `dnf erase nvidia*` is your best bet. Start from a clean state.
 
 For fc36, use the f35 repo. There is also a f36 repo https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7[that is known not to work!]. Why is this? i don't know, i have not debugged the C/C++ yet, but `dkms` will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).
 
@@ -66,7 +66,7 @@ dnf -y module install nvidia-driver:latest-dkms
 dnf -y install cuda
 ----
 
-Now, you will also need (cuDNN) which is a GPU-accelerated library of primitives for deep neural networks. The easiest way i found to install this is to grab the local repo as rpm and install it. You https://developer.nvidia.com/rdp/cudnn-archive[download it here from nvidia].
+Now, you will also need (cuDNN) which is a GPU-accelerated library of primitives for deep neural networks. The easiest way i found to install this is to grab the local repo as rpm and install it. You https://developer.nvidia.com/rdp/cudnn-archive[need to download it here from nvidia].
 
 [source,bash,options="wrap"]
 ----
@@ -92,7 +92,7 @@ sudo ldconfig
 
 For `podman`, you will need to do the following
 
-- install nvidia drivers as abive, make sure nvidia-smi works on the host (see testing in next section)
+- install nvidia drivers as above, make sure `nvidia-smi` works on the host (see testing in next section)
 - Install `nvidia-container-toolkit`
 
 [source,bash,options="wrap"]
@@ -101,7 +101,7 @@ curl -s -L https://nvidia.github.io/libnvidia-container/rhel8.6/libnvidia-contai
 dnf install -y nvidia-container-toolkit
 ----
 
-- Modify `/etc/nvidia-container-runtime/config.toml` and change these values (needed because of `cgroupsv2` and the dsire to run pod rootless if possible)
+- Modify `/etc/nvidia-container-runtime/config.toml` and change these values (needed because of `cgroupsv2` and the desire to run the pod rootless if possible)
 
 [source,bash,options="wrap"]
 ----
@@ -115,11 +115,11 @@ user = "root:root"
 debug = "~/./local/nvidia-container-runtime.log"
 ----
 
-You should be good to go.
+You should now be good to go.
 
 ## Test Your Local Setup
 
-Let's some things work. Needless to say if any of these fail, you are going to have to debug and fix them!
+Let's get some things working. Needless to say if any of these steps fail, you are going to have to debug and fix them 🛠️ !
 
 This is always my first check, from your shell:
 
@@ -159,7 +159,7 @@ docker.io/nvidia/cuda:11.2.2-base-ubi8 \
 /usr/bin/nvidia-smi
 ----
 
-We can now check that a python container will find our GPU and CUDA setup correctly. Stable Diffusion uses the http://torch.ch/[torch] library, but if things don't work tensorflow gives you a lot more details about any failure (libraries, cuda version mismatch etc). It is worth pointing out you *must* have the same CUDA libs in both places (your host and image), so make sure you do! (see the Dockerfile for Stable Diffusion later on).
+We can now check that a python container will find your GPU and CUDA setup correctly. Stable Diffusion uses the http://torch.ch/[torch] library, but if things don't work tensorflow gives you a lot more details about any failure (libraries, cuda version mismatch etc). It is worth pointing out you *must* have the same CUDA libs in both places (your host and image), so make sure you *do*! (see the Dockerfile for Stable Diffusion later on).
 
 [source,bash,options="wrap"]
 ----
@@ -192,7 +192,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '/device:GPU:0'
 ----
 
-The last line `'/device:GPU:0'` is good. Now, we can also check torch works (you can leave this check till later, once you have built or pulled the image)
+The last line `'/device:GPU:0'` is good. Now, we can also check torch works (you can leave this check till later, once you have built or pulled the `Stable Diffusion` image)
 
 [source,bash,options="wrap"]
 ----
@@ -205,7 +205,9 @@ If that returns False, then something is amiss.
 
 ## Build the Stable Diffusion Image
 
-OK, the instructions from here should be straight forward and i have https://github.com/eformat/stable-diffusion/[put the instructions in a git repo here]. You will need some time and storage available! The AI model downloads use approx (12GB) of local disk 😲 and we use the `aria2` torrent client to grab all the bits needed.
+OK, the instructions from here should be straight forward and i have https://github.com/eformat/stable-diffusion/[put the instructions in a git repo here]. Strictly speaking you can just grab the image and run it if you have a similar setup to mine `podman pull quay.io/eformat/sd-auto:14-02`. Be warned its a 6GB image!
+
+You will need some time ☕ and storage available! The AI model downloads use approx (12GB) of local disk 😲 and we use the `aria2` torrent client to grab all the bits needed.
 
 Download the data.
 
@@ -215,14 +217,14 @@ dnf -q install aria2
 ./download.sh
 ----
 
-Then we can build the container using podman. There is a `Makefile` to make you life easier.
+Then we can build the container using podman. There is a `Makefile` to make your life easier.
 
 [source,bash,options="wrap"]
 ----
 make build
 ----
 
-Then we can run it using podman. Note you have to mount the `download/data` folder - set `export DATA_DIR=/<your directory>/stable-diffusion/download/data` appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).
+Then we can run it using podman. Note you have to mount the `download/data` folder so set `DATA_DIR=`pwd`/download/data` appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).
 
 [source,bash,options="wrap"]
 ----
@@ -242,11 +244,11 @@ Browse to `http://0.0.0.0:7860/` and type in some text. In this example i was us
 forest wanderer by dominic mayer, anthony jones, Loish, painterly style by Gerald parel, craig mullins, marc simonetti, mike mignola, flat colors illustration, bright and colorful, high contrast, Mythology, cinematic, detailed, atmospheric, epic , concept art, Matte painting, Lord of the rings, Game of Thrones, shafts of lighting, mist, , photorealistic, concept art, volumetric light, cinematic epic + rule of thirds
 ----
 
-You should get this sort if image generated!
+You should get an awesome image generated!
 
 image:/2022/11/tmpcgvezq90.png["Image ",640,480]
 
-You can also see the python process running using your GPU by running:
+You can also check the python process is running using your GPU OK by running:
 
 [source,text,options="wrap"]
 ----
@@ -259,7 +261,6 @@ Which you can see with the application and shell side by side here.
 <div id="lightbox"></div>
 <div class="imageblock id="ddd-school-timetable-classes">
   <img src="/2022/11/stable-diffusion.png" class="zoom">
-  <div class="title">Figure - Class Hierarchy</div>
 </div>
 ++++
 
