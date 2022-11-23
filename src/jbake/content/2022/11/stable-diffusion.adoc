@@ -55,7 +55,7 @@ One other thing i find very handy, is to run graphics using the intel gpu, and t
 
 Make sure to recreate your (in my case UEFI) bootloader `grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg` if you change any of these.
 
-Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I'm running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, `dnf erase nvidia*` is your best bet. Start from a clean state.
+Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I'm running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my advice, if you are starting with a broken system, `dnf erase nvidia*` is your best bet. Start from a clean state.
 
 For fc36, use the f35 repo. There is also a f36 repo https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7[that is known not to work!]. Why is this? i don't know, i have not debugged the C/C++ yet, but `dkms` will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).
 
