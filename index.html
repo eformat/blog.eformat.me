@@ -105,13 +105,13 @@
 <h2 id="_stable_diffusion_for_fedora_core">Stable Diffusion for Fedora Core</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you have not heard about it, <code>Stable Diffusion</code> is a text to image ML model (<a href="https://stability.ai/blog/stable-diffusion-public-release" class="bare">https://stability.ai/blog/stable-diffusion-public-release</a>). I wanted to demo a GPU with podman and OCI like a pro and I don&#8217;t want to use to the awesome but boring <code>docker.io/nvidia/samples:vectoradd-cuda11.2.1</code></p>
+<p>If you have not heard about it, <code>Stable Diffusion</code> <a href="https://stability.ai/blog/stable-diffusion-public-release">is a text to image ML model generator</a>. I wanted to demo a GPU with podman and OCI like a pro and I don&#8217;t want to use to the awesome but boring <code>docker.io/nvidia/samples:vectoradd-cuda11.2.1</code></p>
 </div>
 <div class="paragraph">
-<p>Watching numbers add .. erm, yeah. This is 2022!</p>
+<p>Watching numbers add .. erm, yeah. This is 2022 baby!</p>
 </div>
 <div class="paragraph">
-<p>So let&#8217;s see if we can build this Stable Diffusion on fedora core. The setup is <em>painfull</em> .. i warn you now. But <em>its worth the effort</em>.</p>
+<p>So let&#8217;s see if we can build this <code>Stable Diffusion</code> thing on fedora. The setup is <em>painfull</em> .. I warn you now. But <em>its worth the effort</em> - trust me&#8230;&#8203;</p>
 </div>
 </div>
 </div>
@@ -119,13 +119,13 @@
 <h2 id="_getting_setup">Getting Setup</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>I have a 4 (nearly 5 ?) year old work laptop a <code>dell-xps-15</code>. It has been a real workhorse ! But, if you have been running fedora for as long as i have, you will know that running NVIDIA graphics has been .. well, torturous to say the least over the years. Things have gotten <em>way better</em>.</p>
+<p>I have a 4 (nearly 5 ?) year old work laptop - a <code>dell-xps-15</code>. It has been a real workhorse 🐴 ! But, if you have been running fedora for as long as i have, you will know that running NVIDIA graphics has been .. well, torturous to say the least over the years. Things have gotten <em>way better</em>.</p>
 </div>
 <div id="linus-nvidia" class="paragraph">
 <p><span class="image"><img src="/2022/11/linus-nvidia.jpg" alt="Linus " width="640" height="480"></span></p>
 </div>
 <div class="paragraph">
-<p>So strap yourself in ! At least these days, NVIDIA play very nicely in the Open Source community, so hopefully you will not need to <em>"do a Linus"</em> as i have one many times over the years.</p>
+<p>So strap yourself in ! At least these days, NVIDIA play very nicely in the Open Source community, so hopefully you will not need to <em>"do a Linus"</em> as we probably all have over the years.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s my hardware devices:</p>
@@ -138,7 +138,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>Its worth noting that i run my display with the perfectly acceptable intel i915 gpu (on the mother board). For one thing, it runs a lot cooler than the NVIDIA card, so less noisy overall as the fans don&#8217;t scream. You can blacklist the nvidia drivers then <code>dracut -f</code> the boot image:</p>
+<p>Its worth noting that i run my display with the perfectly acceptable <strong>intel i915 gpu</strong> (on the mother board). For one thing, it runs a lot cooler than the NVIDIA card, so less noisy overall as the fans don&#8217;t scream. You can blacklist the nvidia drivers then <code>dracut -f</code> the boot image:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -152,7 +152,7 @@ alias lbm-nouveau off</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>OR, you can set up the Kernel to boot using <code>i915.modeset</code> and blacklist there as well. I also blacklist the default <code>nouveau</code> driver because, err - it runs like a dog! You never want to use it when you have other options, like two perfectly good graphics card drivers to choose from!</p>
+<p>OR, you can set up the kernel to boot using <code>i915.modeset</code> and blacklist there as well. I also blacklist the default <code>nouveau</code> driver because, err - it runs like a dog! You never want to use it when you have other options, like two perfectly good graphics card drivers to choose from!</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -161,13 +161,13 @@ GRUB_CMDLINE_LINUX="i915.modeset=1 quiet rhgb intel_iommu=on modprobe.blacklist=
 </div>
 </div>
 <div class="paragraph">
-<p>One other thing i find very handy, is to run graphics using the intel gpu, and then use the NVIDIA gpu for AIML, or to pass through via PCI to OpenShift SNO running in <code>libvirt</code>, so i set <code>intel_iommu=on</code> as well for good measure. This seems to confuse people, but if you want to pci passthrough the device to libvirt &#8230;&#8203; you <strong>cannot</strong> share it ! i.e. don&#8217;t run you main monitor using the NVIDIA card, and expect to share it with a VM using pci-passthrough.</p>
+<p>One other thing i find very handy, is to run graphics using the intel gpu, and then use the NVIDIA gpu for AIML, or to pass through via PCI to OpenShift SNO running in <code>libvirt</code>, so i set <code>intel_iommu=on</code> as well for good measure. This seems to confuse people, but if you want to pci passthrough the device to libvirt &#8230;&#8203; you <strong>cannot</strong> share it ! i.e. don&#8217;t run your main monitor using the NVIDIA card, and expect to share it with a VM using pci-passthrough.</p>
 </div>
 <div class="paragraph">
 <p>Make sure to recreate your (in my case UEFI) bootloader <code>grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg</code> if you change any of these.</p>
 </div>
 <div class="paragraph">
-<p>You are not done. What you need now is running NVIDIA and CUDA drivers for your operating system. I&#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, <code>dnf erase nvidia*</code> is your best bet. Start from a clean state.</p>
+<p>Sadly, you are not done. What you need now is a running NVIDIA, CUDA drivers for your operating system. I&#8217;m running fc36. So many years, so much pain here, so many crappy blogs giving you bad advice. OK .. so this is my adice, if you are starting with a broken system, <code>dnf erase nvidia*</code> is your best bet. Start from a clean state.</p>
 </div>
 <div class="paragraph">
 <p>For fc36, use the f35 repo. There is also a f36 repo <a href="https://forums.developer.nvidia.com/t/bug-report-on-nvidia-driver-515-65-01-for-fedora-36-kernel-5-18-19-rtx-2060-rev-1/227009/7">that is known not to work!</a>. Why is this? i don&#8217;t know, i have not debugged the C/C++ yet, but <code>dkms</code> will fail to compile the kernel driver if you try the fc36 repo (and the nvidia driver version is lower, so go figure?).</p>
@@ -180,7 +180,7 @@ dnf -y install cuda</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Now, you will also need (cuDNN) which is a GPU-accelerated library of primitives for deep neural networks. The easiest way i found to install this is to grab the local repo as rpm and install it. You <a href="https://developer.nvidia.com/rdp/cudnn-archive">download it here from nvidia</a>.</p>
+<p>Now, you will also need (cuDNN) which is a GPU-accelerated library of primitives for deep neural networks. The easiest way i found to install this is to grab the local repo as rpm and install it. You <a href="https://developer.nvidia.com/rdp/cudnn-archive">need to download it here from nvidia</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -212,7 +212,7 @@ sudo ldconfig</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>install nvidia drivers as abive, make sure nvidia-smi works on the host (see testing in next section)</p>
+<p>install nvidia drivers as above, make sure <code>nvidia-smi</code> works on the host (see testing in next section)</p>
 </li>
 <li>
 <p>Install <code>nvidia-container-toolkit</code></p>
@@ -228,7 +228,7 @@ dnf install -y nvidia-container-toolkit</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>Modify <code>/etc/nvidia-container-runtime/config.toml</code> and change these values (needed because of <code>cgroupsv2</code> and the dsire to run pod rootless if possible)</p>
+<p>Modify <code>/etc/nvidia-container-runtime/config.toml</code> and change these values (needed because of <code>cgroupsv2</code> and the desire to run the pod rootless if possible)</p>
 </li>
 </ul>
 </div>
@@ -245,7 +245,7 @@ debug = "~/./local/nvidia-container-runtime.log"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You should be good to go.</p>
+<p>You should now be good to go.</p>
 </div>
 </div>
 </div>
@@ -253,7 +253,7 @@ debug = "~/./local/nvidia-container-runtime.log"</code></pre>
 <h2 id="_test_your_local_setup">Test Your Local Setup</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let&#8217;s some things work. Needless to say if any of these fail, you are going to have to debug and fix them!</p>
+<p>Let&#8217;s get some things working. Needless to say if any of these steps fail, you are going to have to debug and fix them 🛠️ !</p>
 </div>
 <div class="paragraph">
 <p>This is always my first check, from your shell:</p>
@@ -296,7 +296,7 @@ docker.io/nvidia/cuda:11.2.2-base-ubi8 \
 </div>
 </div>
 <div class="paragraph">
-<p>We can now check that a python container will find our GPU and CUDA setup correctly. Stable Diffusion uses the <a href="http://torch.ch/">torch</a> library, but if things don&#8217;t work tensorflow gives you a lot more details about any failure (libraries, cuda version mismatch etc). It is worth pointing out you <strong>must</strong> have the same CUDA libs in both places (your host and image), so make sure you do! (see the Dockerfile for Stable Diffusion later on).</p>
+<p>We can now check that a python container will find your GPU and CUDA setup correctly. Stable Diffusion uses the <a href="http://torch.ch/">torch</a> library, but if things don&#8217;t work tensorflow gives you a lot more details about any failure (libraries, cuda version mismatch etc). It is worth pointing out you <strong>must</strong> have the same CUDA libs in both places (your host and image), so make sure you <strong>do</strong>! (see the Dockerfile for Stable Diffusion later on).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -332,7 +332,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 </div>
 </div>
 <div class="paragraph">
-<p>The last line <code>'/device:GPU:0'</code> is good. Now, we can also check torch works (you can leave this check till later, once you have built or pulled the image)</p>
+<p>The last line <code>'/device:GPU:0'</code> is good. Now, we can also check torch works (you can leave this check till later, once you have built or pulled the <code>Stable Diffusion</code> image)</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -350,7 +350,10 @@ True</code></pre>
 <h2 id="_build_the_stable_diffusion_image">Build the Stable Diffusion Image</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>OK, the instructions from here should be straight forward and i have <a href="https://github.com/eformat/stable-diffusion/">put the instructions in a git repo here</a>. You will need some time and storage available! The AI model downloads use approx (12GB) of local disk 😲 and we use the <code>aria2</code> torrent client to grab all the bits needed.</p>
+<p>OK, the instructions from here should be straight forward and i have <a href="https://github.com/eformat/stable-diffusion/">put the instructions in a git repo here</a>. Strictly speaking you can just grab the image and run it if you have a similar setup to mine <code>podman pull quay.io/eformat/sd-auto:14-02</code>. Be warned its a 6GB image!</p>
+</div>
+<div class="paragraph">
+<p>You will need some time ☕ and storage available! The AI model downloads use approx (12GB) of local disk 😲 and we use the <code>aria2</code> torrent client to grab all the bits needed.</p>
 </div>
 <div class="paragraph">
 <p>Download the data.</p>
@@ -362,7 +365,7 @@ True</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then we can build the container using podman. There is a <code>Makefile</code> to make you life easier.</p>
+<p>Then we can build the container using podman. There is a <code>Makefile</code> to make your life easier.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -370,7 +373,7 @@ True</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then we can run it using podman. Note you have to mount the <code>download/data</code> folder - set <code>export DATA_DIR=/&lt;your directory&gt;/stable-diffusion/download/data</code> appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).</p>
+<p>Then we can run it using podman. Note you have to mount the <code>download/data</code> folder so set <code>DATA_DIR=`pwd</code>/download/data` appropriately. We also run the pod as privileged which should not strictly be necessary (/dev/nvidia0 is not found otherwise, this needs fixing up).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -395,13 +398,13 @@ quay.io/eformat/sd-auto:14-02</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You should get this sort if image generated!</p>
+<p>You should get an awesome image generated!</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="/2022/11/tmpcgvezq90.png" alt="Image " width="640" height="480"></span></p>
 </div>
 <div class="paragraph">
-<p>You can also see the python process running using your GPU by running:</p>
+<p>You can also check the python process is running using your GPU OK by running:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -414,7 +417,6 @@ quay.io/eformat/sd-auto:14-02</code></pre>
 <div id="lightbox"></div>
 <div class="imageblock id="ddd-school-timetable-classes">
   <img src="/2022/11/stable-diffusion.png" class="zoom">
-  <div class="title">Figure - Class Hierarchy</div>
 </div>
 <div class="paragraph">
 <p>🎉🎉 Enjoy 🎉🎉</p>
@@ -522,7 +524,7 @@ quay.io/eformat/sd-auto:14-02</code></pre>
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 23 07:10:49 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Wed Nov 23 07:33:21 UTC 2022</a></p>
       </div>
     </div>
     
