@@ -6,9 +6,210 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Wed, 23 Nov 2022 08:54:01 +0000</pubDate>
-      <lastBuildDate>Wed, 23 Nov 2022 08:54:01 +0000</lastBuildDate>
+      <pubDate>Tue, 13 Dec 2022 07:46:26 +0000</pubDate>
+      <lastBuildDate>Tue, 13 Dec 2022 07:46:26 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Stable Diffusion on OpenShift with GPU Sharing</title>
+          <link>https://blog.eformat.me/2022/12/nvidia-gpu-sharing.html</link>
+          <pubDate>Tue, 13 Dec 2022 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/12/nvidia-gpu-sharing.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_stable_diffusion_on_openshift_with_gpu_sharing&quot;&gt;Stable Diffusion on OpenShift with GPU Sharing&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So the intuitive follow on from the last blog post &lt;a href=&quot;https://blog.eformat.me/2022/11/stable-diffusion.html&quot;&gt;Stable Diffusion for Fedora Core&lt;/a&gt; is of course to see if we can get the app running on OpenShift in a lab environment!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are a couple of challenges. In my case, i actually wanted to demo the app in a lab that contains some older &lt;a href=&quot;https://www.nvidia.com/en-au/data-center/tesla-t4/&quot;&gt;Nvidia-Tesla-T4 GPU&amp;#8217;s&lt;/a&gt;, a bare metal SNO instance along with a bunch of other GPU enabled apps. This raises some interesting questions, in particular how do we configure and deploy applications so they can share the GPU&amp;#8217;s in this environment?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One of the best article i found &lt;a href=&quot;https://developer.nvidia.com/blog/improving-gpu-utilization-in-kubernetes&quot;&gt;describing GPU Sharing&lt;/a&gt; and the various mechanisms involved, highlights the different options available.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;gpu-concurrency-mechanisms&quot;&gt;
+  &lt;img src=&quot;/2022/12/gpu-concurrency-mechanisms.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We are interested primarily in the system software and hardware part of this picture (CUDA and MPS-CUDA are more at the application level). Although, Stable Diffusion does require working CUDA for python torch as well.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;code&gt;MIG&lt;/code&gt; (which stands for multi instance GPU) is the newest technology and only supported on a small number of cards (not the T4&apos;) like vGPU (A100 and A30). There are some great &lt;a href=&quot;https://www.openshift.com/blog/multi-instance-gpu-support-with-the-gpu-operator-v1.7.0&quot;&gt;OpenShift blogs&lt;/a&gt; describing MIG usage. vGPU is a technology that is &lt;strong&gt;only&lt;/strong&gt; available if OpenShift is running in a VM/hypervisor. vGPUs are created/configured at the hypervisor level independently of OpenShift.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, that leaves us with &lt;strong&gt;Time-slicing&lt;/strong&gt;. The &lt;a href=&quot;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/time-slicing-gpus-in-openshift.html#configuring-gpus-with-time-slicing&quot;&gt;best place to read about it&lt;/a&gt; is on the Nvidia site. Unlike MIG, there is no memory or fault-isolation between replicas, but for some workloads this is better than not being able to share the GPU at all. &lt;a href=&quot;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/gpu-sharing.html&quot;&gt;There is a lot of documentation&lt;/a&gt; to read, so i&amp;#8217;m going to summarize the steps to get OpenShift Bare Metal SNO working using time-slicing.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_installing_the_node_feature_discovery_nfd_operator&quot;&gt;Installing the Node Feature Discovery (NFD) Operator&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The first step after installing OpenShift SNO bare-metal, was to configure the NFD operator as cluster-admin. The default configuration for the operator is fine. All going well, your GPU&amp;#8217;s should now be visible to OpenShift, and you can check by doing:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc debug node/&amp;lt;node name&amp;gt;
+$ chroot /host
+$ lspci | grep -i nvidia
+17:00.0 3D controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)
+65:00.0 3D controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can see our two physical GPU&amp;#8217;s OK. Another check is the node labels and description:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc describe node | egrep &apos;Roles|pci&apos; | grep -v master
+   feature.node.kubernetes.io/pci-10de.present=true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you see the &lt;strong&gt;pci-10de&lt;/strong&gt; device, that is the code for Nvidia GPU&amp;#8217;s, all good so far.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_installing_the_nvidia_gpu_operator&quot;&gt;Installing the NVIDIA GPU Operator&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next step is to &lt;a href=&quot;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/install-gpu-ocp.html&quot;&gt;install the Nvidia GPU Operator&lt;/a&gt;. By default you should &lt;strong&gt;not&lt;/strong&gt; need to install any license as &lt;a href=&quot;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/steps-overview.html#entitlement-free-supported-versions&quot;&gt;OpenShift 4.9.9+ is entitlement free&lt;/a&gt;. There are several pods that install with this operator. If you install the default &lt;code&gt;Cluster Policy&lt;/code&gt; the nvidia driver is downloaded and compiled for your OpenShift and inserted as dynamic &lt;strong&gt;kmods&lt;/strong&gt;. This may take a little bit of time to complete.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;nvidia-driver&quot; class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;span class=&quot;image&quot;&gt;&lt;img src=&quot;/2022/12/nvidia-driver-pod.png&quot; alt=&quot;Nvidia Dameon Set&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In our case, we only have one node (SNO) so the dameon set compiles and installs the driver on our node. If you follow the documentation above you should be able to verify the drivers are loaded.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc debug node/&amp;lt;node name&amp;gt;
+$ chroot /host
+$ lsmod | grep nvidia
+nvidia_modeset       1142784  0
+nvidia_uvm           1310720  2
+nvidia              40796160  363 nvidia_uvm,nvidia_modeset
+drm                   589824  4 drm_kms_helper,nvidia,mgag200&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Its worth noting that if you were using vGPU, you would &lt;strong&gt;also&lt;/strong&gt; get the &lt;em&gt;nvidia_vgpu_vfio&lt;/em&gt; module, but because we are bare metal, the driver dameon set recognizes passthrough mode and does not compile it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The second part of the puzzle is you need to now configure the GPU for time-slicing. To do this we need create a ConfigMap that specifies how many slices we want, for example &lt;em&gt;8&lt;/em&gt; in our case.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: time-slicing-config
+  namespace: nvidia-gpu-operator
+data:
+  tesla-t4: |-
+    version: v1
+    sharing:
+      timeSlicing:
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 8&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next, we add this ConfigMap name into the nvidia.com ClusterPolicy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;                  devicePlugin:
+                    config:
+                      default: &quot;tesla-t4&quot;
+                      name: &quot;time-slicing-config&quot;
+                    enabled: true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By enabling the &lt;em&gt;devicePlugin&lt;/em&gt; you should see the device plugin DaemonSet spin up.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;nvidia-deive-plugin&quot; class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;span class=&quot;image&quot;&gt;&lt;img src=&quot;/2022/12/nvidia-device-plugin.png&quot; alt=&quot;Nvidia Device Plugin Dameon Set&quot; width=&quot;640&quot; height=&quot;480&quot;&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We are nearly there ! If we now look at the OpenShift node description, we should see how many GPU&amp;#8217;s OpenShift now thinks it has.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc describe node| sed &apos;/Capacity/,/System/!d;/System/d&apos;
+
+Capacity:
+  ...
+  nvidia.com/gpu:                 16
+Allocatable:
+  ...
+  nvidia.com/gpu:                 16&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So great ! that is &lt;strong&gt;8x2=16&lt;/strong&gt; time-sliced GPU&amp;#8217;s available.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_deploy_stable_diffusion&quot;&gt;Deploy Stable Diffusion&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have created a simple &lt;a href=&quot;https://github.com/eformat/stable-diffusion/tree/main/openshift&quot;&gt;Kustomize folder&lt;/a&gt; in the git repo and split out the two part needed to get the app running.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;First create a data download job (this is 6 GB of downloads), which creates a PVC using he default Storage Class to download the required Stable Diffusion model data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f create-data/app.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then run the deployment.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f create-app/app.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Here&amp;#8217;s an example of a run on the lab, showing the &lt;code&gt;nvidia-smi pmon&lt;/code&gt; on the shell for the running python process and an output text to image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;stable-diffusion-gpu-time-slice&quot;&gt;
+  &lt;img src=&quot;/2022/12/stable-diffusion-gpu-time-slice.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In our Deployment we only requested one GPU, so we get one time-sliced gpu.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;        resources:
+          limits:
+            nvidia.com/gpu: 1&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can scale this up, or use the nvidia sample image to test out time-slicing and sharing e.g. Create a Deployment using this image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;        replicas: 16
+        image: nvidia/samples:dcgmproftester-2.0.10-cuda11.0-ubuntu18.04
+        resources:
+          limits:
+            nvidia.com/gpu: &quot;1&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And hey presto ! we now see 15/16 app replicas spinning up and running on our 2 physical GPU&amp;#8217;s. You can see them easily using &lt;code&gt;nvidia-smi pmon&lt;/code&gt;. We don&amp;#8217;t quite get to 16 as Stable Diffusion is still running on the GPU as well!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;stable-diffusion-gpu-time-slice&quot;&gt;
+  &lt;img src=&quot;/2022/12/gpu-sharing-16.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Stable Diffusion for Fedora Core</title>
