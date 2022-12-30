@@ -1,0 +1,109 @@
+= Running Mastodon on OpenShift
+:jbake-date: 2022-12-31
+:jbake-type: post
+:jbake-tags: openshift,social,fediverse,mastodon
+:jbake-status: published
+
+== Join the Fediverse with OpenShift
+
+Who knew that **fediverse** was a portmanteau of "federation" and "universe" ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
+i have just the https://github.com/eformat/openshift-mastodon[helm template] for you.
+
+It should be as simple as logging into OpenShift and running helm, where _CLUSTER_DOMAIN_ is your cluster apps domain name.
+
+```bash
+helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.<CLUSTER DOMAIN>
+```
+
+This will get you a basic server installed, using the lastest Mastodon image. You should change the _values.yaml_ to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your **mastodon** namespace.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-pods">
+  <img src="/2022/12/mastodon-pods.png" class="zoom">
+</div>
+++++
+
+=== A note on S3
+
+Mastodon can store its microblogging images in S3. The helm chart uses a https://min.io[minio] instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.
+
+```bash
+oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
+cat << 'EOF' > /tmp/mastodon-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::mastodon/*"
+      ],
+      "Sid": ""
+    }
+  ]
+}
+EOF
+
+export AWS_PROFILE=minio
+aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json
+```
+
+=== Logging In, Adding users
+
+By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like https://www.mailgun.com[mailgun] with your credentials would look something like this:
+
+```bash
+helm upgrade --install my-fediverse . \
+  --set mastodon.smtp_server=smtp.mailgun.org \
+  --set mastodon.smtp_login=postmaster@example.com \
+  --set mastodon.smtp_password=123456 \
+  --set mastodon.smtp_from_address=mastodon@example.com. \
+  --create-namespace --namespace mastodon
+```
+
+If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select **Create Account**.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-front-page">
+  <img src="/2022/12/mastodon-front-page.png" class="zoom">
+</div>
+++++
+
+This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as **eformat** and also gave myself the _Admin_ role.
+
+```bash
+oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
+
+RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
+RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin
+```
+
+You should see **OK** printed out when running these commands. Now log back in to mastodon and you should be able to right-click **Preferences** to administer the server.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-admin">
+  <img src="/2022/12/mastodon-admin.png" class="zoom">
+</div>
+++++
+
+I updated the server thumbnail which is stored in your minio s3.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-server-thumb">
+  <img src="/2022/12/mastodon-server-thumb.png" class="zoom">
+</div>
+++++
+
+🏅That's it !! you can find all of the https://docs.joinmastodon.org/admin/config[docs and configuration guides] online for mastodon.
