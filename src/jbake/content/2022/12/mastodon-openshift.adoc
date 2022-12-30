@@ -12,7 +12,9 @@ i have just the https://github.com/eformat/openshift-mastodon[helm template] for
 It should be as simple as logging into OpenShift and running helm, where _CLUSTER_DOMAIN_ is your cluster apps domain name.
 
 ```bash
-helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.<CLUSTER DOMAIN>
+helm upgrade --install my-fediverse . \
+  --create-namespace --namespace mastodon \
+  --set mastodon.local_domain=mastodon.<CLUSTER DOMAIN>
 ```
 
 This will get you a basic server installed, using the lastest Mastodon image. You should change the _values.yaml_ to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your **mastodon** namespace.
