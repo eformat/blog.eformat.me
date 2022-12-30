@@ -81,220 +81,139 @@
                             <meta itemprop="name" content="Mike Hepburn"/>
                         </div>
                         <meta itemprop="inLanguage" content="en-US"/>
-                        <a itemprop="url" href="2022/12/nvidia-gpu-sharing.html">
-                            <h1 itemprop="name">Stable Diffusion on OpenShift with GPU Sharing</h1>
+                        <a itemprop="url" href="2022/12/mastodon-openshift.html">
+                            <h1 itemprop="name">Running Mastodon on OpenShift</h1>
                         </a>
                         <p>
                             <time itemprop="datePublished"
-                                  datetime="2022-12-13">
-                                13 December 2022
+                                  datetime="2022-12-31">
+                                31 December 2022
                             </time>
                         </p>
 
                         <p>Tags :
-                            <meta itemprop="keywords" content="openshift,gpu,aiml,stable diffusion"/>
-                            <a href="tags/openshift.html">openshift</a>, <a href="tags/gpu.html">gpu</a>, <a href="tags/aiml.html">aiml</a>, <a href="tags/stable diffusion.html">stable diffusion</a>
+                            <meta itemprop="keywords" content="openshift,social,fediverse,mastodon"/>
+                            <a href="tags/openshift.html">openshift</a>, <a href="tags/social.html">social</a>, <a href="tags/fediverse.html">fediverse</a>, <a href="tags/mastodon.html">mastodon</a>
                         </p>
 
-                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/12/nvidia-gpu-sharing.html" data-text="Stable Diffusion on OpenShift with GPU Sharing" data-via="eformat" data-lang="en">Tweeter</a-->
+                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/12/mastodon-openshift.html" data-text="Running Mastodon on OpenShift" data-via="eformat" data-lang="en">Tweeter</a-->
                         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/12/nvidia-gpu-sharing.html"></div>
+                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/12/mastodon-openshift.html"></div>
 
                         <div itemprop="blogPost">
                             <p><div class="sect1">
-<h2 id="_stable_diffusion_on_openshift_with_gpu_sharing">Stable Diffusion on OpenShift with GPU Sharing</h2>
+<h2 id="_join_the_fediverse_with_openshift">Join the Fediverse with OpenShift</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>So the intuitive follow on from the last blog post <a href="https://blog.eformat.me/2022/11/stable-diffusion.html">Stable Diffusion for Fedora Core</a> is of course to see if we can get the app running on OpenShift in a lab environment!</p>
+<p>Who knew that <strong>fediverse</strong> was a portmanteau of "federation" and "universe" ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
+i have just the <a href="https://github.com/eformat/openshift-mastodon">helm template</a> for you.</p>
 </div>
 <div class="paragraph">
-<p>There are a couple of challenges. In my case, i actually wanted to demo the app in a lab that contains some older <a href="https://www.nvidia.com/en-au/data-center/tesla-t4/">Nvidia-Tesla-T4 GPU&#8217;s</a>, a bare metal SNO instance along with a bunch of other GPU enabled apps. This raises some interesting questions, in particular how do we configure and deploy applications so they can share the GPU&#8217;s in this environment?</p>
+<p>It should be as simple as logging into OpenShift and running helm, where <em>CLUSTER_DOMAIN</em> is your cluster apps domain name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.&lt;CLUSTER DOMAIN&gt;</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>One of the best article i found <a href="https://developer.nvidia.com/blog/improving-gpu-utilization-in-kubernetes">describing GPU Sharing</a> and the various mechanisms involved, highlights the different options available.</p>
+<p>This will get you a basic server installed, using the lastest Mastodon image. You should change the <em>values.yaml</em> to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your <strong>mastodon</strong> namespace.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="gpu-concurrency-mechanisms">
-  <img src="/2022/12/gpu-concurrency-mechanisms.png" class="zoom">
-</div>
-<div class="paragraph">
-<p>We are interested primarily in the system software and hardware part of this picture (CUDA and MPS-CUDA are more at the application level). Although, Stable Diffusion does require working CUDA for python torch as well.</p>
-</div>
-<div class="paragraph">
-<p><code>MIG</code> (which stands for multi instance GPU) is the newest technology and only supported on a small number of cards (not the T4') like vGPU (A100 and A30). There are some great <a href="https://www.openshift.com/blog/multi-instance-gpu-support-with-the-gpu-operator-v1.7.0">OpenShift blogs</a> describing MIG usage. vGPU is a technology that is <strong>only</strong> available if OpenShift is running in a VM/hypervisor. vGPUs are created/configured at the hypervisor level independently of OpenShift.</p>
-</div>
-<div class="paragraph">
-<p>So, that leaves us with <strong>Time-slicing</strong>. The <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/time-slicing-gpus-in-openshift.html#configuring-gpus-with-time-slicing">best place to read about it</a> is on the Nvidia site. Unlike MIG, there is no memory or fault-isolation between replicas, but for some workloads this is better than not being able to share the GPU at all. <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/gpu-sharing.html">There is a lot of documentation</a> to read, so i&#8217;m going to summarize the steps to get OpenShift Bare Metal SNO working using time-slicing.</p>
+<div class="imageblock id="mastodon-pods">
+  <img src="/2022/12/mastodon-pods.png" class="zoom">
 </div>
 <div class="sect2">
-<h3 id="_installing_the_node_feature_discovery_nfd_operator">Installing the Node Feature Discovery (NFD) Operator</h3>
+<h3 id="_a_note_on_s3">A note on S3</h3>
 <div class="paragraph">
-<p>The first step after installing OpenShift SNO bare-metal, was to configure the NFD operator as cluster-admin. The default configuration for the operator is fine. All going well, your GPU&#8217;s should now be visible to OpenShift, and you can check by doing:</p>
+<p>Mastodon can store its microblogging images in S3. The helm chart uses a <a href="https://min.io">minio</a> instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc debug node/&lt;node name&gt;
-$ chroot /host
-$ lspci | grep -i nvidia
-17:00.0 3D controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)
-65:00.0 3D controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We can see our two physical GPU&#8217;s OK. Another check is the node labels and description:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc describe node | egrep 'Roles|pci' | grep -v master
-   feature.node.kubernetes.io/pci-10de.present=true</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you see the <strong>pci-10de</strong> device, that is the code for Nvidia GPU&#8217;s, all good so far.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_installing_the_nvidia_gpu_operator">Installing the NVIDIA GPU Operator</h3>
-<div class="paragraph">
-<p>Next step is to <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/install-gpu-ocp.html">install the Nvidia GPU Operator</a>. By default you should <strong>not</strong> need to install any license as <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/openshift/steps-overview.html#entitlement-free-supported-versions">OpenShift 4.9.9+ is entitlement free</a>. There are several pods that install with this operator. If you install the default <code>Cluster Policy</code> the nvidia driver is downloaded and compiled for your OpenShift and inserted as dynamic <strong>kmods</strong>. This may take a little bit of time to complete.</p>
-</div>
-<div id="nvidia-driver" class="paragraph">
-<p><span class="image"><img src="/2022/12/nvidia-driver-pod.png" alt="Nvidia Dameon Set" width="640" height="480"></span></p>
-</div>
-<div class="paragraph">
-<p>In our case, we only have one node (SNO) so the dameon set compiles and installs the driver on our node. If you follow the documentation above you should be able to verify the drivers are loaded.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc debug node/&lt;node name&gt;
-$ chroot /host
-$ lsmod | grep nvidia
-nvidia_modeset       1142784  0
-nvidia_uvm           1310720  2
-nvidia              40796160  363 nvidia_uvm,nvidia_modeset
-drm                   589824  4 drm_kms_helper,nvidia,mgag200</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Its worth noting that if you were using vGPU, you would <strong>also</strong> get the <em>nvidia_vgpu_vfio</em> module, but because we are bare metal, the driver dameon set recognizes passthrough mode and does not compile it.</p>
-</div>
-<div class="paragraph">
-<p>The second part of the puzzle is you need to now configure the GPU for time-slicing. To do this we need create a ConfigMap that specifies how many slices we want, for example <em>8</em> in our case.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: time-slicing-config
-  namespace: nvidia-gpu-operator
-data:
-  tesla-t4: |-
-    version: v1
-    sharing:
-      timeSlicing:
-        resources:
-        - name: nvidia.com/gpu
-          replicas: 8</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Next, we add this ConfigMap name into the nvidia.com ClusterPolicy.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">                  devicePlugin:
-                    config:
-                      default: "tesla-t4"
-                      name: "time-slicing-config"
-                    enabled: true</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>By enabling the <em>devicePlugin</em> you should see the device plugin DaemonSet spin up.</p>
-</div>
-<div id="nvidia-deive-plugin" class="paragraph">
-<p><span class="image"><img src="/2022/12/nvidia-device-plugin.png" alt="Nvidia Device Plugin Dameon Set" width="640" height="480"></span></p>
-</div>
-<div class="paragraph">
-<p>We are nearly there ! If we now look at the OpenShift node description, we should see how many GPU&#8217;s OpenShift now thinks it has.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc describe node| sed '/Capacity/,/System/!d;/System/d'
+<pre class="prettyprint highlight"><code data-lang="bash">oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
+cat &lt;&lt; 'EOF' &gt; /tmp/mastodon-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::mastodon/*"
+      ],
+      "Sid": ""
+    }
+  ]
+}
+EOF
 
-Capacity:
-  ...
-  nvidia.com/gpu:                 16
-Allocatable:
-  ...
-  nvidia.com/gpu:                 16</code></pre>
+export AWS_PROFILE=minio
+aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>So great ! that is <strong>8x2=16</strong> time-sliced GPU&#8217;s available.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_deploy_stable_diffusion">Deploy Stable Diffusion</h3>
+<h3 id="_logging_in_adding_users">Logging In, Adding users</h3>
 <div class="paragraph">
-<p>I have created a simple <a href="https://github.com/eformat/stable-diffusion/tree/main/openshift">Kustomize folder</a> in the git repo and split out the two part needed to get the app running.</p>
-</div>
-<div class="paragraph">
-<p>First create a data download job (this is 6 GB of downloads), which creates a PVC using he default Storage Class to download the required Stable Diffusion model data.</p>
+<p>By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like <a href="https://www.mailgun.com">mailgun</a> with your credentials would look something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f create-data/app.yaml</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . \
+  --set mastodon.smtp_server=smtp.mailgun.org \
+  --set mastodon.smtp_login=postmaster@example.com \
+  --set mastodon.smtp_password=123456 \
+  --set mastodon.smtp_from_address=mastodon@example.com. \
+  --create-namespace --namespace mastodon</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then run the deployment.</p>
+<p>If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select <strong>Create Account</strong>.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-front-page">
+  <img src="/2022/12/mastodon-front-page.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as <strong>eformat</strong> and also gave myself the <em>Admin</em> role.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f create-app/app.yaml</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
+
+RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
+RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Here&#8217;s an example of a run on the lab, showing the <code>nvidia-smi pmon</code> on the shell for the running python process and an output text to image.</p>
+<p>You should see <strong>OK</strong> printed out when running these commands. Now log back in to mastodon and you should be able to right-click <strong>Preferences</strong> to administer the server.</p>
 </div>
-<div class="imageblock id="stable-diffusion-gpu-time-slice">
-  <img src="/2022/12/stable-diffusion-gpu-time-slice.png" class="zoom">
-</div>
-<div class="paragraph">
-<p>In our Deployment we only requested one GPU, so we get one time-sliced gpu.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">        resources:
-          limits:
-            nvidia.com/gpu: 1</code></pre>
-</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-admin">
+  <img src="/2022/12/mastodon-admin.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>You can scale this up, or use the nvidia sample image to test out time-slicing and sharing e.g. Create a Deployment using this image.</p>
+<p>I updated the server thumbnail which is stored in your minio s3.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">        replicas: 16
-        image: nvidia/samples:dcgmproftester-2.0.10-cuda11.0-ubuntu18.04
-        resources:
-          limits:
-            nvidia.com/gpu: "1"</code></pre>
-</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-server-thumb">
+  <img src="/2022/12/mastodon-server-thumb.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>And hey presto ! we now see 15/16 app replicas spinning up and running on our 2 physical GPU&#8217;s. You can see them easily using <code>nvidia-smi pmon</code>. We don&#8217;t quite get to 16 as Stable Diffusion is still running on the GPU as well!</p>
-</div>
-<div class="imageblock id="stable-diffusion-gpu-time-slice">
-  <img src="/2022/12/gpu-sharing-16.png" class="zoom">
+<p>🏅That&#8217;s it !! you can find all of the <a href="https://docs.joinmastodon.org/admin/config">docs and configuration guides</a> online for mastodon.</p>
 </div>
 </div>
 </div>
 </div></p>
                         </div>
-                        <p><a itemprop="discussionUrl" href="2022/12/nvidia-gpu-sharing.html#disqus_thread">Comments</a></p>
+                        <p><a itemprop="discussionUrl" href="2022/12/mastodon-openshift.html#disqus_thread">Comments</a></p>
 
                     </div>
                 
@@ -324,7 +243,7 @@ Allocatable:
                 <h4>Tags</h4>
                 <ol class="list-unstyled" style="margin-left: 0px">
                     
-                        <li><a href="tags/openshift.html">openshift</a> (4)</li>
+                        <li><a href="tags/openshift.html">openshift</a> (5)</li>
                     
                         <li><a href="tags/aiml.html">aiml</a> (2)</li>
                     
@@ -344,11 +263,15 @@ Allocatable:
                     
                         <li><a href="tags/devops.html">devops</a> (1)</li>
                     
+                        <li><a href="tags/fediverse.html">fediverse</a> (1)</li>
+                    
                         <li><a href="tags/fedora.html">fedora</a> (1)</li>
                     
                         <li><a href="tags/flink.html">flink</a> (1)</li>
                     
                         <li><a href="tags/gitops.html">gitops</a> (1)</li>
+                    
+                        <li><a href="tags/mastodon.html">mastodon</a> (1)</li>
                     
                         <li><a href="tags/optaplanner.html">optaplanner</a> (1)</li>
                     
@@ -365,6 +288,8 @@ Allocatable:
                         <li><a href="tags/security.html">security</a> (1)</li>
                     
                         <li><a href="tags/sno.html">sno</a> (1)</li>
+                    
+                        <li><a href="tags/social.html">social</a> (1)</li>
                     
                         <li><a href="tags/streaming.html">streaming</a> (1)</li>
                     
@@ -383,7 +308,7 @@ Allocatable:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Tue Dec 13 07:46:26 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Dec 30 23:03:53 UTC 2022</a></p>
       </div>
     </div>
     

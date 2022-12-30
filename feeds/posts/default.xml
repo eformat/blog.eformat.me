@@ -6,9 +6,129 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Tue, 13 Dec 2022 07:46:26 +0000</pubDate>
-      <lastBuildDate>Tue, 13 Dec 2022 07:46:26 +0000</lastBuildDate>
+      <pubDate>Fri, 30 Dec 2022 23:03:53 +0000</pubDate>
+      <lastBuildDate>Fri, 30 Dec 2022 23:03:53 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Running Mastodon on OpenShift</title>
+          <link>https://blog.eformat.me/2022/12/mastodon-openshift.html</link>
+          <pubDate>Sat, 31 Dec 2022 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2022/12/mastodon-openshift.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_join_the_fediverse_with_openshift&quot;&gt;Join the Fediverse with OpenShift&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Who knew that &lt;strong&gt;fediverse&lt;/strong&gt; was a portmanteau of &quot;federation&quot; and &quot;universe&quot; ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
+i have just the &lt;a href=&quot;https://github.com/eformat/openshift-mastodon&quot;&gt;helm template&lt;/a&gt; for you.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It should be as simple as logging into OpenShift and running helm, where &lt;em&gt;CLUSTER_DOMAIN&lt;/em&gt; is your cluster apps domain name.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.&amp;lt;CLUSTER DOMAIN&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will get you a basic server installed, using the lastest Mastodon image. You should change the &lt;em&gt;values.yaml&lt;/em&gt; to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your &lt;strong&gt;mastodon&lt;/strong&gt; namespace.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;mastodon-pods&quot;&gt;
+  &lt;img src=&quot;/2022/12/mastodon-pods.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_a_note_on_s3&quot;&gt;A note on S3&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Mastodon can store its microblogging images in S3. The helm chart uses a &lt;a href=&quot;https://min.io&quot;&gt;minio&lt;/a&gt; instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
+cat &amp;lt;&amp;lt; &apos;EOF&apos; &amp;gt; /tmp/mastodon-policy.json
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Action&quot;: [
+        &quot;s3:GetObject&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Principal&quot;: {
+        &quot;AWS&quot;: [
+          &quot;*&quot;
+        ]
+      },
+      &quot;Resource&quot;: [
+        &quot;arn:aws:s3:::mastodon/*&quot;
+      ],
+      &quot;Sid&quot;: &quot;&quot;
+    }
+  ]
+}
+EOF
+
+export AWS_PROFILE=minio
+aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_logging_in_adding_users&quot;&gt;Logging In, Adding users&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like &lt;a href=&quot;https://www.mailgun.com&quot;&gt;mailgun&lt;/a&gt; with your credentials would look something like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;helm upgrade --install my-fediverse . \
+  --set mastodon.smtp_server=smtp.mailgun.org \
+  --set mastodon.smtp_login=postmaster@example.com \
+  --set mastodon.smtp_password=123456 \
+  --set mastodon.smtp_from_address=mastodon@example.com. \
+  --create-namespace --namespace mastodon&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select &lt;strong&gt;Create Account&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;mastodon-front-page&quot;&gt;
+  &lt;img src=&quot;/2022/12/mastodon-front-page.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as &lt;strong&gt;eformat&lt;/strong&gt; and also gave myself the &lt;em&gt;Admin&lt;/em&gt; role.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
+
+RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
+RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You should see &lt;strong&gt;OK&lt;/strong&gt; printed out when running these commands. Now log back in to mastodon and you should be able to right-click &lt;strong&gt;Preferences&lt;/strong&gt; to administer the server.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;mastodon-admin&quot;&gt;
+  &lt;img src=&quot;/2022/12/mastodon-admin.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I updated the server thumbnail which is stored in your minio s3.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;mastodon-server-thumb&quot;&gt;
+  &lt;img src=&quot;/2022/12/mastodon-server-thumb.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🏅That&amp;#8217;s it !! you can find all of the &lt;a href=&quot;https://docs.joinmastodon.org/admin/config&quot;&gt;docs and configuration guides&lt;/a&gt; online for mastodon.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Stable Diffusion on OpenShift with GPU Sharing</title>

@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - streaming</title>
+    <title>eformat.me - mastodon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : streaming">
-    <meta property="og:title" content="eformat.me - streaming" />
+    <meta name="description" content="eformat.me : mastodon">
+    <meta property="og:title" content="eformat.me - mastodon" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/streaming.html" />
-    <meta property="og:description" content="eformat.me : streaming" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/mastodon.html" />
+    <meta property="og:description" content="eformat.me : mastodon" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -66,7 +66,7 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: streaming</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: mastodon</h1></div>
             </div>
 	</div>
 
@@ -75,51 +75,129 @@
     <div class="col-sm-8">
         
             
-                <a href="../2022/11/pulsar-flink.html"><h1>Pulsar Flink</h1></a>
-                <p>02 November 2022</p>
+                <a href="../2022/12/mastodon-openshift.html"><h1>Running Mastodon on OpenShift</h1></a>
+                <p>31 December 2022</p>
 
                 <p>Tags :
-                <a href="streaming.html">streaming</a>, <a href="pulsar.html">pulsar</a>, <a href="flink.html">flink</a>, <a href="java.html">java</a>
+                <a href="openshift.html">openshift</a>, <a href="social.html">social</a>, <a href="fediverse.html">fediverse</a>, <a href="mastodon.html">mastodon</a>
                 </p>
 
-                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/pulsar-flink.html" data-text="Pulsar Flink" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/12/mastodon-openshift.html" data-text="Running Mastodon on OpenShift" data-via="eformat" data-lang="en">Tweeter</a-->
                 <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/pulsar-flink.html"></div>
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/12/mastodon-openshift.html"></div>
 
-                <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
-<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩</p>
-<p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
+                <p><div class="sect1">
+<h2 id="_join_the_fediverse_with_openshift">Join the Fediverse with OpenShift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Who knew that <strong>fediverse</strong> was a portmanteau of "federation" and "universe" ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
+i have just the <a href="https://github.com/eformat/openshift-mastodon">helm template</a> for you.</p>
+</div>
+<div class="paragraph">
+<p>It should be as simple as logging into OpenShift and running helm, where <em>CLUSTER_DOMAIN</em> is your cluster apps domain name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.&lt;CLUSTER DOMAIN&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will get you a basic server installed, using the lastest Mastodon image. You should change the <em>values.yaml</em> to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your <strong>mastodon</strong> namespace.</p>
+</div>
 <div id="lightbox"></div>
-<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
-<p>that you can easily run locally or on OpenShift:</p>
-<pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
-oc create route edge quote-generator --service=quote-generator --port=8080
-</code></pre>
-<p>and then retrieve the events in the browser or by curl:</p>
-<pre><code class="language-bash">curl -H &quot;Content-Type: application/json&quot; --max-time 9999999 -N http://localhost:8080/quotes/stream
-</code></pre>
-<p>So, first challenge - How might we consume these SSE&rsquo;s using Flink? I found a handy <a href="https://github.com/aws-samples/amazon-kinesis-data-analytics-apache-flink-server-sent-events-sse/tree/main/kinesis-data-analytics-sse">AWS Kinesis SSE demo</a> which i snarfed the SSE/OKHttp code from. I wired this into flinks <code>RichSourceFunction</code>:</p>
-<script src="https://gist.github.com/eformat/4d5fd40d8566e99e866e1e7fd4cb6388.js"></script>
-<p>So now i could consume this SSE source as a <code>DataStream</code></p>
-<script src="https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js"></script>
-<p>In the example, i wire in the stock quotes for <code>NFLX</code> and <code>RHT</code>. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this <a href="https://flink.apache.org/news/2015/02/09/streaming-example.html">stock price</a> example from 2015! cool. So i implemented a simple <code>BuyFunction</code> class that makes stock buy recommendations:</p>
-<script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
-<p>Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:</p>
-<script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
-<p>Friends of mine have been telling me how much more awesome <code>Pulsar</code> is compared to <code>Kafka</code> so i also tried out sending to a local pulsar container that you can run using:</p>
-<pre><code class="language-bash">podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
-</code></pre>
-<p>And forwrded to pulsar using a simple utility class using the pulsar java client:</p>
-<script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
-<p>Then consume the messages to make sure they are there !</p>
-<pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
-</code></pre>
-<p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
-<p><img src="/2022/11/flink-stocks-ocp.png" width="640" class="zoom"></p>
-<p></br><br />
-Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
-</p>
-                <p><a href="2022/11/pulsar-flink.html#disqus_thread">Commentaires</a></p>
+<div class="imageblock id="mastodon-pods">
+  <img src="/2022/12/mastodon-pods.png" class="zoom">
+</div>
+<div class="sect2">
+<h3 id="_a_note_on_s3">A note on S3</h3>
+<div class="paragraph">
+<p>Mastodon can store its microblogging images in S3. The helm chart uses a <a href="https://min.io">minio</a> instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
+cat &lt;&lt; 'EOF' &gt; /tmp/mastodon-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::mastodon/*"
+      ],
+      "Sid": ""
+    }
+  ]
+}
+EOF
+
+export AWS_PROFILE=minio
+aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_logging_in_adding_users">Logging In, Adding users</h3>
+<div class="paragraph">
+<p>By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like <a href="https://www.mailgun.com">mailgun</a> with your credentials would look something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . \
+  --set mastodon.smtp_server=smtp.mailgun.org \
+  --set mastodon.smtp_login=postmaster@example.com \
+  --set mastodon.smtp_password=123456 \
+  --set mastodon.smtp_from_address=mastodon@example.com. \
+  --create-namespace --namespace mastodon</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select <strong>Create Account</strong>.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-front-page">
+  <img src="/2022/12/mastodon-front-page.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as <strong>eformat</strong> and also gave myself the <em>Admin</em> role.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
+
+RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
+RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see <strong>OK</strong> printed out when running these commands. Now log back in to mastodon and you should be able to right-click <strong>Preferences</strong> to administer the server.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-admin">
+  <img src="/2022/12/mastodon-admin.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>I updated the server thumbnail which is stored in your minio s3.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-server-thumb">
+  <img src="/2022/12/mastodon-server-thumb.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>🏅That&#8217;s it !! you can find all of the <a href="https://docs.joinmastodon.org/admin/config">docs and configuration guides</a> online for mastodon.</p>
+</div>
+</div>
+</div>
+</div></p>
+                <p><a href="2022/12/mastodon-openshift.html#disqus_thread">Commentaires</a></p>
             
 
         

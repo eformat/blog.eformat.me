@@ -75,6 +75,133 @@
     <div class="col-sm-8">
         
             
+                <a href="../2022/12/mastodon-openshift.html"><h1>Running Mastodon on OpenShift</h1></a>
+                <p>31 December 2022</p>
+
+                <p>Tags :
+                <a href="openshift.html">openshift</a>, <a href="social.html">social</a>, <a href="fediverse.html">fediverse</a>, <a href="mastodon.html">mastodon</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/12/mastodon-openshift.html" data-text="Running Mastodon on OpenShift" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/12/mastodon-openshift.html"></div>
+
+                <p><div class="sect1">
+<h2 id="_join_the_fediverse_with_openshift">Join the Fediverse with OpenShift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Who knew that <strong>fediverse</strong> was a portmanteau of "federation" and "universe" ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
+i have just the <a href="https://github.com/eformat/openshift-mastodon">helm template</a> for you.</p>
+</div>
+<div class="paragraph">
+<p>It should be as simple as logging into OpenShift and running helm, where <em>CLUSTER_DOMAIN</em> is your cluster apps domain name.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.&lt;CLUSTER DOMAIN&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will get you a basic server installed, using the lastest Mastodon image. You should change the <em>values.yaml</em> to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your <strong>mastodon</strong> namespace.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-pods">
+  <img src="/2022/12/mastodon-pods.png" class="zoom">
+</div>
+<div class="sect2">
+<h3 id="_a_note_on_s3">A note on S3</h3>
+<div class="paragraph">
+<p>Mastodon can store its microblogging images in S3. The helm chart uses a <a href="https://min.io">minio</a> instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
+cat &lt;&lt; 'EOF' &gt; /tmp/mastodon-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::mastodon/*"
+      ],
+      "Sid": ""
+    }
+  ]
+}
+EOF
+
+export AWS_PROFILE=minio
+aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_logging_in_adding_users">Logging In, Adding users</h3>
+<div class="paragraph">
+<p>By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like <a href="https://www.mailgun.com">mailgun</a> with your credentials would look something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . \
+  --set mastodon.smtp_server=smtp.mailgun.org \
+  --set mastodon.smtp_login=postmaster@example.com \
+  --set mastodon.smtp_password=123456 \
+  --set mastodon.smtp_from_address=mastodon@example.com. \
+  --create-namespace --namespace mastodon</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select <strong>Create Account</strong>.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-front-page">
+  <img src="/2022/12/mastodon-front-page.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as <strong>eformat</strong> and also gave myself the <em>Admin</em> role.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
+
+RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
+RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see <strong>OK</strong> printed out when running these commands. Now log back in to mastodon and you should be able to right-click <strong>Preferences</strong> to administer the server.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-admin">
+  <img src="/2022/12/mastodon-admin.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>I updated the server thumbnail which is stored in your minio s3.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="mastodon-server-thumb">
+  <img src="/2022/12/mastodon-server-thumb.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>🏅That&#8217;s it !! you can find all of the <a href="https://docs.joinmastodon.org/admin/config">docs and configuration guides</a> online for mastodon.</p>
+</div>
+</div>
+</div>
+</div></p>
+                <p><a href="2022/12/mastodon-openshift.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2022/12/nvidia-gpu-sharing.html"><h1>Stable Diffusion on OpenShift with GPU Sharing</h1></a>
                 <p>13 December 2022</p>
 
@@ -917,7 +1044,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
-                <li><a href="openshift.html">openshift</a> (4)</li>
+                <li><a href="openshift.html">openshift</a> (5)</li>
                 
 
                 <li><a href="aiml.html">aiml</a> (2)</li>
@@ -947,6 +1074,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="devops.html">devops</a> (1)</li>
                 
 
+                <li><a href="fediverse.html">fediverse</a> (1)</li>
+                
+
                 <li><a href="fedora.html">fedora</a> (1)</li>
                 
 
@@ -954,6 +1084,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="gitops.html">gitops</a> (1)</li>
+                
+
+                <li><a href="mastodon.html">mastodon</a> (1)</li>
                 
 
                 <li><a href="optaplanner.html">optaplanner</a> (1)</li>
@@ -980,6 +1113,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="sno.html">sno</a> (1)</li>
                 
 
+                <li><a href="social.html">social</a> (1)</li>
+                
+
                 <li><a href="streaming.html">streaming</a> (1)</li>
                 
 
@@ -998,7 +1134,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Tue Dec 13 07:46:27 UTC 2022</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Dec 30 23:03:53 UTC 2022</a></p>
       </div>
     </div>
     
