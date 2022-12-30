@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 30 Dec 2022 23:03:53 +0000</pubDate>
-      <lastBuildDate>Fri, 30 Dec 2022 23:03:53 +0000</lastBuildDate>
+      <pubDate>Fri, 30 Dec 2022 23:10:57 +0000</pubDate>
+      <lastBuildDate>Fri, 30 Dec 2022 23:10:57 +0000</lastBuildDate>
 
       
       <item>
@@ -28,7 +28,9 @@ i have just the &lt;a href=&quot;https://github.com/eformat/openshift-mastodon&q
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;helm upgrade --install my-fediverse . --create-namespace --namespace mastodon --set mastodon.local_domain=mastodon.&amp;lt;CLUSTER DOMAIN&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;helm upgrade --install my-fediverse . \
+  --create-namespace --namespace mastodon \
+  --set mastodon.local_domain=mastodon.&amp;lt;CLUSTER DOMAIN&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
