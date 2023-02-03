@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2022-12-30</lastmod>
+        <lastmod>2023-02-03</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2022-12-30</lastmod>
+        <lastmod>2023-02-03</lastmod>
     </url>
 
     <url>
@@ -20,7 +20,7 @@
         <loc>https://blog.eformat.me/tags/openshift.html</loc>
         
 
-        <lastmod>2022-12-31</lastmod>
+        <lastmod>2023-02-02</lastmod>
     </url>
 
     <url>
@@ -28,6 +28,20 @@
         
 
         <lastmod>2022-11-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/bgp.html</loc>
+        
+
+        <lastmod>2023-02-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/metallb.html</loc>
+        
+
+        <lastmod>2023-02-02</lastmod>
     </url>
 
     <url>
@@ -80,6 +94,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/bird.html</loc>
+        
+
+        <lastmod>2023-02-02</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/mastodon.html</loc>
         
 
@@ -126,6 +147,13 @@
         
 
         <lastmod>2022-11-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/frr.html</loc>
+        
+
+        <lastmod>2023-02-02</lastmod>
     </url>
 
     <url>
@@ -191,6 +219,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2023/02/sno-metallb-bpg.html</loc>
+        <lastmod>2023-02-02</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2022/12/mastodon-openshift.html</loc>

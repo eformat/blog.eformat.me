@@ -6,9 +6,578 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 30 Dec 2022 23:10:57 +0000</pubDate>
-      <lastBuildDate>Fri, 30 Dec 2022 23:10:57 +0000</lastBuildDate>
+      <pubDate>Fri, 3 Feb 2023 01:57:03 +0000</pubDate>
+      <lastBuildDate>Fri, 3 Feb 2023 01:57:03 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>SNO, MetalLB, BGP</title>
+          <link>https://blog.eformat.me/2023/02/sno-metallb-bpg.html</link>
+          <pubDate>Thu, 2 Feb 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/02/sno-metallb-bpg.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_using_sno_and_metallb_in_bgp_mode&quot;&gt;Using SNO and MetalLB in BGP Mode&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So yeah, i was reading &lt;a href=&quot;https://cloud.redhat.com/blog/metallb-in-bgp-mode&quot;&gt;this awesome blog post on &apos;How to Use MetalLB in BGP Mode&apos;&lt;/a&gt; and thought i need to give this a try with SNO at home.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I won&amp;#8217;t repeat all the details linked in that post, please go read it before trying what comes next as i reference it. Suffice to say the following:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;SNO&lt;/strong&gt; - Single Node OpenShift&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;MetalLB&lt;/strong&gt; - creates &lt;code&gt;LoadBalancer&lt;/code&gt; types of Kubernetes services on top of a bare-metal (like) OpenShift/Kubernetes. I&amp;#8217;m going to do it in a kvm/libvirt lab.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;BGP&lt;/strong&gt; - Border Gateway Protol - runs and scales the internet - (ftw! seriously, go read about bpg hijacking) - with MetalLB we can use BGP mode to statelessly load balance client traffic towards the applications running on bare metal-like OpenShift clusters.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The idea is that you can have both normal Routing/HAProxy service &lt;code&gt;ClusterIP&amp;#8217;s&lt;/code&gt; on the SDN as well as &lt;code&gt;LoadBalancer&amp;#8217;s&lt;/code&gt; being served by BGP/MetalLB in your SNO Cluster. OpenShift SDN (OVNKubernetes as well as OPenShiftSDN) both support MetalLB out of the box.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_the_lab_setup&quot;&gt;The Lab Setup&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_networking_services&quot;&gt;Networking Services&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are some complexities in my home lab, mainly caused by the constraint of having teenagers who feel good bandwidth is a basic human &lt;em&gt;right&lt;/em&gt; and not a &lt;em&gt;luxury&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So i need to keep the connections to their myriad of devices running smoothly as well as serving my own geek needs. To make this happen and keep things relatively simple, i have a pretty standard setup and use my Mesh network. I am not trying any telco grade stuff (e.g. SRIOV) - so have no main Cisco/vendor switching involved.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;gpu-concurrency-mechanisms&quot;&gt;
+  &lt;img src=&quot;/2023/02/lab-network.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;Router&lt;/strong&gt; - Plain old broadband router with firewall and port-forwarding facilities.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;Mesh Network&lt;/strong&gt; - Connectivity va Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;VMHost&lt;/strong&gt; - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to &lt;a href=&quot;https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf&quot;&gt;change the defaults for bridge mode to&lt;/a&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;cat /etc/sysctl.d/99-netfilter-bridge.conf
+net.bridge.bridge-nf-call-ip6tables = 0
+net.bridge.bridge-nf-call-iptables = 0
+net.bridge.bridge-nf-call-arptables = 0
+
+cat /etc/modules-load.d/br_netfilter.conf
+br_netfilter
+
+sudo sysctl -p /etc/sysctl.d/99-netfilter-bridge.conf&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And the bridge looks like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/libvirt/qemu/networks/sno.xml
+&amp;lt;network&amp;gt;
+  &amp;lt;name&amp;gt;sno&amp;lt;/name&amp;gt;
+  &amp;lt;uuid&amp;gt;fc43091f-de22-4bf5-974b-98711b9f3d9e&amp;lt;/uuid&amp;gt;
+  &amp;lt;forward mode=&quot;bridge&quot;/&amp;gt;
+  &amp;lt;bridge name=&apos;br0&apos;/&amp;gt;
+&amp;lt;/network&amp;gt;
+EOF
+
+virsh net-define /etc/libvirt/qemu/networks/sno.xml
+virsh net-start sno
+virsh net-autostart sno&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you have a firewall on this host (firewalld, iptables) make sure to allow these ports and traffic to flow: 179/TCP (BGP), 3784/UDP and 3785/UDP (BFD).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;SNO&lt;/strong&gt; - Single Node OpenShift 4.12 libvirt/kvm installed &lt;a href=&quot;https://github.com/eformat/ocp4-sno-inplace&quot;&gt;using libvirt Bootstrap In-Place methodology&lt;/a&gt; from a single iso. A snippet from my install-config file showing the networking setup.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;cat &amp;lt;&amp;lt; EOF &amp;gt; install-config.yaml
+...
+networking:
+  networkType: OVNKubernetes
+  machineNetwork:
+  - cidr: 192.168.86.0/24&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When doing boostrap in-place, normally you rely on DHCP assignment for hostname, ip, dns, gateway. However, due to my DHCP being mesh controlled i modified the installer ISO to setup the networking manually. Set up so we copy the network form the boostrap image:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;cat &amp;lt;&amp;lt; EOF &amp;gt; install-config.yaml
+...
+bootstrapInPlace:
+  installationDisk: &quot;--copy-network /dev/vda&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Setup the ip address, gateway, network, hostname, device, dns as &lt;a href=&quot;https://docs.openshift.com/container-platform/4.12/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html#installation-user-infra-machines-advanced_installing-bare-metal&quot;&gt;per the OpenShift docs.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;arg1=&quot;rd.neednet=1&quot;
+arg2=&quot;ip=192.168.86.32::192.168.86.1:255.255.255.0:sno:enp1s0:none nameserver=192.168.86.27&quot;
+coreos-installer iso customize rhcos-live.x86_64.iso --live-karg-append=&quot;${arg1}&quot; --live-karg-append=&quot;${arg2}&quot; -f&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;DNS&lt;/strong&gt; - I run bind/named on my VMHost to control OpenShift api.* and apps.* cluster domain. The SOA is in the cloud, so I can route from anywhere to the FQDN OK. In the lab, the internal DNS server just gives you the lab IP address. Externally you are forwarded to the Router which port-forwards via the firewall&amp;#8217;s and Mesh to the correct SNO instance. I don&amp;#8217;t show it, but I run HAProxy on the VMHost - that way I can serve external traffic to multiple OpenShift clusters in the lab simultaneously. My DNS zone looks like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;ns1       IN     A       192.168.86.27
+api       IN     A       192.168.86.32
+api-int   IN     A       192.168.86.32
+*.apps    IN     A       192.168.86.32&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;DHCP&lt;/strong&gt; - One of the drawback&amp;#8217;s of my mesh tech is that it does not allow you to override DNS on a per host / DHCP assigned basis. This is required to setup OpenShift (need control over DNS etc). I could have installed another DHCP server on linux to do this job, but I just figured &quot;no need&quot;, I will stick with the mesh as DHCP provider (see SNO section above for manual networking configuration).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;BGP&lt;/strong&gt; - Once installed, the bpg network looks like this.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;gpu-concurrency-mechanisms&quot;&gt;
+  &lt;img src=&quot;/2023/02/bgp-lab-network.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When creating &lt;code&gt;LoadBalancer&lt;/code&gt; services in SNO, MetalLB with the help of FRR binds an &lt;code&gt;External IP&lt;/code&gt; to the service. Since we only have one SNO node, &lt;code&gt;BFD&lt;/code&gt; is not in use like the article (multiple worker nodes as &lt;code&gt;BGPPeer&amp;#8217;s&lt;/code&gt;). That&amp;#8217;s OK though we are just trying it out here!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A nice addition for demoing, is being able to configure a &lt;a href=&quot;https://bird.network.cz&quot;&gt;Bird&lt;/a&gt; daemon on my Fedora Core laptop so that any BGP announcements are automatically added to its routing setup.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;FRR&lt;/strong&gt; - RHEL8 VM running &lt;a href=&quot;https://frrouting.org&quot;&gt;FRRouting (FRR)&lt;/a&gt; as a pod - this is an open source Internet routing protocol suite for Linux and Unix platforms. The configuration i used is from the linked blog post at the top. From the blog use the same &lt;code&gt;vtysh.conf&lt;/code&gt; and &lt;code&gt;daemons&lt;/code&gt; files. My &lt;code&gt;frr.conf&lt;/code&gt; files was as folows - i added an additional entry for my Bird Client BGPPeer at &lt;em&gt;192.168.86.109&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;cat &amp;lt;&amp;lt;&apos;EOF&apos; &amp;gt; /root/frr/frr.conf
+frr version master_git
+frr defaults traditional
+hostname frr-upstream
+!
+debug bgp updates
+debug bgp neighbor
+debug zebra nht
+debug bgp nht
+debug bfd peer
+log file /tmp/frr.log debugging
+log timestamp precision 3
+!
+interface eth0
+ ip address 192.168.86.23/24
+!
+router bgp 64521
+ bgp router-id 192.168.86.23
+ timers bgp 3 15
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ no bgp network import-check
+ neighbor metallb peer-group
+ neighbor metallb remote-as 64520
+ neighbor 192.168.86.32 peer-group metallb
+ neighbor 192.168.86.32 bfd
+ neighbor 192.168.86.109 remote-as external
+!
+ address-family ipv4 unicast
+  neighbor 192.168.86.32 next-hop-self
+  neighbor 192.168.86.32 activate
+  neighbor 192.168.86.109 next-hop-self
+  neighbor 192.168.86.109 activate
+ exit-address-family
+!
+line vty
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Running FRR with podman is pretty straight forward:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;podman run -d --rm  -v /root/frr:/etc/frr:Z --net=host --name frr-upstream --privileged quay.io/frrouting/frr:master&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Some useful commands i found to show you the BGP/FRR details:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;podman exec -it frr-upstream vtysh -c &quot;show ip route&quot;
+podman exec -it frr-upstream ip r
+podman exec -it frr-upstream vtysh -c &quot;show ip bgp sum&quot;
+podman exec -it frr-upstream vtysh -c &quot;show ip bgp&quot;
+podman exec -it frr-upstream vtysh -c &quot;show bfd peers&quot;
+podman exec -it frr-upstream vtysh -c &quot;show bgp summary&quot;
+podman exec -it frr-upstream vtysh -c &quot;show ip bgp neighbor&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;As in the blog post, when looking at your &quot;show ip bgp neighbor&quot; you should see &lt;strong&gt;BGP state = Established&lt;/strong&gt; for the &lt;code&gt;BGPPeers&lt;/code&gt; once everything is connected up.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;MetalLB&lt;/strong&gt; - Installed on SNO as per the blog post. Check there for a detailed explanation. The commands I used were as follows:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+name: metallb-system
+spec: {}
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+name: metallb-operator
+namespace: metallb-system
+spec: {}
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+name: metallb-operator-sub
+namespace: metallb-system
+spec:
+name: metallb-operator
+channel: &quot;stable&quot;
+source: redhat-operators
+sourceNamespace: openshift-marketplace
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc get installplan -n metallb-system
+oc get csv -n metallb-system -o custom-columns=&apos;NAME:.metadata.name, VERSION:.spec.version, PHASE:.status.phase&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: metallb.io/v1beta1
+kind: MetalLB
+metadata:
+name: metallb
+namespace: metallb-system
+spec:
+nodeSelector:
+node-role.kubernetes.io/worker: &quot;&quot;
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+name: address-pool-bgp
+namespace: metallb-system
+spec:
+addresses:
+- 192.168.155.150/32
+- 192.168.155.151/32
+- 192.168.155.152/32
+- 192.168.155.153/32
+- 192.168.155.154/32
+- 192.168.155.155/32
+autoAssign: true
+protocol: bgp
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: metallb.io/v1beta1
+kind: BFDProfile
+metadata:
+name: test-bfd-prof
+namespace: metallb-system
+spec:
+detectMultiplier: 37
+echoMode: true
+minimumTtl: 10
+passiveMode: true
+receiveInterval: 35
+transmitInterval: 35
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPPeer
+metadata:
+name: peer-test
+namespace: metallb-system
+spec:
+bfdProfile: test-bfd-prof
+myASN: 64520
+peerASN: 64521
+peerAddress: 192.168.86.23
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+name: announce-test
+namespace: metallb-system
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;Client&lt;/strong&gt; - Fedora Core laptop i&amp;#8217;m writing this blog post on ;) I installed Bird and configured it to &lt;code&gt;import&lt;/code&gt; all bgp addresses from the &lt;code&gt;FRR&lt;/code&gt; neighbour as follows.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;dnf install -y bird
+
+cat &amp;lt;&amp;lt;&apos;EOF&apos; &amp;gt; /etc/bird.conf
+log syslog all;
+protocol kernel {
+        ipv4 {
+              import none;
+              export all;
+        };
+        ipv6 {
+              import none;
+              export all;
+        };
+}
+protocol direct {
+        disabled;               # Disable by default
+        ipv4;                   # Connect to default IPv4 table
+        ipv6;                   # ... and to default IPv6 table
+}
+protocol static {
+        ipv4;
+}
+protocol device {
+        scan time 10;
+}
+protocol bgp {
+        description &quot;OpenShift FFR+MetalLB Routes&quot;;
+        local as 64523;
+        neighbor 192.168.86.23 as 64521;
+        source address 192.168.86.109;
+        ipv4 {
+            import all;
+            export none;
+        };
+}
+EOF
+
+systemctl start bird
+journalctl -u bird.service&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_workload_demo&quot;&gt;Workload Demo&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OK, time to try this out with a real application on OpenShift. I am going to use a very simple hello world container.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Login to the SNO instance and create a namespace and a deployment.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc new-project welcome-metallb
+oc create deployment welcome --image=quay.io/eformat/welcome:latest&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now create a &lt;code&gt;LoadBalancer&lt;/code&gt; type service, MetalLB will do its thing.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f- &amp;lt;&amp;lt;&apos;EOF&apos;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: welcome
+spec:
+  selector:
+    app: welcome
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+  type: LoadBalancer
+EOF&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can see an &lt;code&gt;ExternalIP&lt;/code&gt; was assigned along with a &lt;code&gt;NodePort&lt;/code&gt; by MetalLB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc get svc
+
+NAME      TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)        AGE
+welcome   LoadBalancer   172.30.154.119   192.168.155.150   80:30396/TCP   7s&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If we describe the service, we can see that the address was also &lt;strong&gt;announced&lt;/strong&gt; over BGP.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc describe svc welcome
+
+Name:                     welcome
+Namespace:                welcome-metallb
+Labels:                   &amp;lt;none&amp;gt;
+Annotations:              &amp;lt;none&amp;gt;
+Selector:                 app=welcome
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       172.30.154.119
+IPs:                      172.30.154.119
+LoadBalancer Ingress:     192.168.155.150
+Port:                     &amp;lt;unset&amp;gt;  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 &amp;lt;unset&amp;gt;  30396/TCP
+Endpoints:                10.128.0.163:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:
+  Type    Reason        Age   From                Message
+  ----    ------        ----  ----                -------
+  Normal  IPAllocated   57s   metallb-controller  Assigned IP [&quot;192.168.155.150&quot;]
+  Normal  nodeAssigned  57s   metallb-speaker     announcing from node &quot;sno&quot; with protocol &quot;bgp&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can check on our &lt;strong&gt;FRR&lt;/strong&gt; Host the BGP route was seen:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;[root@rhel8 ~]# podman exec -it frr-upstream   vtysh -c &quot;show ip route&quot;
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric,
+       &amp;gt; - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K&amp;gt;* 0.0.0.0/0 [0/100] via 192.168.86.1, eth0, src 192.168.86.23, 19:16:24
+C&amp;gt;* 192.168.86.0/24 is directly connected, eth0, 19:16:24
+B&amp;gt;* 192.168.155.150/32 [20/0] via 192.168.86.32, eth0, weight 1, 00:02:12&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And from our &lt;strong&gt;Client&lt;/strong&gt; that Bird also added the route correctly from the announcement:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;route -n
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.86.1    0.0.0.0         UG    600    0        0 wlp2s0
+192.168.86.0    0.0.0.0         255.255.255.0   U     600    0        0 wlp2s0
+192.168.155.150 192.168.86.23   255.255.255.255 UGH   32     0        0 wlp2s0&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can try the app endpoint from out &lt;strong&gt;Client&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ curl 192.168.155.150:80
+Hello World ! Welcome to OpenShift from welcome-5575fd7854-7hlxj:10.128.0.163&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🍾🍾 Yay ! success. 🍾🍾&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If we deploy the application &lt;em&gt;normally&lt;/em&gt; using a Route&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc new-project welcome-router
+oc new-app quay.io/eformat/welcome:latest
+oc expose svc welcome&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;and a &lt;code&gt;ClusterIP&lt;/code&gt; type &lt;code&gt;Service&lt;/code&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc get svc welcome
+NAME      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+welcome   ClusterIP   172.30.121.184   &amp;lt;none&amp;gt;        8080/TCP   62s&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We see that that MetalLB and normal HAProxy based Routing can happily co-exist in the same cluster.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ curl welcome-welcome-router.apps.foo.eformat.me
+Hello World ! Welcome to OpenShift from welcome-8dcc64fcd-2ktv4:10.128.0.167&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you delete the &lt;code&gt;welcome-metallb&lt;/code&gt; project or &lt;code&gt;LoadBalancer&lt;/code&gt; service, you will see the BGP announcement to remove the routing OK.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🏅That&amp;#8217;s it !! Go forth and BGP !&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Running Mastodon on OpenShift</title>
