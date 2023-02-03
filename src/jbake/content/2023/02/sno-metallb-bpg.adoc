@@ -12,7 +12,7 @@ I won't repeat all the details linked in that post, please go read it before try
 
 - *SNO* - Single Node OpenShift
 - *MetalLB* - creates `LoadBalancer` types of Kubernetes services on top of a bare-metal (like) OpenShift/Kubernetes. I'm going to do it in a kvm/libvirt lab.
-- *BGP* - Border Gateway Protol - runs and scales the internet - (ftw! seriously, go read about bpg hijacking) - with MetalLB we can use BGP mode to statelessly load balance client traffic towards the applications running on bare metal-like OpenShift clusters.
+- *BGP* - Border Gateway Protocol - runs and scales the internet - (ftw! seriously, go read about bpg hijacking) - with MetalLB we can use BGP mode to statelessly load balance client traffic towards the applications running on bare metal-like OpenShift clusters.
 
 The idea is that you can have both normal Routing/HAProxy service `ClusterIP's` on the SDN as well as `LoadBalancer's` being served by BGP/MetalLB in your SNO Cluster. OpenShift SDN (OVNKubernetes as well as OPenShiftSDN) both support MetalLB out of the box.
 
