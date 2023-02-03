@@ -33,7 +33,7 @@ So i need to keep the connections to their myriad of devices running smoothly as
 
 **Router** - Plain old broadband router with firewall and port-forwarding facilities.
 
-**Mesh Network** - Connectivity va Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.
+**Mesh Network** - Connectivity via Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.
 
 **VMHost** - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf[change the defaults for bridge mode to]:
 
