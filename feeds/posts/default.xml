@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 3 Feb 2023 02:40:57 +0000</pubDate>
-      <lastBuildDate>Fri, 3 Feb 2023 02:40:57 +0000</lastBuildDate>
+      <pubDate>Fri, 3 Feb 2023 03:13:23 +0000</pubDate>
+      <lastBuildDate>Fri, 3 Feb 2023 03:13:23 +0000</lastBuildDate>
 
       
       <item>
@@ -34,7 +34,7 @@
 &lt;p&gt;&lt;strong&gt;MetalLB&lt;/strong&gt; - creates &lt;code&gt;LoadBalancer&lt;/code&gt; types of Kubernetes services on top of a bare-metal (like) OpenShift/Kubernetes. I&amp;#8217;m going to do it in a kvm/libvirt lab.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;BGP&lt;/strong&gt; - Border Gateway Protol - runs and scales the internet - (ftw! seriously, go read about bpg hijacking) - with MetalLB we can use BGP mode to statelessly load balance client traffic towards the applications running on bare metal-like OpenShift clusters.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;BGP&lt;/strong&gt; - Border Gateway Protocol - runs and scales the internet - (ftw! seriously, go read about bpg hijacking) - with MetalLB we can use BGP mode to statelessly load balance client traffic towards the applications running on bare metal-like OpenShift clusters.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
