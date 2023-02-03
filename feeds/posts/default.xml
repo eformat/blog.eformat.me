@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 3 Feb 2023 02:14:10 +0000</pubDate>
-      <lastBuildDate>Fri, 3 Feb 2023 02:14:10 +0000</lastBuildDate>
+      <pubDate>Fri, 3 Feb 2023 02:40:57 +0000</pubDate>
+      <lastBuildDate>Fri, 3 Feb 2023 02:40:57 +0000</lastBuildDate>
 
       
       <item>
@@ -62,7 +62,7 @@
 &lt;p&gt;&lt;strong&gt;Router&lt;/strong&gt; - Plain old broadband router with firewall and port-forwarding facilities.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;&lt;strong&gt;Mesh Network&lt;/strong&gt; - Connectivity va Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Mesh Network&lt;/strong&gt; - Connectivity via Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;&lt;strong&gt;VMHost&lt;/strong&gt; - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to &lt;a href=&quot;https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf&quot;&gt;change the defaults for bridge mode to&lt;/a&gt;:&lt;/p&gt;
