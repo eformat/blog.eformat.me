@@ -473,7 +473,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.155.150 192.168.86.23   255.255.255.255 UGH   32     0        0 wlp2s0
 ----
 
-We can try the app endpoint from out **Client**
+We can try the app endpoint from our **Client**
 
 [source,bash,options="wrap"]
 ----
