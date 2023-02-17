@@ -13,7 +13,7 @@
 </div>
 ++++
 
-I have https://github.com/eformat/argocd-team-topologies[written about] how we can align our Tech to setup GitOps tooling so that it fits with out team structure.
+I have https://github.com/eformat/argocd-team-topologies[written about] how we can align our Tech to setup GitOps tooling so that it fits with our team structure.
 
 How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports `Policy` based deployments so we can track compliance of our clusters to the expected configuration management policy.
 
@@ -46,7 +46,7 @@ This deploys the following resources:
 
 * `Placement` Resource - We use a `Placement` resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with `useglobal=true`.
 
-* `ArgoCD` Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the `PolicyGenerator` binary, and configure kustomize to run with the setting:
+* `ArgoCD` Resource - The CR for our global ArgoCD where we will deploy Policy. We configure ArgoCD to download the `PolicyGenerator` binary, and configure kustomize to run with the setting:
 
 ```yaml
 kustomizeBuildOptions: --enable-alpha-plugins
