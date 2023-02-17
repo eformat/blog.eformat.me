@@ -75,6 +75,188 @@
     <div class="col-sm-8">
         
             
+                <a href="../2023/02/acm-team-argocd.html"><h1>ACM &amp; ArgoCD for Teams</h1></a>
+                <p>17 February 2023</p>
+
+                <p>Tags :
+                <a href="openshift.html">openshift</a>, <a href="argocd.html">argocd</a>, <a href="acm.html">acm</a>, <a href="gitops.html">gitops</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/02/acm-team-argocd.html" data-text="ACM &amp; ArgoCD for Teams" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/02/acm-team-argocd.html"></div>
+
+                <p><div class="sect1">
+<h2 id="_quickly_deploying_argocd_applicationsets_using_rhacms_global_clusterset">Quickly deploying ArgoCD ApplicationSets using RHACM&#8217;s Global ClusterSet</h2>
+<div class="sectionbody">
+<div id="lightbox"></div>
+<div class="imageblock id="gpu-concurrency-mechanisms">
+  <img src="/2023/02/sre-cluster-argo-team-namespaced.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>I have <a href="https://github.com/eformat/argocd-team-topologies">written about</a> how we can align our Tech to setup GitOps tooling so that it fits with out team structure.</p>
+</div>
+<div class="paragraph">
+<p>How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports <code>Policy</code> based deployments so we can track compliance of our clusters to the expected configuration management policy.</p>
+</div>
+<div class="paragraph">
+<p>The source code is here - <a href="https://github.com/eformat/acm-gitops" class="bare">https://github.com/eformat/acm-gitops</a> - git clone it so you can follow along.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_global_clustersets">Global ClusterSet&#8217;s</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a cluster is managed in ACM there are several resources created out of the box <a href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#managedclustersets_global">you can read about them here</a> in the documentation. This includes a namespace called <code>open-cluster-management-global-set</code>. We can quickly deploy <code>ApplicationSet&#8217;s</code> in this global-namespace that generates <code>Policy</code> to create our team based ArgoCD instances.</p>
+</div>
+<div class="paragraph">
+<p>We can leverage the fact that <code>ApplicationSet&#8217;s</code> can be associated with a <code>Placement</code> - that way we can easily control where our <code>Policy</code> and <code>Team ArgoCD&#8217;s</code> are deployed across our fleet of OpenShift clusters by using simple label selectors for example.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bootstrap_a_cluster_scoped_argocd_for_our_policies">Bootstrap a Cluster Scoped ArgoCD for our Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We are going Bootstrap a cluster-scoped ArgoCD instance into the <code>open-cluster-management-global-set</code> namespace.</p>
+</div>
+<div class="paragraph">
+<p>We will deploy our Team ArgoCD&#8217;s using ACM <code>Policy</code> that is generated using the <code>PolicyGenerator</code> tool <a href="https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml">which you can read about here from its' reference file</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f bootstrap-acm-global-gitops/setup.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This deploys the following resources:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Subscription</code> Resource - The GitOps operator <code>Subscription</code>, including disabling the default ArgoCD and setting cluster-scoped connections for our namespaces - see the <code>ARGOCD_CLUSTER_CONFIG_NAMESPACES</code> env.var that is part of the <code>Subscription</code> object. If your namespace is not added here, you will get namespace scoped connections for your ArgoCD, rather than all namespaces.</p>
+</li>
+<li>
+<p><code>GitOpsCluster</code> Resource - This resource provides a Connection between ArgoCD-Server and the Placement (where to deploy exactly the Application).</p>
+</li>
+<li>
+<p><code>Placement</code> Resource - We use a <code>Placement</code> resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with <code>useglobal=true</code>.</p>
+</li>
+<li>
+<p><code>ArgoCD</code> Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the <code>PolicyGenerator</code> binary, and configure kustomize to run with the setting:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">kustomizeBuildOptions: --enable-alpha-plugins</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_the_team_based_argocd_using_generated_policy">Deploy the Team Based ArgoCD using Generated Policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We are going to deploy ArgoCD for two teams now using the ACM <code>PolicyGenerator</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>PolicyGenerator</code> runs using kustomize. We specify the <code>generator-input/</code> folder - that holds our YAML manifests for each ArgoCD - in this case one for <code>fteam</code>, one for <code>zteam</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can run the <code>PolicyGenerator</code> from the CLI to test it out before deploying - download it using the <a href="https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)">instructions here</a> e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">kustomize build --enable-alpha-plugins team-gitops-policy/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We specify the placement rule <code>placement-team-argo</code> - where the Clusters needs to be labeled with <code>teamargo=true</code>.</p>
+</div>
+<div class="paragraph">
+<p>We add some default compliance and control labels for grouping purposes in ACM Governance.</p>
+</div>
+<div class="paragraph">
+<p>We also set the <code>pruneObjectBehavior: "DeleteAll</code> so that if we delete the <code>ApplicationSet</code> the generated <code>Policy</code> s deleted and all objects are removed. For this to work, we must also set the <code>remediationAction</code> to <code>enforce</code> for our Policies.</p>
+</div>
+<div class="paragraph">
+<p>One last configuration is to set the ArgoCD <code>IgnoreExtraneous</code> compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: argocd-teams
+placementBindingDefaults:
+  name: argocd-teams
+policyDefaults:
+  placement:
+    placementName: placement-team-argo
+  categories:
+    - CM Configuration Management
+  complianceType: "musthave"
+  controls:
+    - CM-2 Baseline Configuration
+  consolidateManifests: false
+  disabled: false
+  namespace: open-cluster-management-global-set
+  pruneObjectBehavior: "DeleteAll"
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - generic
+  policyAnnotations: {"argocd.argoproj.io/compare-options": "IgnoreExtraneous"}
+policies:
+  - name: team-gitops
+    manifests:
+      - path: generator-input/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To create our Team ArgoCD&#8217;s run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f applicationsets/team-argo-appset.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To delete them, remove the <code>AppSet</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc delete appset team-argo</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_summary">Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can now take this pattern and deploy it across multiple clusters that are managed by ACM. You can easily scale out the number of Team Based ArgoCD and have fine grained control over their individual configuration including third party plugins like Vault. ACM offers a single plane of glass to check if your clusters are compliant to the generated policies, and if not - take remedial action.</p>
+</div>
+<div class="paragraph">
+<p>You can see the code in action in this video.</p>
+</div>
+<div class="videoblock">
+<div class="content">
+<iframe width="800" height="600" src="https://www.youtube.com/embed/eGxPMkADAbc?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
+</div>
+<div class="paragraph">
+<p>🏅Enjoy !!</p>
+</div>
+</div>
+</div></p>
+                <p><a href="2023/02/acm-team-argocd.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2023/02/sno-metallb-bpg.html"><h1>SNO, MetalLB, BGP</h1></a>
                 <p>02 February 2023</p>
 
@@ -1622,10 +1804,16 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
-                <li><a href="openshift.html">openshift</a> (6)</li>
+                <li><a href="openshift.html">openshift</a> (7)</li>
                 
 
                 <li><a href="aiml.html">aiml</a> (2)</li>
+                
+
+                <li><a href="argocd.html">argocd</a> (2)</li>
+                
+
+                <li><a href="gitops.html">gitops</a> (2)</li>
                 
 
                 <li><a href="gpu.html">gpu</a> (2)</li>
@@ -1637,7 +1825,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="stable diffusion.html">stable diffusion</a> (2)</li>
                 
 
-                <li><a href="argocd.html">argocd</a> (1)</li>
+                <li><a href="acm.html">acm</a> (1)</li>
                 
 
                 <li><a href="aws.html">aws</a> (1)</li>
@@ -1668,9 +1856,6 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="frr.html">frr</a> (1)</li>
-                
-
-                <li><a href="gitops.html">gitops</a> (1)</li>
                 
 
                 <li><a href="mastodon.html">mastodon</a> (1)</li>
@@ -1724,7 +1909,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 03 03:13:23 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 17 03:45:15 UTC 2023</a></p>
       </div>
     </div>
     

@@ -6,9 +6,184 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 3 Feb 2023 03:13:23 +0000</pubDate>
-      <lastBuildDate>Fri, 3 Feb 2023 03:13:23 +0000</lastBuildDate>
+      <pubDate>Fri, 17 Feb 2023 03:45:15 +0000</pubDate>
+      <lastBuildDate>Fri, 17 Feb 2023 03:45:15 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>ACM &amp; ArgoCD for Teams</title>
+          <link>https://blog.eformat.me/2023/02/acm-team-argocd.html</link>
+          <pubDate>Fri, 17 Feb 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/02/acm-team-argocd.html</guid>
+          <description>
+              &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_quickly_deploying_argocd_applicationsets_using_rhacms_global_clusterset&quot;&gt;Quickly deploying ArgoCD ApplicationSets using RHACM&amp;#8217;s Global ClusterSet&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;gpu-concurrency-mechanisms&quot;&gt;
+  &lt;img src=&quot;/2023/02/sre-cluster-argo-team-namespaced.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have &lt;a href=&quot;https://github.com/eformat/argocd-team-topologies&quot;&gt;written about&lt;/a&gt; how we can align our Tech to setup GitOps tooling so that it fits with out team structure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports &lt;code&gt;Policy&lt;/code&gt; based deployments so we can track compliance of our clusters to the expected configuration management policy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The source code is here - &lt;a href=&quot;https://github.com/eformat/acm-gitops&quot; class=&quot;bare&quot;&gt;https://github.com/eformat/acm-gitops&lt;/a&gt; - git clone it so you can follow along.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_global_clustersets&quot;&gt;Global ClusterSet&amp;#8217;s&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When a cluster is managed in ACM there are several resources created out of the box &lt;a href=&quot;https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#managedclustersets_global&quot;&gt;you can read about them here&lt;/a&gt; in the documentation. This includes a namespace called &lt;code&gt;open-cluster-management-global-set&lt;/code&gt;. We can quickly deploy &lt;code&gt;ApplicationSet&amp;#8217;s&lt;/code&gt; in this global-namespace that generates &lt;code&gt;Policy&lt;/code&gt; to create our team based ArgoCD instances.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can leverage the fact that &lt;code&gt;ApplicationSet&amp;#8217;s&lt;/code&gt; can be associated with a &lt;code&gt;Placement&lt;/code&gt; - that way we can easily control where our &lt;code&gt;Policy&lt;/code&gt; and &lt;code&gt;Team ArgoCD&amp;#8217;s&lt;/code&gt; are deployed across our fleet of OpenShift clusters by using simple label selectors for example.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_bootstrap_a_cluster_scoped_argocd_for_our_policies&quot;&gt;Bootstrap a Cluster Scoped ArgoCD for our Policies&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We are going Bootstrap a cluster-scoped ArgoCD instance into the &lt;code&gt;open-cluster-management-global-set&lt;/code&gt; namespace.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We will deploy our Team ArgoCD&amp;#8217;s using ACM &lt;code&gt;Policy&lt;/code&gt; that is generated using the &lt;code&gt;PolicyGenerator&lt;/code&gt; tool &lt;a href=&quot;https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml&quot;&gt;which you can read about here from its&apos; reference file&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f bootstrap-acm-global-gitops/setup.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This deploys the following resources:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Subscription&lt;/code&gt; Resource - The GitOps operator &lt;code&gt;Subscription&lt;/code&gt;, including disabling the default ArgoCD and setting cluster-scoped connections for our namespaces - see the &lt;code&gt;ARGOCD_CLUSTER_CONFIG_NAMESPACES&lt;/code&gt; env.var that is part of the &lt;code&gt;Subscription&lt;/code&gt; object. If your namespace is not added here, you will get namespace scoped connections for your ArgoCD, rather than all namespaces.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;GitOpsCluster&lt;/code&gt; Resource - This resource provides a Connection between ArgoCD-Server and the Placement (where to deploy exactly the Application).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; Resource - We use a &lt;code&gt;Placement&lt;/code&gt; resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with &lt;code&gt;useglobal=true&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;ArgoCD&lt;/code&gt; Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the &lt;code&gt;PolicyGenerator&lt;/code&gt; binary, and configure kustomize to run with the setting:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;kustomizeBuildOptions: --enable-alpha-plugins&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_deploy_the_team_based_argocd_using_generated_policy&quot;&gt;Deploy the Team Based ArgoCD using Generated Policy&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We are going to deploy ArgoCD for two teams now using the ACM &lt;code&gt;PolicyGenerator&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The &lt;code&gt;PolicyGenerator&lt;/code&gt; runs using kustomize. We specify the &lt;code&gt;generator-input/&lt;/code&gt; folder - that holds our YAML manifests for each ArgoCD - in this case one for &lt;code&gt;fteam&lt;/code&gt;, one for &lt;code&gt;zteam&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can run the &lt;code&gt;PolicyGenerator&lt;/code&gt; from the CLI to test it out before deploying - download it using the &lt;a href=&quot;https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)&quot;&gt;instructions here&lt;/a&gt; e.g.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;kustomize build --enable-alpha-plugins team-gitops-policy/&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We specify the placement rule &lt;code&gt;placement-team-argo&lt;/code&gt; - where the Clusters needs to be labeled with &lt;code&gt;teamargo=true&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We add some default compliance and control labels for grouping purposes in ACM Governance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We also set the &lt;code&gt;pruneObjectBehavior: &quot;DeleteAll&lt;/code&gt; so that if we delete the &lt;code&gt;ApplicationSet&lt;/code&gt; the generated &lt;code&gt;Policy&lt;/code&gt; s deleted and all objects are removed. For this to work, we must also set the &lt;code&gt;remediationAction&lt;/code&gt; to &lt;code&gt;enforce&lt;/code&gt; for our Policies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One last configuration is to set the ArgoCD &lt;code&gt;IgnoreExtraneous&lt;/code&gt; compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: argocd-teams
+placementBindingDefaults:
+  name: argocd-teams
+policyDefaults:
+  placement:
+    placementName: placement-team-argo
+  categories:
+    - CM Configuration Management
+  complianceType: &quot;musthave&quot;
+  controls:
+    - CM-2 Baseline Configuration
+  consolidateManifests: false
+  disabled: false
+  namespace: open-cluster-management-global-set
+  pruneObjectBehavior: &quot;DeleteAll&quot;
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - generic
+  policyAnnotations: {&quot;argocd.argoproj.io/compare-options&quot;: &quot;IgnoreExtraneous&quot;}
+policies:
+  - name: team-gitops
+    manifests:
+      - path: generator-input/&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To create our Team ArgoCD&amp;#8217;s run:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc apply -f applicationsets/team-argo-appset.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To delete them, remove the &lt;code&gt;AppSet&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;oc delete appset team-argo&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_summary&quot;&gt;Summary&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can now take this pattern and deploy it across multiple clusters that are managed by ACM. You can easily scale out the number of Team Based ArgoCD and have fine grained control over their individual configuration including third party plugins like Vault. ACM offers a single plane of glass to check if your clusters are compliant to the generated policies, and if not - take remedial action.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can see the code in action in this video.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;videoblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;iframe width=&quot;800&quot; height=&quot;600&quot; src=&quot;https://www.youtube.com/embed/eGxPMkADAbc?rel=0&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🏅Enjoy !!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>SNO, MetalLB, BGP</title>

@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - AI Constraints Programming with Quarkus and OptaPlanner</title>
+    <title>eformat.me - ACM &amp; ArgoCD for Teams</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : AI Constraints Programming with Quarkus and OptaPlanner">
-    <meta property="og:title" content="eformat.me - AI Constraints Programming with Quarkus and OptaPlanner" />
+    <meta name="description" content="eformat.me : ACM &amp; ArgoCD for Teams">
+    <meta property="og:title" content="eformat.me - ACM &amp; ArgoCD for Teams" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
     <meta property="og:url" content="https://blog.eformat.me" />
-    <meta property="og:description" content="eformat.me : AI Constraints Programming with Quarkus and OptaPlanner" />
+    <meta property="og:description" content="eformat.me : ACM &amp; ArgoCD for Teams" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -66,7 +66,7 @@
 	<div class="page-header">
         <div class="row">
             <div class="col-xs-4 col-md-2"><img src="../../img/eformat.me.jpg"></div>
-            <div class="col-xs-12 col-md-8"><h1>AI Constraints Programming with Quarkus and OptaPlanner</h1></div>
+            <div class="col-xs-12 col-md-8"><h1>ACM &amp; ArgoCD for Teams</h1></div>
         </div>
 	</div>
 
@@ -77,94 +77,196 @@
         <p>
             <em>
                 <time itemprop="datePublished"
-                      datetime="2022-11-04">
-                    04 November 2022
+                      datetime="2023-02-17">
+                    17 February 2023
                 </time>
             </em>
         </p>
 
-        <meta itemprop="name" content="AI Constraints Programming with Quarkus and OptaPlanner"/>
+        <meta itemprop="name" content="ACM &amp; ArgoCD for Teams"/>
 
         <div itemprop="author" itemscope itemtype="http://schema.org/Person">
             <meta itemprop="name" content="Mike Hepburn"/>
         </div>
         <meta itemprop="inLanguage" content="en-US"/>
-        <meta itemprop="url" content="https://blog.eformat.me/2022/11/optaplanner-quarkus.html"/>
-        <meta itemprop="discussionUrl" content="https://blog.eformat.me/2022/11/optaplanner-quarkus.html#disqus_thread"/>
+        <meta itemprop="url" content="https://blog.eformat.me/2023/02/acm-team-argocd.html"/>
+        <meta itemprop="discussionUrl" content="https://blog.eformat.me/2023/02/acm-team-argocd.html#disqus_thread"/>
 
 
 
         <p>Tags :
-        <meta itemprop="keywords" content="quarkus,constraints,optaplanner,java"/>
-        <a href="../../tags/quarkus.html">quarkus</a>, <a href="../../tags/constraints.html">constraints</a>, <a href="../../tags/optaplanner.html">optaplanner</a>, <a href="../../tags/java.html">java</a>
+        <meta itemprop="keywords" content="openshift,argocd,acm,gitops"/>
+        <a href="../../tags/openshift.html">openshift</a>, <a href="../../tags/argocd.html">argocd</a>, <a href="../../tags/acm.html">acm</a>, <a href="../../tags/gitops.html">gitops</a>
         </p>
 
-        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/optaplanner-quarkus.html" data-via="eformat" data-text="AI Constraints Programming with Quarkus and OptaPlanner" data-lang="en">Tweeter</a-->
+        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/02/acm-team-argocd.html" data-via="eformat" data-text="ACM &amp; ArgoCD for Teams" data-lang="en">Tweeter</a-->
         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/optaplanner-quarkus.html"></div>
+        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/02/acm-team-argocd.html"></div>
 
         <div itemprop="blogPost">
         <p><div class="sect1">
-<h2 id="_ai_on_quarkus_i_love_it_when_an_optaplan_comes_together">AI on Quarkus: I love it when an OptaPlan comes together</h2>
+<h2 id="_quickly_deploying_argocd_applicationsets_using_rhacms_global_clusterset">Quickly deploying ArgoCD ApplicationSets using RHACM&#8217;s Global ClusterSet</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>I have been meaning to look at <a href="https://www.optaplanner.org/">OptaPlanner</a> for ages. All i can say is <em>"Sorry Geoffrey De Smet, you are a goddamn genius and i should have played with OptaPlanner way sooner".</em></p>
+<div id="lightbox"></div>
+<div class="imageblock id="gpu-concurrency-mechanisms">
+  <img src="/2023/02/sre-cluster-argo-team-namespaced.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>So, i watched this video to see how to get started.</p>
+<p>I have <a href="https://github.com/eformat/argocd-team-topologies">written about</a> how we can align our Tech to setup GitOps tooling so that it fits with out team structure.</p>
+</div>
+<div class="paragraph">
+<p>How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports <code>Policy</code> based deployments so we can track compliance of our clusters to the expected configuration management policy.</p>
+</div>
+<div class="paragraph">
+<p>The source code is here - <a href="https://github.com/eformat/acm-gitops" class="bare">https://github.com/eformat/acm-gitops</a> - git clone it so you can follow along.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_global_clustersets">Global ClusterSet&#8217;s</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a cluster is managed in ACM there are several resources created out of the box <a href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#managedclustersets_global">you can read about them here</a> in the documentation. This includes a namespace called <code>open-cluster-management-global-set</code>. We can quickly deploy <code>ApplicationSet&#8217;s</code> in this global-namespace that generates <code>Policy</code> to create our team based ArgoCD instances.</p>
+</div>
+<div class="paragraph">
+<p>We can leverage the fact that <code>ApplicationSet&#8217;s</code> can be associated with a <code>Placement</code> - that way we can easily control where our <code>Policy</code> and <code>Team ArgoCD&#8217;s</code> are deployed across our fleet of OpenShift clusters by using simple label selectors for example.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bootstrap_a_cluster_scoped_argocd_for_our_policies">Bootstrap a Cluster Scoped ArgoCD for our Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We are going Bootstrap a cluster-scoped ArgoCD instance into the <code>open-cluster-management-global-set</code> namespace.</p>
+</div>
+<div class="paragraph">
+<p>We will deploy our Team ArgoCD&#8217;s using ACM <code>Policy</code> that is generated using the <code>PolicyGenerator</code> tool <a href="https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml">which you can read about here from its' reference file</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f bootstrap-acm-global-gitops/setup.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This deploys the following resources:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Subscription</code> Resource - The GitOps operator <code>Subscription</code>, including disabling the default ArgoCD and setting cluster-scoped connections for our namespaces - see the <code>ARGOCD_CLUSTER_CONFIG_NAMESPACES</code> env.var that is part of the <code>Subscription</code> object. If your namespace is not added here, you will get namespace scoped connections for your ArgoCD, rather than all namespaces.</p>
+</li>
+<li>
+<p><code>GitOpsCluster</code> Resource - This resource provides a Connection between ArgoCD-Server and the Placement (where to deploy exactly the Application).</p>
+</li>
+<li>
+<p><code>Placement</code> Resource - We use a <code>Placement</code> resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with <code>useglobal=true</code>.</p>
+</li>
+<li>
+<p><code>ArgoCD</code> Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the <code>PolicyGenerator</code> binary, and configure kustomize to run with the setting:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">kustomizeBuildOptions: --enable-alpha-plugins</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_the_team_based_argocd_using_generated_policy">Deploy the Team Based ArgoCD using Generated Policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We are going to deploy ArgoCD for two teams now using the ACM <code>PolicyGenerator</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>PolicyGenerator</code> runs using kustomize. We specify the <code>generator-input/</code> folder - that holds our YAML manifests for each ArgoCD - in this case one for <code>fteam</code>, one for <code>zteam</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can run the <code>PolicyGenerator</code> from the CLI to test it out before deploying - download it using the <a href="https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)">instructions here</a> e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">kustomize build --enable-alpha-plugins team-gitops-policy/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We specify the placement rule <code>placement-team-argo</code> - where the Clusters needs to be labeled with <code>teamargo=true</code>.</p>
+</div>
+<div class="paragraph">
+<p>We add some default compliance and control labels for grouping purposes in ACM Governance.</p>
+</div>
+<div class="paragraph">
+<p>We also set the <code>pruneObjectBehavior: "DeleteAll</code> so that if we delete the <code>ApplicationSet</code> the generated <code>Policy</code> s deleted and all objects are removed. For this to work, we must also set the <code>remediationAction</code> to <code>enforce</code> for our Policies.</p>
+</div>
+<div class="paragraph">
+<p>One last configuration is to set the ArgoCD <code>IgnoreExtraneous</code> compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: argocd-teams
+placementBindingDefaults:
+  name: argocd-teams
+policyDefaults:
+  placement:
+    placementName: placement-team-argo
+  categories:
+    - CM Configuration Management
+  complianceType: "musthave"
+  controls:
+    - CM-2 Baseline Configuration
+  consolidateManifests: false
+  disabled: false
+  namespace: open-cluster-management-global-set
+  pruneObjectBehavior: "DeleteAll"
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - generic
+  policyAnnotations: {"argocd.argoproj.io/compare-options": "IgnoreExtraneous"}
+policies:
+  - name: team-gitops
+    manifests:
+      - path: generator-input/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To create our Team ArgoCD&#8217;s run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc apply -f applicationsets/team-argo-appset.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To delete them, remove the <code>AppSet</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">oc delete appset team-argo</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_summary">Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can now take this pattern and deploy it across multiple clusters that are managed by ACM. You can easily scale out the number of Team Based ArgoCD and have fine grained control over their individual configuration including third party plugins like Vault. ACM offers a single plane of glass to check if your clusters are compliant to the generated policies, and if not - take remedial action.</p>
+</div>
+<div class="paragraph">
+<p>You can see the code in action in this video.</p>
 </div>
 <div class="videoblock">
 <div class="content">
-<iframe src="https://www.youtube.com/embed/3N3NoDs3Ylc?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="800" height="600" src="https://www.youtube.com/embed/eGxPMkADAbc?rel=0" frameborder="0" allowfullscreen></iframe>
 </div>
 </div>
 <div class="paragraph">
-<p>So much fun ! 😁 to code.</p>
-</div>
-<div id="lightbox"></div>
-<div class="imageblock id="quarkus-school-timetabling-screenshot">
-  <img src="/2022/11/quarkus-school-timetabling-screenshot.png" class="zoom">
-  <div class="title">Figure - Quarkus School Timetable</div>
-</div>
-<div class="paragraph">
-<p>There were a couple of long learnt lessons i remembered whilst playing with the code.</p>
-</div>
-<div class="paragraph">
-<p>(1) Domain Driven Design</p>
-</div>
-<div class="paragraph">
-<p>To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keeps giving - DDD (and UML) is perfect to help you out here.</p>
-</div>
-<div id="lightbox"></div>
-<div class="imageblock id="ddd-school-timetable-classes">
-  <img src="/2022/11/ddd-school-timetable-classes.png" class="zoom">
-  <div class="title">Figure - Class Hierarchy</div>
-</div>
-<div class="paragraph">
-<p>You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.</p>
-</div>
-<div class="paragraph">
-<p>(2) Constraints Programming</p>
-</div>
-<div class="paragraph">
-<p>I went looking for some code i helped write some 15 years ago ! A <a href="https://en.wikipedia.org/wiki/Constraint_programming">Constraint</a> based programming model we had written in C++</p>
-</div>
-<script src="https://gist.github.com/eformat/87efba0e2ec717ff077852c5924766ec.js"></script>
-<div class="paragraph">
-<p>We had a whole bunch of Production classes used for calculating different trades types and their values. You added these <em>productions</em> into a solver class heirarcy and if you had the right <a href="https://en.wikipedia.org/wiki/Degrees_of_freedom">degrees of freedom</a> your trade calculation would be successful. The beauty of it was the solver would spit out any parameter you had not specified, as long as it was possible to calculate it based on the production rules.</p>
-</div>
-<div class="paragraph">
-<p>OptaPlanner viscerally reminded me of that code and experience, and started me thinking about how to use it for a similar use case.</p>
-</div>
-<script src="https://gist.github.com/eformat/6551fe9434bb0a810321c83bd07adee2.js"></script>
-<div class="paragraph">
-<p>I am now a fan 🥰</p>
-</div>
-<div class="paragraph">
-<p>One last lesson from the OptaPlanner crew was their use of a a new static doc-generation system, their docs are a thing of beauty i have to say, <a href="https://jbake.org">JBake</a> which I am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.</p>
-</div>
-<div class="paragraph">
-<p>OptaPlanner Quickstarts Code - <a href="https://github.com/kiegroup/optaplanner-quickstarts" class="bare">https://github.com/kiegroup/optaplanner-quickstarts</a></p>
+<p>🏅Enjoy !!</p>
 </div>
 </div>
 </div></p>
