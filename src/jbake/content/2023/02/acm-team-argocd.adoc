@@ -1,0 +1,127 @@
+= ACM & ArgoCD for Teams
+:jbake-date: 2023-02-17
+:jbake-type: post
+:jbake-tags: openshift,argocd,acm,gitops
+:jbake-status: published
+
+== Quickly deploying ArgoCD ApplicationSets using RHACM's Global ClusterSet
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="gpu-concurrency-mechanisms">
+  <img src="/2023/02/sre-cluster-argo-team-namespaced.png" class="zoom">
+</div>
+++++
+
+I have https://github.com/eformat/argocd-team-topologies[written about] how we can align our Tech to setup GitOps tooling so that it fits with out team structure.
+
+How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports `Policy` based deployments so we can track compliance of our clusters to the expected configuration management policy.
+
+The source code is here - https://github.com/eformat/acm-gitops - git clone it so you can follow along.
+
+== Global ClusterSet's
+
+When a cluster is managed in ACM there are several resources created out of the box https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.6/html-single/multicluster_engine/index#managedclustersets_global[you can read about them here] in the documentation. This includes a namespace called `open-cluster-management-global-set`. We can quickly deploy `ApplicationSet's` in this global-namespace that generates `Policy` to create our team based ArgoCD instances.
+
+We can leverage the fact that `ApplicationSet's` can be associated with a `Placement` - that way we can easily control where our `Policy` and `Team ArgoCD's` are deployed across our fleet of OpenShift clusters by using simple label selectors for example.
+
+== Bootstrap a Cluster Scoped ArgoCD for our Policies
+
+We are going Bootstrap a cluster-scoped ArgoCD instance into the `open-cluster-management-global-set` namespace.
+
+We will deploy our Team ArgoCD's using ACM `Policy` that is generated using the `PolicyGenerator` tool https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml[which you can read about here from its' reference file].
+
+[source,bash,options="wrap"]
+----
+oc apply -f bootstrap-acm-global-gitops/setup.yaml
+----
+
+This deploys the following resources:
+
+* `Subscription` Resource - The GitOps operator `Subscription`, including disabling the default ArgoCD and setting cluster-scoped connections for our namespaces - see the `ARGOCD_CLUSTER_CONFIG_NAMESPACES` env.var that is part of the `Subscription` object. If your namespace is not added here, you will get namespace scoped connections for your ArgoCD, rather than all namespaces.
+
+* `GitOpsCluster` Resource - This resource provides a Connection between ArgoCD-Server and the Placement (where to deploy exactly the Application).
+
+* `Placement` Resource - We use a `Placement` resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with `useglobal=true`.
+
+* `ArgoCD` Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the `PolicyGenerator` binary, and configure kustomize to run with the setting:
+
+```yaml
+kustomizeBuildOptions: --enable-alpha-plugins
+```
+
+== Deploy the Team Based ArgoCD using Generated Policy
+
+We are going to deploy ArgoCD for two teams now using the ACM `PolicyGenerator`.
+
+The `PolicyGenerator` runs using kustomize. We specify the `generator-input/` folder - that holds our YAML manifests for each ArgoCD - in this case one for `fteam`, one for `zteam`.
+
+
+You can run the `PolicyGenerator` from the CLI to test it out before deploying - download it using the https://github.com/stolostron/policy-generator-plugin/blob/main/README.md)[instructions here] e.g.
+
+```bash
+kustomize build --enable-alpha-plugins team-gitops-policy/
+```
+
+We specify the placement rule `placement-team-argo` - where the Clusters needs to be labeled with `teamargo=true`.
+
+We add some default compliance and control labels for grouping purposes in ACM Governance.
+
+We also set the `pruneObjectBehavior: "DeleteAll` so that if we delete the `ApplicationSet` the generated `Policy` s deleted and all objects are removed. For this to work, we must also set the `remediationAction` to `enforce` for our Policies.
+
+One last configuration is to set the ArgoCD `IgnoreExtraneous` compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.
+
+[source,yaml,options="wrap"]
+----
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: argocd-teams
+placementBindingDefaults:
+  name: argocd-teams
+policyDefaults:
+  placement:
+    placementName: placement-team-argo
+  categories:
+    - CM Configuration Management
+  complianceType: "musthave"
+  controls:
+    - CM-2 Baseline Configuration
+  consolidateManifests: false
+  disabled: false
+  namespace: open-cluster-management-global-set
+  pruneObjectBehavior: "DeleteAll"
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - generic
+  policyAnnotations: {"argocd.argoproj.io/compare-options": "IgnoreExtraneous"}
+policies:
+  - name: team-gitops
+    manifests:
+      - path: generator-input/
+----
+
+To create our Team ArgoCD's run:
+
+[source,bash,options="wrap"]
+----
+oc apply -f applicationsets/team-argo-appset.yaml
+----
+
+To delete them, remove the `AppSet`
+
+[source,bash,options="wrap"]
+----
+oc delete appset team-argo
+----
+
+== Summary
+
+You can now take this pattern and deploy it across multiple clusters that are managed by ACM. You can easily scale out the number of Team Based ArgoCD and have fine grained control over their individual configuration including third party plugins like Vault. ACM offers a single plane of glass to check if your clusters are compliant to the generated policies, and if not - take remedial action.
+
+You can see the code in action in this video.
+
+video::eGxPMkADAbc[youtube,width=800,height=600]
+
+🏅Enjoy !!
