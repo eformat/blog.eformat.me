@@ -31,6 +31,8 @@ We are going Bootstrap a cluster-scoped ArgoCD instance into the `open-cluster-m
 
 We will deploy our Team ArgoCD's using ACM `Policy` that is generated using the `PolicyGenerator` tool https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml[which you can read about here from its' reference file].
 
+Make sure to label the cluster's where you want to deploy to with `useglobal=true`.
+
 [source,bash,options="wrap"]
 ----
 oc apply -f bootstrap-acm-global-gitops/setup.yaml
@@ -101,6 +103,8 @@ policies:
     manifests:
       - path: generator-input/
 ----
+
+Make sure to label the cluster's where you want to deploy to with `teamargo=true`.
 
 To create our Team ArgoCD's run:
 
