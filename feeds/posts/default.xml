@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 17 Feb 2023 03:45:15 +0000</pubDate>
-      <lastBuildDate>Fri, 17 Feb 2023 03:45:15 +0000</lastBuildDate>
+      <pubDate>Fri, 17 Feb 2023 03:57:48 +0000</pubDate>
+      <lastBuildDate>Fri, 17 Feb 2023 03:57:48 +0000</lastBuildDate>
 
       
       <item>
@@ -53,6 +53,9 @@
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;We will deploy our Team ArgoCD&amp;#8217;s using ACM &lt;code&gt;Policy&lt;/code&gt; that is generated using the &lt;code&gt;PolicyGenerator&lt;/code&gt; tool &lt;a href=&quot;https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml&quot;&gt;which you can read about here from its&apos; reference file&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Make sure to label the cluster&amp;#8217;s where you want to deploy to with &lt;code&gt;useglobal=true&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
@@ -144,6 +147,9 @@ policies:
     manifests:
       - path: generator-input/&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Make sure to label the cluster&amp;#8217;s where you want to deploy to with &lt;code&gt;teamargo=true&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;To create our Team ArgoCD&amp;#8217;s run:&lt;/p&gt;

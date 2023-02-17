@@ -139,6 +139,9 @@
 <div class="paragraph">
 <p>We will deploy our Team ArgoCD&#8217;s using ACM <code>Policy</code> that is generated using the <code>PolicyGenerator</code> tool <a href="https://github.com/stolostron/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml">which you can read about here from its' reference file</a>.</p>
 </div>
+<div class="paragraph">
+<p>Make sure to label the cluster&#8217;s where you want to deploy to with <code>useglobal=true</code>.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="bash">oc apply -f bootstrap-acm-global-gitops/setup.yaml</code></pre>
@@ -229,6 +232,9 @@ policies:
     manifests:
       - path: generator-input/</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Make sure to label the cluster&#8217;s where you want to deploy to with <code>teamargo=true</code>.</p>
 </div>
 <div class="paragraph">
 <p>To create our Team ArgoCD&#8217;s run:</p>
@@ -373,7 +379,7 @@ policies:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 17 03:45:15 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 17 03:57:48 UTC 2023</a></p>
       </div>
     </div>
     
