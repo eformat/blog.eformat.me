@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 17 Feb 2023 03:57:48 +0000</pubDate>
-      <lastBuildDate>Fri, 17 Feb 2023 03:57:48 +0000</lastBuildDate>
+      <pubDate>Fri, 17 Feb 2023 09:22:13 +0000</pubDate>
+      <lastBuildDate>Fri, 17 Feb 2023 09:22:13 +0000</lastBuildDate>
 
       
       <item>
@@ -24,7 +24,7 @@
   &lt;img src=&quot;/2023/02/sre-cluster-argo-team-namespaced.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;I have &lt;a href=&quot;https://github.com/eformat/argocd-team-topologies&quot;&gt;written about&lt;/a&gt; how we can align our Tech to setup GitOps tooling so that it fits with out team structure.&lt;/p&gt;
+&lt;p&gt;I have &lt;a href=&quot;https://github.com/eformat/argocd-team-topologies&quot;&gt;written about&lt;/a&gt; how we can align our Tech to setup GitOps tooling so that it fits with our team structure.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports &lt;code&gt;Policy&lt;/code&gt; based deployments so we can track compliance of our clusters to the expected configuration management policy.&lt;/p&gt;
@@ -77,7 +77,7 @@
 &lt;p&gt;&lt;code&gt;Placement&lt;/code&gt; Resource - We use a &lt;code&gt;Placement&lt;/code&gt; resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with &lt;code&gt;useglobal=true&lt;/code&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;code&gt;ArgoCD&lt;/code&gt; Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the &lt;code&gt;PolicyGenerator&lt;/code&gt; binary, and configure kustomize to run with the setting:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ArgoCD&lt;/code&gt; Resource - The CR for our global ArgoCD where we will deploy Policy. We configure ArgoCD to download the &lt;code&gt;PolicyGenerator&lt;/code&gt; binary, and configure kustomize to run with the setting:&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;

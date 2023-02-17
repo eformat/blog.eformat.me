@@ -112,7 +112,7 @@
   <img src="/2023/02/sre-cluster-argo-team-namespaced.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>I have <a href="https://github.com/eformat/argocd-team-topologies">written about</a> how we can align our Tech to setup GitOps tooling so that it fits with out team structure.</p>
+<p>I have <a href="https://github.com/eformat/argocd-team-topologies">written about</a> how we can align our Tech to setup GitOps tooling so that it fits with our team structure.</p>
 </div>
 <div class="paragraph">
 <p>How can we make these patterns real using tools like Advanced Cluster Manager (ACM) that help us deploy to a fleet of Clusters ? ACM supports <code>Policy</code> based deployments so we can track compliance of our clusters to the expected configuration management policy.</p>
@@ -165,7 +165,7 @@
 <p><code>Placement</code> Resource - We use a <code>Placement</code> resource for this global ArgoCD which deploys to a fleet of Clusters, where the Clusters needs to be labeled with <code>useglobal=true</code>.</p>
 </li>
 <li>
-<p><code>ArgoCD</code> Resource - The CR for out global Argocd where we will deploy Policy. We configure ArgoCD to download the <code>PolicyGenerator</code> binary, and configure kustomize to run with the setting:</p>
+<p><code>ArgoCD</code> Resource - The CR for our global ArgoCD where we will deploy Policy. We configure ArgoCD to download the <code>PolicyGenerator</code> binary, and configure kustomize to run with the setting:</p>
 </li>
 </ul>
 </div>
@@ -407,7 +407,7 @@ policies:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 17 03:57:47 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Feb 17 09:22:12 UTC 2023</a></p>
       </div>
     </div>
     
