@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 17 Feb 2023 09:22:13 +0000</pubDate>
-      <lastBuildDate>Fri, 17 Feb 2023 09:22:13 +0000</lastBuildDate>
+      <pubDate>Fri, 10 Mar 2023 23:53:09 +0000</pubDate>
+      <lastBuildDate>Fri, 10 Mar 2023 23:53:09 +0000</lastBuildDate>
 
       
       <item>
@@ -115,7 +115,7 @@
 &lt;p&gt;We also set the &lt;code&gt;pruneObjectBehavior: &quot;DeleteAll&lt;/code&gt; so that if we delete the &lt;code&gt;ApplicationSet&lt;/code&gt; the generated &lt;code&gt;Policy&lt;/code&gt; s deleted and all objects are removed. For this to work, we must also set the &lt;code&gt;remediationAction&lt;/code&gt; to &lt;code&gt;enforce&lt;/code&gt; for our Policies.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;One last configuration is to set the ArgoCD &lt;code&gt;IgnoreExtraneous&lt;/code&gt; compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.&lt;/p&gt;
+&lt;p&gt;One last configuration is to set the ArgoCD &lt;code&gt;IgnoreExtraneous&lt;/code&gt; compare option - as Policy is generated we do not want ArgoCD to be out of sync for these objects.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
