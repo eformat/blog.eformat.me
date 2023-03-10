@@ -71,7 +71,7 @@ We add some default compliance and control labels for grouping purposes in ACM G
 
 We also set the `pruneObjectBehavior: "DeleteAll` so that if we delete the `ApplicationSet` the generated `Policy` s deleted and all objects are removed. For this to work, we must also set the `remediationAction` to `enforce` for our Policies.
 
-One last configuration is to set the ArgoCD `IgnoreExtraneous` compare option - as Policy is generated we do not want ArgoCD to be our of sync for these objects.
+One last configuration is to set the ArgoCD `IgnoreExtraneous` compare option - as Policy is generated we do not want ArgoCD to be out of sync for these objects.
 
 [source,yaml,options="wrap"]
 ----
