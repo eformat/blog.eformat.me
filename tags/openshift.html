@@ -75,6 +75,218 @@
     <div class="col-sm-8">
         
             
+                <a href="../2023/04/disconnected-registries.html"><h1>OpenShift Install, Semi-Connected Registries and Mirror by Digest Images</h1></a>
+                <p>12 April 2023</p>
+
+                <p>Tags :
+                <a href="openshift.html">openshift</a>, <a href="gitops.html">gitops</a>, <a href="registries.html">registries</a>, <a href="disconnected.html">disconnected</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/04/disconnected-registries.html" data-text="OpenShift Install, Semi-Connected Registries and Mirror by Digest Images" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/04/disconnected-registries.html"></div>
+
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>I have been working with disconnected OpenShift clusters quite a lot recently. One of the things you need to deal with is disconnected registries and mirror by digest images.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quay_transparent_proxy_pull_through_cache">Quay Transparent Proxy-Pull Through Cache</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are a couple general approaches to configuring registries when disconnected. The <a href="https://docs.openshift.com/container-platform/4.12/installing/disconnected_install/index.html">product documentation</a> has great depth of detail about using a Quay Mirror Registry. This is the right approach when wanting disconnected. The downside when you are testing things out in a lab is the mirror import process is both time-consuming and uses a lot of disk space.</p>
+</div>
+<div class="paragraph">
+<p>One approach i have become fond of is a what i call a <code>semi-connected</code> method, where your clusters' use a <a href="https://www.youtube.com/watch?v=oVlRDuCD6ic">Quay Transparent Proxy-Pull Through Cache</a> to speed things up. This still uses disk space, but you don&#8217;t need to import all the images before installing a cluster.</p>
+</div>
+<div class="paragraph">
+<p>After you install the quay mirror registry on the provisioning host, set this in your <code>config.yaml</code> and restart the quay pods or service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">FEATURE_PROXY_CACHE: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is <strong>just</strong> to the mirror. More on that below.</p>
+</div>
+<div class="paragraph">
+<p>If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.</p>
+</div>
+<div class="paragraph">
+<p>For installing OpenShift, you really need (at a minimum) two mirror organisations. I set up these two (admin is a default):</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quay-mirror-orgs">
+  <img src="/2023/04/quay-mirror-orgs.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Where each Organisation points to these registries:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">registry-redhat-io -&gt; registry.redhat.io
+ocp4-mirror -&gt; quay.io/openshift-release-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>One nice trick is that you can <strong>base64 decode</strong> your Red Hat <strong>pull-secret</strong> (you download this from cloud.redhat.com) and use those credentials in the Organisation mirror registry setup for authentication.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ocp_install_configuration">OCP Install Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now comes for the tricky part - configuring your OpenShift installer setup. There are a several ways to do this. The one you use depends on your install method and how you wish to control the <strong>registries.conf</strong> that gets configured for you cluster nodes.</p>
+</div>
+<div class="paragraph">
+<p>I have been working with the <strong>Agent-based</strong> installer method for Bare Metal (i fake it on libvirt with sushy) - you can <a href="https://github.com/eformat/acm-gitops-ocp">check out all the code here</a>.</p>
+</div>
+<div class="paragraph">
+<p>The issue i think everyone quickly discovers is that the OpenShift installer sets all mirror&#8217;s by digest to be true i.e. <strong>mirror-by-digest-only = true</strong>. If you check the <a href="https://github.com/openshift/installer">installer code</a> its here:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="ocp-installer-boostrap">
+  <img src="/2023/04/ocp-installer-boostrap.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Setting mirror by digest to true is intentional, it helps stop image spoofing or getting an image from a moving tag.</p>
+</div>
+<div class="paragraph">
+<p>Unfortunately not all Operators pull by digest either. In fact the deployments that are part of the <strong>openshift-marketplace</strong> do not. So after a cluster install we see Image Pull errors like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS             RESTARTS      AGE
+certified-operators-d2nd9              0/1     ImagePullBackOff   0             15h
+certified-operators-pqrlz              0/1     ImagePullBackOff   0             15h
+community-operators-7kpbm              0/1     ImagePullBackOff   0             15h
+community-operators-k662l              0/1     ImagePullBackOff   0             15h
+marketplace-operator-84457bfc9-v22db   1/1     Running            4 (15h ago)   16h
+redhat-marketplace-kjrt9               0/1     ImagePullBackOff   0             15h
+redhat-marketplace-sqch2               0/1     ImagePullBackOff   0             15h
+redhat-operators-4m4gt                 0/1     ImagePullBackOff   0             15h
+redhat-operators-62z6x                 0/1     ImagePullBackOff   0             15h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And checking one of the pods we see it is trying to pull by tag:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ oc describe pod certified-operators-d2nd9
+Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image "registry.redhat.io/redhat/certified-operator-index:v4.12"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unfortunately you cannot configure <strong>ImageContentSourcePolicy</strong> for <strong>mirror-by-digest-only = false</strong> so (currently) the only solution is to apply MachineConfig <strong>post</strong> your install as a day#2 thing as documented in this <a href="https://access.redhat.com/solutions/4817401">Knowledge Base Article</a></p>
+</div>
+<div class="paragraph">
+<p>Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the <strong>new API&#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet</strong> - see <a href="https://issues.redhat.com/browse/OCPNODE-521">Allow mirroring images by tags</a> REF for more details on these changes.</p>
+</div>
+<div class="paragraph">
+<p>For now though, i use <strong>butane</strong> and MachineConfig as per the KB article at post install time to configure <strong>mirror-by-digest-only = false</strong> for my mirror registries that need it. From my <a href="https://github.com/eformat/acm-gitops-ocp">git repo</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">butane 99-master-mirror-by-digest-registries.bu -o 99-master-mirror-by-digest-registries.yaml
+oc apply -f 99-master-mirror-by-digest-registries.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will reboot your nodes to apply the MCP, you may add or change the butane template(s) and yaml to suit the nodes you need to target e.g. masters or workers (or any other) node role. In my case it&#8217;s targeting a SNO cluster so master is fine.</p>
+</div>
+<div class="paragraph">
+<p>All going well your marketplace pods should now pull images and run OK</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS    RESTARTS   AGE
+certified-operators-d2nd9              1/1     Running   0          16h
+community-operators-k662l              1/1     Running   0          16h
+marketplace-operator-84457bfc9-v22db   1/1     Running   5          16h
+redhat-marketplace-kjrt9               1/1     Running   0          16h
+redhat-operators-62z6x                 1/1     Running   0          16h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A word of warning when using the Assited Installer / Agent Installer method. If you try to set <strong>mirror-by-digest-only = false</strong> registries in your <strong>AgentServiceConfig</strong> using the provided ConfigMap e.g. something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quay-mirror-config
+  namespace: multicluster-engine
+  labels:
+    app: assisted-service
+data:
+  LOG_LEVEL: "debug"
+  ca-bundle.crt: |
+    -----BEGIN CERTIFICATE-----
+    ! Put you CA for your mirror registry here !
+    -----END CERTIFICATE-----
+
+  registries.conf: |
+    unqualified-search-registries = ["registry.redhat.io", "registry.access.redhat.com", "docker.io"]
+
+    [[registry]]
+      prefix = ""
+      location = "registry.redhat.io/redhat"
+      mirror-by-digest-only = false
+      [[registry.mirror]]
+        location = "quay.eformat.me:8443/registry-redhat-io/redhat"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The registry mirror setting will get reset to <strong>mirror-by-digest-only = true</strong> by the installer.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, if you try and set MachineConfig in the <strong>ignitionConfigOverride</strong> in the <strong>InfraEnv</strong> e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+...
+  # User for modify ignition during discovery
+  ignitionConfigOverride: '{"ignition": {"version": "3.1.0"}, "storage": {"files": [{"path": "/etc/containers/registries.conf", "mode": 420, "overwrite": true, "user": { "name": "root"},"contents": {"source": "data:text/plain;base64,dW5xd..."}}]}}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>it also gets overriden by the installer. I tried both these methods and failed 😭😭</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_summary">Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For now, the only way to configure <strong>mirror-by-digest-only = false</strong> is via MachineConfig <strong>post-install</strong>.</p>
+</div>
+<div class="paragraph">
+<p>You can always <strong>try</strong> and only mirror images by digest, just remember that various operators and components may not be configured this work this way.</p>
+</div>
+<div class="paragraph">
+<p>The future looks bright with the new API&#8217;s, as this has been a long-standing issue now.</p>
+</div>
+<div class="paragraph">
+<p>🏅Good luck installing out there !!</p>
+</div>
+</div>
+</div></p>
+                <p><a href="2023/04/disconnected-registries.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2023/02/acm-team-argocd.html"><h1>ACM &amp; ArgoCD for Teams</h1></a>
                 <p>17 February 2023</p>
 
@@ -1810,16 +2022,16 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
-                <li><a href="openshift.html">openshift</a> (7)</li>
+                <li><a href="openshift.html">openshift</a> (8)</li>
+                
+
+                <li><a href="gitops.html">gitops</a> (3)</li>
                 
 
                 <li><a href="aiml.html">aiml</a> (2)</li>
                 
 
                 <li><a href="argocd.html">argocd</a> (2)</li>
-                
-
-                <li><a href="gitops.html">gitops</a> (2)</li>
                 
 
                 <li><a href="gpu.html">gpu</a> (2)</li>
@@ -1850,6 +2062,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="devops.html">devops</a> (1)</li>
+                
+
+                <li><a href="disconnected.html">disconnected</a> (1)</li>
                 
 
                 <li><a href="fediverse.html">fediverse</a> (1)</li>
@@ -1888,6 +2103,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="quarkus.html">quarkus</a> (1)</li>
                 
 
+                <li><a href="registries.html">registries</a> (1)</li>
+                
+
                 <li><a href="security.html">security</a> (1)</li>
                 
 
@@ -1915,7 +2133,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Mar 10 23:53:09 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Apr 13 01:39:52 UTC 2023</a></p>
       </div>
     </div>
     

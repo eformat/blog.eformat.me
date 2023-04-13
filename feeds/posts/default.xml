@@ -6,9 +6,214 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 10 Mar 2023 23:53:09 +0000</pubDate>
-      <lastBuildDate>Fri, 10 Mar 2023 23:53:09 +0000</lastBuildDate>
+      <pubDate>Thu, 13 Apr 2023 01:39:52 +0000</pubDate>
+      <lastBuildDate>Thu, 13 Apr 2023 01:39:52 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>OpenShift Install, Semi-Connected Registries and Mirror by Digest Images</title>
+          <link>https://blog.eformat.me/2023/04/disconnected-registries.html</link>
+          <pubDate>Wed, 12 Apr 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/04/disconnected-registries.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have been working with disconnected OpenShift clusters quite a lot recently. One of the things you need to deal with is disconnected registries and mirror by digest images.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_quay_transparent_proxy_pull_through_cache&quot;&gt;Quay Transparent Proxy-Pull Through Cache&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are a couple general approaches to configuring registries when disconnected. The &lt;a href=&quot;https://docs.openshift.com/container-platform/4.12/installing/disconnected_install/index.html&quot;&gt;product documentation&lt;/a&gt; has great depth of detail about using a Quay Mirror Registry. This is the right approach when wanting disconnected. The downside when you are testing things out in a lab is the mirror import process is both time-consuming and uses a lot of disk space.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One approach i have become fond of is a what i call a &lt;code&gt;semi-connected&lt;/code&gt; method, where your clusters&apos; use a &lt;a href=&quot;https://www.youtube.com/watch?v=oVlRDuCD6ic&quot;&gt;Quay Transparent Proxy-Pull Through Cache&lt;/a&gt; to speed things up. This still uses disk space, but you don&amp;#8217;t need to import all the images before installing a cluster.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After you install the quay mirror registry on the provisioning host, set this in your &lt;code&gt;config.yaml&lt;/code&gt; and restart the quay pods or service:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;FEATURE_PROXY_CACHE: true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is &lt;strong&gt;just&lt;/strong&gt; to the mirror. More on that below.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For installing OpenShift, you really need (at a minimum) two mirror organisations. I set up these two (admin is a default):&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;quay-mirror-orgs&quot;&gt;
+  &lt;img src=&quot;/2023/04/quay-mirror-orgs.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Where each Organisation points to these registries:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;registry-redhat-io -&amp;gt; registry.redhat.io
+ocp4-mirror -&amp;gt; quay.io/openshift-release-dev&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One nice trick is that you can &lt;strong&gt;base64 decode&lt;/strong&gt; your Red Hat &lt;strong&gt;pull-secret&lt;/strong&gt; (you download this from cloud.redhat.com) and use those credentials in the Organisation mirror registry setup for authentication.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_ocp_install_configuration&quot;&gt;OCP Install Configuration&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now comes for the tricky part - configuring your OpenShift installer setup. There are a several ways to do this. The one you use depends on your install method and how you wish to control the &lt;strong&gt;registries.conf&lt;/strong&gt; that gets configured for you cluster nodes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have been working with the &lt;strong&gt;Agent-based&lt;/strong&gt; installer method for Bare Metal (i fake it on libvirt with sushy) - you can &lt;a href=&quot;https://github.com/eformat/acm-gitops-ocp&quot;&gt;check out all the code here&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The issue i think everyone quickly discovers is that the OpenShift installer sets all mirror&amp;#8217;s by digest to be true i.e. &lt;strong&gt;mirror-by-digest-only = true&lt;/strong&gt;. If you check the &lt;a href=&quot;https://github.com/openshift/installer&quot;&gt;installer code&lt;/a&gt; its here:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;ocp-installer-boostrap&quot;&gt;
+  &lt;img src=&quot;/2023/04/ocp-installer-boostrap.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Setting mirror by digest to true is intentional, it helps stop image spoofing or getting an image from a moving tag.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Unfortunately not all Operators pull by digest either. In fact the deployments that are part of the &lt;strong&gt;openshift-marketplace&lt;/strong&gt; do not. So after a cluster install we see Image Pull errors like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS             RESTARTS      AGE
+certified-operators-d2nd9              0/1     ImagePullBackOff   0             15h
+certified-operators-pqrlz              0/1     ImagePullBackOff   0             15h
+community-operators-7kpbm              0/1     ImagePullBackOff   0             15h
+community-operators-k662l              0/1     ImagePullBackOff   0             15h
+marketplace-operator-84457bfc9-v22db   1/1     Running            4 (15h ago)   16h
+redhat-marketplace-kjrt9               0/1     ImagePullBackOff   0             15h
+redhat-marketplace-sqch2               0/1     ImagePullBackOff   0             15h
+redhat-operators-4m4gt                 0/1     ImagePullBackOff   0             15h
+redhat-operators-62z6x                 0/1     ImagePullBackOff   0             15h&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And checking one of the pods we see it is trying to pull by tag:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc describe pod certified-operators-d2nd9
+Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image &quot;registry.redhat.io/redhat/certified-operator-index:v4.12&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Unfortunately you cannot configure &lt;strong&gt;ImageContentSourcePolicy&lt;/strong&gt; for &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; so (currently) the only solution is to apply MachineConfig &lt;strong&gt;post&lt;/strong&gt; your install as a day#2 thing as documented in this &lt;a href=&quot;https://access.redhat.com/solutions/4817401&quot;&gt;Knowledge Base Article&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the &lt;strong&gt;new API&amp;#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet&lt;/strong&gt; - see &lt;a href=&quot;https://issues.redhat.com/browse/OCPNODE-521&quot;&gt;Allow mirroring images by tags&lt;/a&gt; REF for more details on these changes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For now though, i use &lt;strong&gt;butane&lt;/strong&gt; and MachineConfig as per the KB article at post install time to configure &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; for my mirror registries that need it. From my &lt;a href=&quot;https://github.com/eformat/acm-gitops-ocp&quot;&gt;git repo&lt;/a&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;butane 99-master-mirror-by-digest-registries.bu -o 99-master-mirror-by-digest-registries.yaml
+oc apply -f 99-master-mirror-by-digest-registries.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This will reboot your nodes to apply the MCP, you may add or change the butane template(s) and yaml to suit the nodes you need to target e.g. masters or workers (or any other) node role. In my case it&amp;#8217;s targeting a SNO cluster so master is fine.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;All going well your marketplace pods should now pull images and run OK&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS    RESTARTS   AGE
+certified-operators-d2nd9              1/1     Running   0          16h
+community-operators-k662l              1/1     Running   0          16h
+marketplace-operator-84457bfc9-v22db   1/1     Running   5          16h
+redhat-marketplace-kjrt9               1/1     Running   0          16h
+redhat-operators-62z6x                 1/1     Running   0          16h&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A word of warning when using the Assited Installer / Agent Installer method. If you try to set &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; registries in your &lt;strong&gt;AgentServiceConfig&lt;/strong&gt; using the provided ConfigMap e.g. something like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quay-mirror-config
+  namespace: multicluster-engine
+  labels:
+    app: assisted-service
+data:
+  LOG_LEVEL: &quot;debug&quot;
+  ca-bundle.crt: |
+    -----BEGIN CERTIFICATE-----
+    ! Put you CA for your mirror registry here !
+    -----END CERTIFICATE-----
+
+  registries.conf: |
+    unqualified-search-registries = [&quot;registry.redhat.io&quot;, &quot;registry.access.redhat.com&quot;, &quot;docker.io&quot;]
+
+    [[registry]]
+      prefix = &quot;&quot;
+      location = &quot;registry.redhat.io/redhat&quot;
+      mirror-by-digest-only = false
+      [[registry.mirror]]
+        location = &quot;quay.eformat.me:8443/registry-redhat-io/redhat&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The registry mirror setting will get reset to &lt;strong&gt;mirror-by-digest-only = true&lt;/strong&gt; by the installer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Similarly, if you try and set MachineConfig in the &lt;strong&gt;ignitionConfigOverride&lt;/strong&gt; in the &lt;strong&gt;InfraEnv&lt;/strong&gt; e.g.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+...
+  # User for modify ignition during discovery
+  ignitionConfigOverride: &apos;{&quot;ignition&quot;: {&quot;version&quot;: &quot;3.1.0&quot;}, &quot;storage&quot;: {&quot;files&quot;: [{&quot;path&quot;: &quot;/etc/containers/registries.conf&quot;, &quot;mode&quot;: 420, &quot;overwrite&quot;: true, &quot;user&quot;: { &quot;name&quot;: &quot;root&quot;},&quot;contents&quot;: {&quot;source&quot;: &quot;data:text/plain;base64,dW5xd...&quot;}}]}}&apos;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;it also gets overriden by the installer. I tried both these methods and failed 😭😭&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_summary&quot;&gt;Summary&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For now, the only way to configure &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; is via MachineConfig &lt;strong&gt;post-install&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can always &lt;strong&gt;try&lt;/strong&gt; and only mirror images by digest, just remember that various operators and components may not be configured this work this way.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The future looks bright with the new API&amp;#8217;s, as this has been a long-standing issue now.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🏅Good luck installing out there !!&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>ACM &amp; ArgoCD for Teams</title>

@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2023-03-10</lastmod>
+        <lastmod>2023-04-13</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2023-03-10</lastmod>
+        <lastmod>2023-04-13</lastmod>
     </url>
 
     <url>
@@ -20,7 +20,7 @@
         <loc>https://blog.eformat.me/tags/openshift.html</loc>
         
 
-        <lastmod>2023-02-17</lastmod>
+        <lastmod>2023-04-12</lastmod>
     </url>
 
     <url>
@@ -42,6 +42,13 @@
         
 
         <lastmod>2023-02-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/registries.html</loc>
+        
+
+        <lastmod>2023-04-12</lastmod>
     </url>
 
     <url>
@@ -77,6 +84,13 @@
         
 
         <lastmod>2022-11-02</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/disconnected.html</loc>
+        
+
+        <lastmod>2023-04-12</lastmod>
     </url>
 
     <url>
@@ -125,7 +139,7 @@
         <loc>https://blog.eformat.me/tags/gitops.html</loc>
         
 
-        <lastmod>2023-02-17</lastmod>
+        <lastmod>2023-04-12</lastmod>
     </url>
 
     <url>
@@ -226,6 +240,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2023/04/disconnected-registries.html</loc>
+        <lastmod>2023-04-12</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2023/02/acm-team-argocd.html</loc>
