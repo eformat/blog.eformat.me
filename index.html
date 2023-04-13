@@ -126,7 +126,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is <strong>just</strong> to the mirror. More on that below.</p>
+<p>This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the OpenShift install method, the pull secret i use is <strong>just</strong> to the mirror. More on that below.</p>
 </div>
 <div class="paragraph">
 <p>If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.</p>
@@ -202,7 +202,7 @@ Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image "registr
 <p>Unfortunately you cannot configure <strong>ImageContentSourcePolicy</strong> for <strong>mirror-by-digest-only = false</strong> so (currently) the only solution is to apply MachineConfig <strong>post</strong> your install as a day#2 thing as documented in this <a href="https://access.redhat.com/solutions/4817401">Knowledge Base Article</a></p>
 </div>
 <div class="paragraph">
-<p>Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the <strong>new API&#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet</strong> - see <a href="https://issues.redhat.com/browse/OCPNODE-521">Allow mirroring images by tags</a> REF for more details on these changes.</p>
+<p>Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the <strong>new API&#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet</strong> - see <a href="https://issues.redhat.com/browse/OCPNODE-521">Allow mirroring images by tags</a> RFE for more details on these changes.</p>
 </div>
 <div class="paragraph">
 <p>For now though, i use <strong>butane</strong> and MachineConfig as per the KB article at post install time to configure <strong>mirror-by-digest-only = false</strong> for my mirror registries that need it. From my <a href="https://github.com/eformat/acm-gitops-ocp">git repo</a>:</p>
@@ -407,7 +407,7 @@ kind: InfraEnv
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Apr 13 01:39:52 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2022 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu Apr 13 01:59:19 UTC 2023</a></p>
       </div>
     </div>
     

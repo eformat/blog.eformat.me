@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 13 Apr 2023 01:39:52 +0000</pubDate>
-      <lastBuildDate>Thu, 13 Apr 2023 01:39:52 +0000</lastBuildDate>
+      <pubDate>Thu, 13 Apr 2023 01:59:18 +0000</pubDate>
+      <lastBuildDate>Thu, 13 Apr 2023 01:59:18 +0000</lastBuildDate>
 
       
       <item>
@@ -41,7 +41,7 @@
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is &lt;strong&gt;just&lt;/strong&gt; to the mirror. More on that below.&lt;/p&gt;
+&lt;p&gt;This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the OpenShift install method, the pull secret i use is &lt;strong&gt;just&lt;/strong&gt; to the mirror. More on that below.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.&lt;/p&gt;
@@ -117,7 +117,7 @@ Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image &quot;re
 &lt;p&gt;Unfortunately you cannot configure &lt;strong&gt;ImageContentSourcePolicy&lt;/strong&gt; for &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; so (currently) the only solution is to apply MachineConfig &lt;strong&gt;post&lt;/strong&gt; your install as a day#2 thing as documented in this &lt;a href=&quot;https://access.redhat.com/solutions/4817401&quot;&gt;Knowledge Base Article&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the &lt;strong&gt;new API&amp;#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet&lt;/strong&gt; - see &lt;a href=&quot;https://issues.redhat.com/browse/OCPNODE-521&quot;&gt;Allow mirroring images by tags&lt;/a&gt; REF for more details on these changes.&lt;/p&gt;
+&lt;p&gt;Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the &lt;strong&gt;new API&amp;#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet&lt;/strong&gt; - see &lt;a href=&quot;https://issues.redhat.com/browse/OCPNODE-521&quot;&gt;Allow mirroring images by tags&lt;/a&gt; RFE for more details on these changes.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;For now though, i use &lt;strong&gt;butane&lt;/strong&gt; and MachineConfig as per the KB article at post install time to configure &lt;strong&gt;mirror-by-digest-only = false&lt;/strong&gt; for my mirror registries that need it. From my &lt;a href=&quot;https://github.com/eformat/acm-gitops-ocp&quot;&gt;git repo&lt;/a&gt;:&lt;/p&gt;
