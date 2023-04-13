@@ -19,7 +19,7 @@ After you install the quay mirror registry on the provisioning host, set this in
 FEATURE_PROXY_CACHE: true
 ----
 
-This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is *just* to the mirror. More on that below.
+This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the OpenShift install method, the pull secret i use is *just* to the mirror. More on that below.
 
 If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.
 
@@ -86,7 +86,7 @@ Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image "registr
 
 Unfortunately you cannot configure *ImageContentSourcePolicy* for *mirror-by-digest-only = false* so (currently) the only solution is to apply MachineConfig *post* your install as a day#2 thing as documented in this https://access.redhat.com/solutions/4817401[Knowledge Base Article]
 
-Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the *new API's for CRDs ImageDigestMirrorSet ImageTagMirrorSet* - see https://issues.redhat.com/browse/OCPNODE-521[Allow mirroring images by tags] REF for more details on these changes.
+Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the *new API's for CRDs ImageDigestMirrorSet ImageTagMirrorSet* - see https://issues.redhat.com/browse/OCPNODE-521[Allow mirroring images by tags] RFE for more details on these changes.
 
 For now though, i use *butane* and MachineConfig as per the KB article at post install time to configure *mirror-by-digest-only = false* for my mirror registries that need it. From my https://github.com/eformat/acm-gitops-ocp[git repo]:
 
