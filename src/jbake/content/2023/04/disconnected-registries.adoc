@@ -1,0 +1,166 @@
+= OpenShift Install, Semi-Connected Registries and Mirror by Digest Images
+:jbake-date: 2023-04-12
+:jbake-type: post
+:jbake-tags: openshift,gitops,registries,disconnected
+:jbake-status: published
+
+I have been working with disconnected OpenShift clusters quite a lot recently. One of the things you need to deal with is disconnected registries and mirror by digest images.
+
+== Quay Transparent Proxy-Pull Through Cache
+
+There are a couple general approaches to configuring registries when disconnected. The https://docs.openshift.com/container-platform/4.12/installing/disconnected_install/index.html[product documentation] has great depth of detail about using a Quay Mirror Registry. This is the right approach when wanting disconnected. The downside when you are testing things out in a lab is the mirror import process is both time-consuming and uses a lot of disk space.
+
+One approach i have become fond of is a what i call a `semi-connected` method, where your clusters' use a https://www.youtube.com/watch?v=oVlRDuCD6ic[Quay Transparent Proxy-Pull Through Cache] to speed things up. This still uses disk space, but you don't need to import all the images before installing a cluster.
+
+After you install the quay mirror registry on the provisioning host, set this in your `config.yaml` and restart the quay pods or service:
+
+[source,bash,options="wrap"]
+----
+FEATURE_PROXY_CACHE: true
+----
+
+This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the openShift install method, the pull secret i use is *just* to the mirror. More on that below.
+
+If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.
+
+For installing OpenShift, you really need (at a minimum) two mirror organisations. I set up these two (admin is a default):
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="quay-mirror-orgs">
+  <img src="/2023/04/quay-mirror-orgs.png" class="zoom">
+</div>
+++++
+
+Where each Organisation points to these registries:
+
+[source,bash,options="wrap"]
+----
+registry-redhat-io -> registry.redhat.io
+ocp4-mirror -> quay.io/openshift-release-dev
+----
+
+One nice trick is that you can *base64 decode* your Red Hat *pull-secret* (you download this from cloud.redhat.com) and use those credentials in the Organisation mirror registry setup for authentication.
+
+== OCP Install Configuration
+
+Now comes for the tricky part - configuring your OpenShift installer setup. There are a several ways to do this. The one you use depends on your install method and how you wish to control the *registries.conf* that gets configured for you cluster nodes.
+
+I have been working with the *Agent-based* installer method for Bare Metal (i fake it on libvirt with sushy) - you can https://github.com/eformat/acm-gitops-ocp[check out all the code here].
+
+The issue i think everyone quickly discovers is that the OpenShift installer sets all mirror's by digest to be true i.e. *mirror-by-digest-only = true*. If you check the https://github.com/openshift/installer[installer code] its here:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="ocp-installer-boostrap">
+  <img src="/2023/04/ocp-installer-boostrap.png" class="zoom">
+</div>
+++++
+
+Setting mirror by digest to true is intentional, it helps stop image spoofing or getting an image from a moving tag.
+
+Unfortunately not all Operators pull by digest either. In fact the deployments that are part of the *openshift-marketplace* do not. So after a cluster install we see Image Pull errors like this:
+
+[source,bash,options="wrap"]
+----
+$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS             RESTARTS      AGE
+certified-operators-d2nd9              0/1     ImagePullBackOff   0             15h
+certified-operators-pqrlz              0/1     ImagePullBackOff   0             15h
+community-operators-7kpbm              0/1     ImagePullBackOff   0             15h
+community-operators-k662l              0/1     ImagePullBackOff   0             15h
+marketplace-operator-84457bfc9-v22db   1/1     Running            4 (15h ago)   16h
+redhat-marketplace-kjrt9               0/1     ImagePullBackOff   0             15h
+redhat-marketplace-sqch2               0/1     ImagePullBackOff   0             15h
+redhat-operators-4m4gt                 0/1     ImagePullBackOff   0             15h
+redhat-operators-62z6x                 0/1     ImagePullBackOff   0             15h
+----
+
+And checking one of the pods we see it is trying to pull by tag:
+
+[source,bash,options="wrap"]
+----
+$ oc describe pod certified-operators-d2nd9
+Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image "registry.redhat.io/redhat/certified-operator-index:v4.12"
+----
+
+Unfortunately you cannot configure *ImageContentSourcePolicy* for *mirror-by-digest-only = false* so (currently) the only solution is to apply MachineConfig *post* your install as a day#2 thing as documented in this https://access.redhat.com/solutions/4817401[Knowledge Base Article]
+
+Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the *new API's for CRDs ImageDigestMirrorSet ImageTagMirrorSet* - see https://issues.redhat.com/browse/OCPNODE-521[Allow mirroring images by tags] REF for more details on these changes.
+
+For now though, i use *butane* and MachineConfig as per the KB article at post install time to configure *mirror-by-digest-only = false* for my mirror registries that need it. From my https://github.com/eformat/acm-gitops-ocp[git repo]:
+
+[source,bash,options="wrap"]
+----
+butane 99-master-mirror-by-digest-registries.bu -o 99-master-mirror-by-digest-registries.yaml
+oc apply -f 99-master-mirror-by-digest-registries.yaml
+----
+
+This will reboot your nodes to apply the MCP, you may add or change the butane template(s) and yaml to suit the nodes you need to target e.g. masters or workers (or any other) node role. In my case it's targeting a SNO cluster so master is fine.
+
+All going well your marketplace pods should now pull images and run OK
+
+[source,bash,options="wrap"]
+----
+$ oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS    RESTARTS   AGE
+certified-operators-d2nd9              1/1     Running   0          16h
+community-operators-k662l              1/1     Running   0          16h
+marketplace-operator-84457bfc9-v22db   1/1     Running   5          16h
+redhat-marketplace-kjrt9               1/1     Running   0          16h
+redhat-operators-62z6x                 1/1     Running   0          16h
+----
+
+A word of warning when using the Assited Installer / Agent Installer method. If you try to set *mirror-by-digest-only = false* registries in your *AgentServiceConfig* using the provided ConfigMap e.g. something like this:
+
+[source,yaml,options="wrap"]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quay-mirror-config
+  namespace: multicluster-engine
+  labels:
+    app: assisted-service
+data:
+  LOG_LEVEL: "debug"
+  ca-bundle.crt: |
+    -----BEGIN CERTIFICATE-----
+    ! Put you CA for your mirror registry here !
+    -----END CERTIFICATE-----
+
+  registries.conf: |
+    unqualified-search-registries = ["registry.redhat.io", "registry.access.redhat.com", "docker.io"]
+
+    [[registry]]
+      prefix = ""
+      location = "registry.redhat.io/redhat"
+      mirror-by-digest-only = false
+      [[registry.mirror]]
+        location = "quay.eformat.me:8443/registry-redhat-io/redhat"
+----
+
+The registry mirror setting will get reset to *mirror-by-digest-only = true* by the installer.
+
+Similarly, if you try and set MachineConfig in the *ignitionConfigOverride* in the *InfraEnv* e.g.
+
+[source,yaml,options="wrap"]
+----
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+...
+  # User for modify ignition during discovery
+  ignitionConfigOverride: '{"ignition": {"version": "3.1.0"}, "storage": {"files": [{"path": "/etc/containers/registries.conf", "mode": 420, "overwrite": true, "user": { "name": "root"},"contents": {"source": "data:text/plain;base64,dW5xd..."}}]}}'
+----
+
+it also gets overriden by the installer. I tried both these methods and failed 😭😭
+
+== Summary
+
+For now, the only way to configure *mirror-by-digest-only = false* is via MachineConfig *post-install*.
+
+You can always *try* and only mirror images by digest, just remember that various operators and components may not be configured this work this way.
+
+The future looks bright with the new API's, as this has been a long-standing issue now.
+
+🏅Good luck installing out there !!
