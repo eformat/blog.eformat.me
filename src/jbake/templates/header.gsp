@@ -70,6 +70,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
     <link rel="shortcut icon" href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>favicon.ico">
+
+    <!-- WebAnalytics -->
+    <script defer data-domain="blog.eformat.me" src="https://plausible.apps.sno.eformat.me/js/script.js"></script>
   </head>
   <body>
     <div id="wrap">
