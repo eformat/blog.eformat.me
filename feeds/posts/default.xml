@@ -6,9 +6,85 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 7 May 2023 00:13:25 +0000</pubDate>
-      <lastBuildDate>Sun, 7 May 2023 00:13:25 +0000</lastBuildDate>
+      <pubDate>Sun, 7 May 2023 00:38:14 +0000</pubDate>
+      <lastBuildDate>Sun, 7 May 2023 00:38:14 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Open Source Web Analytics</title>
+          <link>https://blog.eformat.me/2023/05/analytics.html</link>
+          <pubDate>Sun, 7 May 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/05/analytics.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;No one is reading your blog ! 😭 Lolz, but seriously how do you know ? i recently stumbled across &lt;a href=&quot;https://plausible.io/&quot;&gt;Plausible&lt;/a&gt; - an easy to use, OpenSource and privacy-friendly analytics solution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_running_on_openshift&quot;&gt;Running on OpenShift&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Plausible has a very handy self-hosting section in their &lt;a href=&quot;https://plausible.io/docs/self-hosting&quot;&gt;docs&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I checked out the kubernetes help and modified them to run on &lt;a href=&quot;https://github.com/eformat/plausible-hosting/tree/master/kubernetes#5-openshift&quot;&gt;OpenShift&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;# Create a new namespace for all resources
+oc new-project plausible
+# Create a configmap from the plausible-conf.env file
+oc -n plausible create secret generic plausible-config \
+  --from-env-file=plausible-conf.env
+# Please change the Postgres and Clickhouse passwords to something more secure here!
+# Create the Postgres user
+oc -n plausible create secret generic plausible-db-user \
+  --from-literal=&apos;username=postgres&apos; --from-literal=&apos;password=postgres&apos;
+# Create the Clickhouse user
+oc -n plausible create secret generic plausible-events-db-user \
+  --from-literal=&apos;username=clickhouse&apos; --from-literal=&apos;password=clickhouse&apos;
+# Deploy plausible
+oc -n plausible apply -f ./kubernetes/openshift&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Your deployments should look something like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;plausible-pods&quot;&gt;
+  &lt;img src=&quot;/2023/05/plausible-pods.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next, i logged into Plausible, created an account, then set the config to disable self registration i.e. in your plausible-config secret&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;DISABLE_REGISTRATION=true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next, i added this blog as a target website in Plausible, and put the generated html into the blog header section&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;javascript&quot;&gt;    &amp;lt;!-- WebAnalytics --&amp;gt;
+    &amp;lt;script defer data-domain=&quot;blog.eformat.me&quot; src=&quot;https://plausible.apps.sno.eformat.me/js/script.js&quot;&amp;gt;&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Once deployed, Viola! 🧝 Checkout the public &lt;a href=&quot;https://plausible.apps.sno.eformat.me/blog.eformat.me&quot;&gt;Analytics&lt;/a&gt; dashboard link in the nav-bar.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;plausible-dashboard&quot;&gt;
+  &lt;img src=&quot;/2023/05/plausible-dashboard.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>OpenShift Install, Semi-Connected Registries and Mirror by Digest Images</title>

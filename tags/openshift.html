@@ -79,6 +79,89 @@
     <div class="col-sm-8">
         
             
+                <a href="../2023/05/analytics.html"><h1>Open Source Web Analytics</h1></a>
+                <p>07 May 2023</p>
+
+                <p>Tags :
+                <a href="openshift.html">openshift</a>, <a href="web.html">web</a>, <a href="analytics.html">analytics</a>, <a href="plausible.html">plausible</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/analytics.html" data-text="Open Source Web Analytics" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/analytics.html"></div>
+
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>No one is reading your blog ! 😭 Lolz, but seriously how do you know ? i recently stumbled across <a href="https://plausible.io/">Plausible</a> - an easy to use, OpenSource and privacy-friendly analytics solution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_on_openshift">Running on OpenShift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Plausible has a very handy self-hosting section in their <a href="https://plausible.io/docs/self-hosting">docs</a>.</p>
+</div>
+<div class="paragraph">
+<p>I checked out the kubernetes help and modified them to run on <a href="https://github.com/eformat/plausible-hosting/tree/master/kubernetes#5-openshift">OpenShift</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash"># Create a new namespace for all resources
+oc new-project plausible
+# Create a configmap from the plausible-conf.env file
+oc -n plausible create secret generic plausible-config \
+  --from-env-file=plausible-conf.env
+# Please change the Postgres and Clickhouse passwords to something more secure here!
+# Create the Postgres user
+oc -n plausible create secret generic plausible-db-user \
+  --from-literal='username=postgres' --from-literal='password=postgres'
+# Create the Clickhouse user
+oc -n plausible create secret generic plausible-events-db-user \
+  --from-literal='username=clickhouse' --from-literal='password=clickhouse'
+# Deploy plausible
+oc -n plausible apply -f ./kubernetes/openshift</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Your deployments should look something like this:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="plausible-pods">
+  <img src="/2023/05/plausible-pods.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Next, i logged into Plausible, created an account, then set the config to disable self registration i.e. in your plausible-config secret</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">DISABLE_REGISTRATION=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, i added this blog as a target website in Plausible, and put the generated html into the blog header section</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="javascript">    &lt;!-- WebAnalytics --&gt;
+    &lt;script defer data-domain="blog.eformat.me" src="https://plausible.apps.sno.eformat.me/js/script.js"&gt;&lt;/script&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once deployed, Viola! 🧝 Checkout the public <a href="https://plausible.apps.sno.eformat.me/blog.eformat.me">Analytics</a> dashboard link in the nav-bar.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="plausible-dashboard">
+  <img src="/2023/05/plausible-dashboard.png" class="zoom">
+</div>
+</div>
+</div></p>
+                <p><a href="2023/05/analytics.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2023/04/disconnected-registries.html"><h1>OpenShift Install, Semi-Connected Registries and Mirror by Digest Images</h1></a>
                 <p>12 April 2023</p>
 
@@ -2026,7 +2109,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
-                <li><a href="openshift.html">openshift</a> (8)</li>
+                <li><a href="openshift.html">openshift</a> (9)</li>
                 
 
                 <li><a href="gitops.html">gitops</a> (3)</li>
@@ -2048,6 +2131,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="acm.html">acm</a> (1)</li>
+                
+
+                <li><a href="analytics.html">analytics</a> (1)</li>
                 
 
                 <li><a href="aws.html">aws</a> (1)</li>
@@ -2101,6 +2187,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="platform as product.html">platform as product</a> (1)</li>
                 
 
+                <li><a href="plausible.html">plausible</a> (1)</li>
+                
+
                 <li><a href="pulsar.html">pulsar</a> (1)</li>
                 
 
@@ -2124,6 +2213,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
 
                 <li><a href="vault.html">vault</a> (1)</li>
                 
+
+                <li><a href="web.html">web</a> (1)</li>
+                
             </ol>
         </div>
     </div>
@@ -2137,7 +2229,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun May 07 00:13:26 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun May 07 00:38:14 UTC 2023</a></p>
       </div>
     </div>
     

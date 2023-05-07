@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - flink</title>
+    <title>eformat.me - analytics</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : flink">
-    <meta property="og:title" content="eformat.me - flink" />
+    <meta name="description" content="eformat.me : analytics">
+    <meta property="og:title" content="eformat.me - analytics" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/flink.html" />
-    <meta property="og:description" content="eformat.me : flink" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/analytics.html" />
+    <meta property="og:description" content="eformat.me : analytics" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -70,7 +70,7 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: flink</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: analytics</h1></div>
             </div>
 	</div>
 
@@ -79,51 +79,85 @@
     <div class="col-sm-8">
         
             
-                <a href="../2022/11/pulsar-flink.html"><h1>Pulsar Flink</h1></a>
-                <p>02 November 2022</p>
+                <a href="../2023/05/analytics.html"><h1>Open Source Web Analytics</h1></a>
+                <p>07 May 2023</p>
 
                 <p>Tags :
-                <a href="streaming.html">streaming</a>, <a href="pulsar.html">pulsar</a>, <a href="flink.html">flink</a>, <a href="java.html">java</a>
+                <a href="openshift.html">openshift</a>, <a href="web.html">web</a>, <a href="analytics.html">analytics</a>, <a href="plausible.html">plausible</a>
                 </p>
 
-                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/pulsar-flink.html" data-text="Pulsar Flink" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/analytics.html" data-text="Open Source Web Analytics" data-via="eformat" data-lang="en">Tweeter</a-->
                 <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/pulsar-flink.html"></div>
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/analytics.html"></div>
 
-                <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
-<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩</p>
-<p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>No one is reading your blog ! 😭 Lolz, but seriously how do you know ? i recently stumbled across <a href="https://plausible.io/">Plausible</a> - an easy to use, OpenSource and privacy-friendly analytics solution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_on_openshift">Running on OpenShift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Plausible has a very handy self-hosting section in their <a href="https://plausible.io/docs/self-hosting">docs</a>.</p>
+</div>
+<div class="paragraph">
+<p>I checked out the kubernetes help and modified them to run on <a href="https://github.com/eformat/plausible-hosting/tree/master/kubernetes#5-openshift">OpenShift</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash"># Create a new namespace for all resources
+oc new-project plausible
+# Create a configmap from the plausible-conf.env file
+oc -n plausible create secret generic plausible-config \
+  --from-env-file=plausible-conf.env
+# Please change the Postgres and Clickhouse passwords to something more secure here!
+# Create the Postgres user
+oc -n plausible create secret generic plausible-db-user \
+  --from-literal='username=postgres' --from-literal='password=postgres'
+# Create the Clickhouse user
+oc -n plausible create secret generic plausible-events-db-user \
+  --from-literal='username=clickhouse' --from-literal='password=clickhouse'
+# Deploy plausible
+oc -n plausible apply -f ./kubernetes/openshift</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Your deployments should look something like this:</p>
+</div>
 <div id="lightbox"></div>
-<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
-<p>that you can easily run locally or on OpenShift:</p>
-<pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
-oc create route edge quote-generator --service=quote-generator --port=8080
-</code></pre>
-<p>and then retrieve the events in the browser or by curl:</p>
-<pre><code class="language-bash">curl -H &quot;Content-Type: application/json&quot; --max-time 9999999 -N http://localhost:8080/quotes/stream
-</code></pre>
-<p>So, first challenge - How might we consume these SSE&rsquo;s using Flink? I found a handy <a href="https://github.com/aws-samples/amazon-kinesis-data-analytics-apache-flink-server-sent-events-sse/tree/main/kinesis-data-analytics-sse">AWS Kinesis SSE demo</a> which i snarfed the SSE/OKHttp code from. I wired this into flinks <code>RichSourceFunction</code>:</p>
-<script src="https://gist.github.com/eformat/4d5fd40d8566e99e866e1e7fd4cb6388.js"></script>
-<p>So now i could consume this SSE source as a <code>DataStream</code></p>
-<script src="https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js"></script>
-<p>In the example, i wire in the stock quotes for <code>NFLX</code> and <code>RHT</code>. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this <a href="https://flink.apache.org/news/2015/02/09/streaming-example.html">stock price</a> example from 2015! cool. So i implemented a simple <code>BuyFunction</code> class that makes stock buy recommendations:</p>
-<script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
-<p>Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:</p>
-<script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
-<p>Friends of mine have been telling me how much more awesome <code>Pulsar</code> is compared to <code>Kafka</code> so i also tried out sending to a local pulsar container that you can run using:</p>
-<pre><code class="language-bash">podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
-</code></pre>
-<p>And forwrded to pulsar using a simple utility class using the pulsar java client:</p>
-<script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
-<p>Then consume the messages to make sure they are there !</p>
-<pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
-</code></pre>
-<p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
-<p><img src="/2022/11/flink-stocks-ocp.png" width="640" class="zoom"></p>
-<p></br><br />
-Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
-</p>
-                <p><a href="2022/11/pulsar-flink.html#disqus_thread">Commentaires</a></p>
+<div class="imageblock id="plausible-pods">
+  <img src="/2023/05/plausible-pods.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Next, i logged into Plausible, created an account, then set the config to disable self registration i.e. in your plausible-config secret</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">DISABLE_REGISTRATION=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, i added this blog as a target website in Plausible, and put the generated html into the blog header section</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="javascript">    &lt;!-- WebAnalytics --&gt;
+    &lt;script defer data-domain="blog.eformat.me" src="https://plausible.apps.sno.eformat.me/js/script.js"&gt;&lt;/script&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once deployed, Viola! 🧝 Checkout the public <a href="https://plausible.apps.sno.eformat.me/blog.eformat.me">Analytics</a> dashboard link in the nav-bar.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="plausible-dashboard">
+  <img src="/2023/05/plausible-dashboard.png" class="zoom">
+</div>
+</div>
+</div></p>
+                <p><a href="2023/05/analytics.html#disqus_thread">Commentaires</a></p>
             
 
         

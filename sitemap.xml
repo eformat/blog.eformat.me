@@ -20,7 +20,7 @@
         <loc>https://blog.eformat.me/tags/openshift.html</loc>
         
 
-        <lastmod>2023-04-12</lastmod>
+        <lastmod>2023-05-07</lastmod>
     </url>
 
     <url>
@@ -59,6 +59,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/plausible.html</loc>
+        
+
+        <lastmod>2023-05-07</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/constraints.html</loc>
         
 
@@ -70,6 +77,13 @@
         
 
         <lastmod>2022-11-01</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/analytics.html</loc>
+        
+
+        <lastmod>2023-05-07</lastmod>
     </url>
 
     <url>
@@ -105,6 +119,13 @@
         
 
         <lastmod>2022-12-31</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/web.html</loc>
+        
+
+        <lastmod>2023-05-07</lastmod>
     </url>
 
     <url>
@@ -240,6 +261,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2023/05/analytics.html</loc>
+        <lastmod>2023-05-07</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2023/04/disconnected-registries.html</loc>
