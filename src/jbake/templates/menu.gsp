@@ -15,6 +15,7 @@
               <li><a href="https://github.com/eformat" target="github:eformat">Github</a></li>
               <li><a href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>archive.html">Archives</a></li>
               <li><a href="<%if (content.rootpath){%>${content.rootpath}<%}else{if (content.type == "tag"){%>../<%}}%>${config.feed_file}">Flux RSS</a></li>
+              <li><a href="https://plausible.apps.sno.eformat.me/blog.eformat.me" target="eformat:analytics">Analytics</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
