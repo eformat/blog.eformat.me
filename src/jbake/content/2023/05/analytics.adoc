@@ -1,0 +1,64 @@
+= Open Source Web Analytics
+:jbake-date: 2023-05-07
+:jbake-type: post
+:jbake-tags: openshift,web,analytics,plausible
+:jbake-status: published
+
+No one is reading your blog ! 😭 Lolz, but seriously how do you know ? i recently stumbled across https://plausible.io/[Plausible] - an easy to use, OpenSource and privacy-friendly analytics solution.
+
+== Running on OpenShift
+
+Plausible has a very handy self-hosting section in their https://plausible.io/docs/self-hosting[docs].
+
+I checked out the kubernetes help and modified them to run on https://github.com/eformat/plausible-hosting/tree/master/kubernetes#5-openshift[OpenShift]
+
+[source,bash,options="wrap"]
+----
+# Create a new namespace for all resources
+oc new-project plausible
+# Create a configmap from the plausible-conf.env file
+oc -n plausible create secret generic plausible-config \
+  --from-env-file=plausible-conf.env
+# Please change the Postgres and Clickhouse passwords to something more secure here!
+# Create the Postgres user
+oc -n plausible create secret generic plausible-db-user \
+  --from-literal='username=postgres' --from-literal='password=postgres'
+# Create the Clickhouse user
+oc -n plausible create secret generic plausible-events-db-user \
+  --from-literal='username=clickhouse' --from-literal='password=clickhouse'
+# Deploy plausible
+oc -n plausible apply -f ./kubernetes/openshift
+----
+
+Your deployments should look something like this:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="plausible-pods">
+  <img src="/2023/05/plausible-pods.png" class="zoom">
+</div>
+++++
+
+Next, i logged into Plausible, created an account, then set the config to disable self registration i.e. in your plausible-config secret
+
+[source,bash,options="wrap"]
+----
+DISABLE_REGISTRATION=true
+----
+
+Next, i added this blog as a target website in Plausible, and put the generated html into the blog header section
+
+[source,javascript,options="wrap"]
+----
+    <!-- WebAnalytics -->
+    <script defer data-domain="blog.eformat.me" src="https://plausible.apps.sno.eformat.me/js/script.js"></script>
+----
+
+Once deployed, Viola! 🧝 Checkout the public https://plausible.apps.sno.eformat.me/blog.eformat.me[Analytics] dashboard link in the nav-bar.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="plausible-dashboard">
+  <img src="/2023/05/plausible-dashboard.png" class="zoom">
+</div>
+++++
