@@ -1,7 +1,7 @@
-= Open Source Service Discovery and Load Balancing
+= Service Discovery and Load Balancing with Stork
 :jbake-date: 2023-05-25
 :jbake-type: post
-:jbake-tags: quarkus,service discovery,load balancing,java
+:jbake-tags: quarkus,service discovery,stork,load balancing,java
 :jbake-status: published
 
 https://smallrye.io/smallrye-stork/[Stork] is a service discovery and client-side load-balancing framework. Its one of those critical services you
@@ -40,7 +40,7 @@ dig SRV canary.demo.redhatlabs.dev
 
 == Coding a Quick Client
 
-For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !
+For a quick and dirty client to make use of the SRV record I reach out for my favourite tools, yes Perl 🐫🐫🐫 !
 
 Let's query the SRV record and see if my OpenShift clusters are healthy.
 
@@ -59,7 +59,6 @@ sub lookup {
       foreach $rr ($query->answer) {
           next unless $rr->type eq 'SRV';
           # return first found
-          # there's no _ldaps SRV record
           return $rr->target;
       }
   } else {
@@ -99,7 +98,7 @@ So, looking good so far.
 
 == Stork and Java
 
-Of course, the whole point was to try out Stork. Following the https://quarkus.io/guides/stork[Quarkus Stork] getting started guide, i used a simple service
+Of course, the whole point was to try out Stork. Following the https://quarkus.io/guides/stork[Quarkus Stork] getting started guide, I used a simple rest client service
 
 ++++
 <script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
@@ -111,7 +110,7 @@ and configured the `canary` stork service as follows:
 <script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
 ++++
 
-Unfortunately, this didn't work as I expected! The SRV record values were `resolved` to IP addresses instead of returning the DNS name fo me to query. The
+Unfortunately, this didn't work as I expected! The SRV record values were `resolved` to IP addresses instead of returning the DNS name for me to query. The
 issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.
 
 ++++
@@ -130,7 +129,7 @@ The Stork documentation spells out this DNS resolution process:
 </div>
 ++++
 
-Looking at the source code, led me to submit this https://github.com/smallrye/smallrye-stork/pull/549/files[PR] which adds in an option so you can skip the DNS resolution step.
+Looking at the source code, led me to submit this https://github.com/smallrye/smallrye-stork/pull/549/files[PR] which adds in an option so that you can skip the DNS resolution step.
 
 So, adding this property using the new version of the Stork library:
 
