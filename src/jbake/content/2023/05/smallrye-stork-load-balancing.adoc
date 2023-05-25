@@ -1,0 +1,160 @@
+= Open Source Service Discovery and Load Balancing
+:jbake-date: 2023-05-25
+:jbake-type: post
+:jbake-tags: quarkus,service discovery,load balancing,java
+:jbake-status: published
+
+https://smallrye.io/smallrye-stork/[Stork] is a service discovery and client-side load-balancing framework. Its one of those critical services you
+find out you need when doing distributed services programming. Have a read of the docs, it integrates into common open source tooling such as Hashi's https://www.consul.io[Consul] as
+well as a host of others. Even-though OpenShift/Kubernetes has a built-in support for service discovery and load-balancing, you may need more flexibility to carefully select
+the service instance you want.
+
+== DNS SRV for Service Discovery
+
+I wanted to try out good 'ol fashioned https://en.wikipedia.org/wiki/SRV_record[SRV Records] as a means to testing out the client side service discovery in Stork. Many people forget that
+DNS itself supports service discovery for high service availability. It is still very commonly used, especially in mobile/telco.
+
+My test case would be to create a DNS SRV record that queries OpenShift Cluster Canary Application endpoints. I'm using Route53 for DNS so you can read the
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html#SRVFormat[SRV Records format here]. The first three records are priority, weight, and port.
+
+[source,bash,options="wrap"]
+----
+1 10 443 canary-openshift-ingress-canary.apps.sno.eformat.me
+1 10 443 canary-openshift-ingress-canary.apps.baz.eformat.me
+----
+
+If you curl one of these, you get a `Healthcheck requested` back if the service is running.
+
+[source,bash,options="wrap"]
+----
+curl https://canary-openshift-ingress-canary.apps.sno.eformat.me
+Healthcheck requested
+----
+
+So, in my example, you can get a full list of SRV record values by querying:
+
+[source,bash,options="wrap"]
+----
+dig SRV canary.demo.redhatlabs.dev
+----
+
+== Coding a Quick Client
+
+For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !
+
+Let's query the SRV record and see if my OpenShift clusters are healthy.
+
+[source,perl5,options="wrap"]
+----
+# sudo dnf install -y perl-Net-DNS perl-WWW-Curl
+use Net::DNS;
+use WWW::Curl::Easy;
+use Term::ANSIColor qw(:constants);
+
+sub lookup {
+  my ($dc) = @_;
+  my $res = Net::DNS::Resolver-> new;
+  my $query = $res->send($dc, "SRV");
+  if ($query) {
+      foreach $rr ($query->answer) {
+          next unless $rr->type eq 'SRV';
+          # return first found
+          # there's no _ldaps SRV record
+          return $rr->target;
+      }
+  } else {
+      print("SRV lookup failed: " . $res->errorstring);
+  }
+  return;
+}
+
+my $host = lookup("canary.demo.redhatlabs.dev");
+print GREEN, $host . "\n", RESET;
+my $curl = WWW::Curl::Easy->new;
+$curl->setopt(CURLOPT_HEADER,1);
+$curl->setopt(CURLOPT_URL, 'https://' . $host);
+$curl->setopt(CURLOPT_SSL_VERIFYHOST, 0);
+
+my $retcode = $curl->perform;
+
+if ($retcode == 0) {
+    print("Transfer went ok\n");
+    my $response_code = $curl->getinfo(CURLINFO_HTTP_CODE);
+    print(GREEN, "Received response code: $response_code\n", RESET, "\n");
+} else {
+    print(RED, "An error happened: $retcode ". RESET . $curl->strerror($retcode)." ".$curl->errbuf."\n");
+}
+----
+
+Of course feel free to run this in a loop :) because each record is equally weighted in the SRV you will get a round-robin behaviour.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="perl-srv">
+  <img src="/2023/05/perl-srv.png" class="zoom">
+</div>
+++++
+
+So, looking good so far.
+
+== Stork and Java
+
+Of course, the whole point was to try out Stork. Following the https://quarkus.io/guides/stork[Quarkus Stork] getting started guide, i used a simple service
+
+++++
+<script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
+++++
+
+and configured the `canary` stork service as follows:
+
+++++
+<script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
+++++
+
+Unfortunately, this didn't work as I expected! The SRV record values were `resolved` to IP addresses instead of returning the DNS name fo me to query. The
+issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-fail.png">
+  <img src="/2023/05/quarkus-stork-call-fail.png" class="zoom">
+</div>
+++++
+
+The Stork documentation spells out this DNS resolution process:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-1">
+  <img src="/2023/05/stork-query-1.png" class="zoom">
+</div>
+++++
+
+Looking at the source code, led me to submit this https://github.com/smallrye/smallrye-stork/pull/549/files[PR] which adds in an option so you can skip the DNS resolution step.
+
+So, adding this property using the new version of the Stork library:
+
+[source,bash,options="wrap"]
+----
+quarkus.stork.canary.service-discovery.resolve-srv=false
+----
+
+Leads to the DNS names being returned and no the ip addresses:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-2">
+  <img src="/2023/05/stork-query-2.png" class="zoom">
+</div>
+++++
+
+Trying out the code and now the Service call works as expected:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-ok.png">
+  <img src="/2023/05/quarkus-stork-call-ok.png" class="zoom">
+</div>
+++++
+
+YAY ! 🦍 Checkout https://github.com/eformat/stork-quickstart/tree/main[the source code here] and watch out for the next version of Stork !
