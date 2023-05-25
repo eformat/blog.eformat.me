@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - pulsar</title>
+    <title>eformat.me - service discovery</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : pulsar">
-    <meta property="og:title" content="eformat.me - pulsar" />
+    <meta name="description" content="eformat.me : service discovery">
+    <meta property="og:title" content="eformat.me - service discovery" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/pulsar.html" />
-    <meta property="og:description" content="eformat.me : pulsar" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/service discovery.html" />
+    <meta property="og:description" content="eformat.me : service discovery" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -70,7 +70,7 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: pulsar</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: service discovery</h1></div>
             </div>
 	</div>
 
@@ -79,51 +79,183 @@
     <div class="col-sm-8">
         
             
-                <a href="../2022/11/pulsar-flink.html"><h1>Pulsar Flink</h1></a>
-                <p>02 November 2022</p>
+                <a href="../2023/05/smallrye-stork-load-balancing.html"><h1>Open Source Service Discovery and Load Balancing</h1></a>
+                <p>25 May 2023</p>
 
                 <p>Tags :
-                <a href="streaming.html">streaming</a>, <a href="pulsar.html">pulsar</a>, <a href="flink.html">flink</a>, <a href="java.html">java</a>
+                <a href="quarkus.html">quarkus</a>, <a href="service discovery.html">service discovery</a>, <a href="load balancing.html">load balancing</a>, <a href="java.html">java</a>
                 </p>
 
-                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/pulsar-flink.html" data-text="Pulsar Flink" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html" data-text="Open Source Service Discovery and Load Balancing" data-via="eformat" data-lang="en">Tweeter</a-->
                 <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/pulsar-flink.html"></div>
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html"></div>
 
-                <p><h1><a href="#pulsar-flink" id="pulsar-flink">Pulsar Flink</a></h1>
-<p>I have been messing around with yet another streaming demo (YASD). You really just cannot have too many. 🤩</p>
-<p>I am a fan of <a href="https://en.wikipedia.org/wiki/Server-sent_events">server sent events</a>, why ? because they are HTML5 native. No messing around with web sockets. I have a a <a href="https://github.com/eformat/quote-generator">small quarkus app</a> that generates stock quotes:</p>
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://smallrye.io/smallrye-stork/">Stork</a> is a service discovery and client-side load-balancing framework. Its one of those critical services you
+find out you need when doing distributed services programming. Have a read of the docs, it integrates into common open source tooling such as Hashi&#8217;s <a href="https://www.consul.io">Consul</a> as
+well as a host of others. Even-though OpenShift/Kubernetes has a built-in support for service discovery and load-balancing, you may need more flexibility to carefully select
+the service instance you want.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dns_srv_for_service_discovery">DNS SRV for Service Discovery</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I wanted to try out good 'ol fashioned <a href="https://en.wikipedia.org/wiki/SRV_record">SRV Records</a> as a means to testing out the client side service discovery in Stork. Many people forget that
+DNS itself supports service discovery for high service availability. It is still very commonly used, especially in mobile/telco.</p>
+</div>
+<div class="paragraph">
+<p>My test case would be to create a DNS SRV record that queries OpenShift Cluster Canary Application endpoints. I&#8217;m using Route53 for DNS so you can read the
+<a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html#SRVFormat">SRV Records format here</a>. The first three records are priority, weight, and port.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">1 10 443 canary-openshift-ingress-canary.apps.sno.eformat.me
+1 10 443 canary-openshift-ingress-canary.apps.baz.eformat.me</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you curl one of these, you get a <code>Healthcheck requested</code> back if the service is running.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">curl https://canary-openshift-ingress-canary.apps.sno.eformat.me
+Healthcheck requested</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, in my example, you can get a full list of SRV record values by querying:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">dig SRV canary.demo.redhatlabs.dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coding_a_quick_client">Coding a Quick Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s query the SRV record and see if my OpenShift clusters are healthy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="perl5"># sudo dnf install -y perl-Net-DNS perl-WWW-Curl
+use Net::DNS;
+use WWW::Curl::Easy;
+use Term::ANSIColor qw(:constants);
+
+sub lookup {
+  my ($dc) = @_;
+  my $res = Net::DNS::Resolver-&gt; new;
+  my $query = $res-&gt;send($dc, "SRV");
+  if ($query) {
+      foreach $rr ($query-&gt;answer) {
+          next unless $rr-&gt;type eq 'SRV';
+          # return first found
+          # there's no _ldaps SRV record
+          return $rr-&gt;target;
+      }
+  } else {
+      print("SRV lookup failed: " . $res-&gt;errorstring);
+  }
+  return;
+}
+
+my $host = lookup("canary.demo.redhatlabs.dev");
+print GREEN, $host . "\n", RESET;
+my $curl = WWW::Curl::Easy-&gt;new;
+$curl-&gt;setopt(CURLOPT_HEADER,1);
+$curl-&gt;setopt(CURLOPT_URL, 'https://' . $host);
+$curl-&gt;setopt(CURLOPT_SSL_VERIFYHOST, 0);
+
+my $retcode = $curl-&gt;perform;
+
+if ($retcode == 0) {
+    print("Transfer went ok\n");
+    my $response_code = $curl-&gt;getinfo(CURLINFO_HTTP_CODE);
+    print(GREEN, "Received response code: $response_code\n", RESET, "\n");
+} else {
+    print(RED, "An error happened: $retcode ". RESET . $curl-&gt;strerror($retcode)." ".$curl-&gt;errbuf."\n");
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Of course feel free to run this in a loop :) because each record is equally weighted in the SRV you will get a round-robin behaviour.</p>
+</div>
 <div id="lightbox"></div>
-<img src="https://raw.githubusercontent.com/eformat/quote-generator/master/images/quotes.gif" width="500" class="zoom">
-<p>that you can easily run locally or on OpenShift:</p>
-<pre><code class="language-bash">oc new-app quay.io/eformat/quote-generator:latest
-oc create route edge quote-generator --service=quote-generator --port=8080
-</code></pre>
-<p>and then retrieve the events in the browser or by curl:</p>
-<pre><code class="language-bash">curl -H &quot;Content-Type: application/json&quot; --max-time 9999999 -N http://localhost:8080/quotes/stream
-</code></pre>
-<p>So, first challenge - How might we consume these SSE&rsquo;s using Flink? I found a handy <a href="https://github.com/aws-samples/amazon-kinesis-data-analytics-apache-flink-server-sent-events-sse/tree/main/kinesis-data-analytics-sse">AWS Kinesis SSE demo</a> which i snarfed the SSE/OKHttp code from. I wired this into flinks <code>RichSourceFunction</code>:</p>
-<script src="https://gist.github.com/eformat/4d5fd40d8566e99e866e1e7fd4cb6388.js"></script>
-<p>So now i could consume this SSE source as a <code>DataStream</code></p>
-<script src="https://gist.github.com/eformat/c63c765710b00b9ce15201edd9aca87b.js"></script>
-<p>In the example, i wire in the stock quotes for <code>NFLX</code> and <code>RHT</code>. Next step, process these streams. Since i am new to flink, i started with a simple print function, then read this <a href="https://flink.apache.org/news/2015/02/09/streaming-example.html">stock price</a> example from 2015! cool. So i implemented a simple <code>BuyFunction</code> class that makes stock buy recommendations:</p>
-<script src="https://gist.github.com/eformat/156cabbd95543e22f4faf90f9529a192.js"></script>
-<p>Lastly, it needs to be sent to a sink. Again, i started by using a simple print sink:</p>
-<script src="https://gist.github.com/eformat/783e1d4a37bc33e91393416109a92b67.js"></script>
-<p>Friends of mine have been telling me how much more awesome <code>Pulsar</code> is compared to <code>Kafka</code> so i also tried out sending to a local pulsar container that you can run using:</p>
-<pre><code class="language-bash">podman run -it -p 6650:6650 -p 8081:8080 --rm --name pulsar docker.io/apachepulsar/pulsar:2.10.2 bin/pulsar standalone
-</code></pre>
-<p>And forwrded to pulsar using a simple utility class using the pulsar java client:</p>
-<script src="https://gist.github.com/eformat/90121414185b9142d884b72cb1e7af1c.js"></script>
-<p>Then consume the messages to make sure they are there !</p>
-<pre><code class="language-bash">podman exec -i pulsar bin/pulsar-client consume -s my-subscription -n 0 persistent://public/default/orders
-</code></pre>
-<p>And i need to write this post as well .. getting it to run in OpenShift &hellip;</p>
-<p><img src="/2022/11/flink-stocks-ocp.png" width="640" class="zoom"></p>
-<p></br><br />
-Source code is here - <a href="https://github.com/eformat/flink-stocks">https://github.com/eformat/flink-stocks</a></p>
-</p>
-                <p><a href="2022/11/pulsar-flink.html#disqus_thread">Commentaires</a></p>
+<div class="imageblock id="perl-srv">
+  <img src="/2023/05/perl-srv.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>So, looking good so far.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stork_and_java">Stork and Java</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Of course, the whole point was to try out Stork. Following the <a href="https://quarkus.io/guides/stork">Quarkus Stork</a> getting started guide, i used a simple service</p>
+</div>
+<script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
+<div class="paragraph">
+<p>and configured the <code>canary</code> stork service as follows:</p>
+</div>
+<script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
+<div class="paragraph">
+<p>Unfortunately, this didn&#8217;t work as I expected! The SRV record values were <code>resolved</code> to IP addresses instead of returning the DNS name fo me to query. The
+issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-fail.png">
+  <img src="/2023/05/quarkus-stork-call-fail.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>The Stork documentation spells out this DNS resolution process:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-1">
+  <img src="/2023/05/stork-query-1.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Looking at the source code, led me to submit this <a href="https://github.com/smallrye/smallrye-stork/pull/549/files">PR</a> which adds in an option so you can skip the DNS resolution step.</p>
+</div>
+<div class="paragraph">
+<p>So, adding this property using the new version of the Stork library:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">quarkus.stork.canary.service-discovery.resolve-srv=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Leads to the DNS names being returned and no the ip addresses:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-2">
+  <img src="/2023/05/stork-query-2.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Trying out the code and now the Service call works as expected:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-ok.png">
+  <img src="/2023/05/quarkus-stork-call-ok.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>YAY ! 🦍 Checkout <a href="https://github.com/eformat/stork-quickstart/tree/main">the source code here</a> and watch out for the next version of Stork !</p>
+</div>
+</div>
+</div></p>
+                <p><a href="2023/05/smallrye-stork-load-balancing.html#disqus_thread">Commentaires</a></p>
             
 
         

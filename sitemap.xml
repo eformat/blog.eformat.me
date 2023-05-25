@@ -2,11 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2023-05-07</lastmod>
+        <lastmod>2023-05-25</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2023-05-07</lastmod>
+        <lastmod>2023-05-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/load balancing.html</loc>
+        
+
+        <lastmod>2023-05-25</lastmod>
     </url>
 
     <url>
@@ -27,7 +34,7 @@
         <loc>https://blog.eformat.me/tags/quarkus.html</loc>
         
 
-        <lastmod>2022-11-04</lastmod>
+        <lastmod>2023-05-25</lastmod>
     </url>
 
     <url>
@@ -111,7 +118,7 @@
         <loc>https://blog.eformat.me/tags/java.html</loc>
         
 
-        <lastmod>2022-11-04</lastmod>
+        <lastmod>2023-05-25</lastmod>
     </url>
 
     <url>
@@ -220,6 +227,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/service discovery.html</loc>
+        
+
+        <lastmod>2023-05-25</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/flink.html</loc>
         
 
@@ -261,6 +275,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html</loc>
+        <lastmod>2023-05-25</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2023/05/analytics.html</loc>

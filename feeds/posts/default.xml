@@ -6,9 +6,183 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 7 May 2023 00:38:14 +0000</pubDate>
-      <lastBuildDate>Sun, 7 May 2023 00:38:14 +0000</lastBuildDate>
+      <pubDate>Thu, 25 May 2023 06:06:23 +0000</pubDate>
+      <lastBuildDate>Thu, 25 May 2023 06:06:23 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Open Source Service Discovery and Load Balancing</title>
+          <link>https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html</link>
+          <pubDate>Thu, 25 May 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://smallrye.io/smallrye-stork/&quot;&gt;Stork&lt;/a&gt; is a service discovery and client-side load-balancing framework. Its one of those critical services you
+find out you need when doing distributed services programming. Have a read of the docs, it integrates into common open source tooling such as Hashi&amp;#8217;s &lt;a href=&quot;https://www.consul.io&quot;&gt;Consul&lt;/a&gt; as
+well as a host of others. Even-though OpenShift/Kubernetes has a built-in support for service discovery and load-balancing, you may need more flexibility to carefully select
+the service instance you want.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_dns_srv_for_service_discovery&quot;&gt;DNS SRV for Service Discovery&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I wanted to try out good &apos;ol fashioned &lt;a href=&quot;https://en.wikipedia.org/wiki/SRV_record&quot;&gt;SRV Records&lt;/a&gt; as a means to testing out the client side service discovery in Stork. Many people forget that
+DNS itself supports service discovery for high service availability. It is still very commonly used, especially in mobile/telco.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;My test case would be to create a DNS SRV record that queries OpenShift Cluster Canary Application endpoints. I&amp;#8217;m using Route53 for DNS so you can read the
+&lt;a href=&quot;https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html#SRVFormat&quot;&gt;SRV Records format here&lt;/a&gt;. The first three records are priority, weight, and port.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;1 10 443 canary-openshift-ingress-canary.apps.sno.eformat.me
+1 10 443 canary-openshift-ingress-canary.apps.baz.eformat.me&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you curl one of these, you get a &lt;code&gt;Healthcheck requested&lt;/code&gt; back if the service is running.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;curl https://canary-openshift-ingress-canary.apps.sno.eformat.me
+Healthcheck requested&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, in my example, you can get a full list of SRV record values by querying:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;dig SRV canary.demo.redhatlabs.dev&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_coding_a_quick_client&quot;&gt;Coding a Quick Client&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Let&amp;#8217;s query the SRV record and see if my OpenShift clusters are healthy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;perl5&quot;&gt;# sudo dnf install -y perl-Net-DNS perl-WWW-Curl
+use Net::DNS;
+use WWW::Curl::Easy;
+use Term::ANSIColor qw(:constants);
+
+sub lookup {
+  my ($dc) = @_;
+  my $res = Net::DNS::Resolver-&amp;gt; new;
+  my $query = $res-&amp;gt;send($dc, &quot;SRV&quot;);
+  if ($query) {
+      foreach $rr ($query-&amp;gt;answer) {
+          next unless $rr-&amp;gt;type eq &apos;SRV&apos;;
+          # return first found
+          # there&apos;s no _ldaps SRV record
+          return $rr-&amp;gt;target;
+      }
+  } else {
+      print(&quot;SRV lookup failed: &quot; . $res-&amp;gt;errorstring);
+  }
+  return;
+}
+
+my $host = lookup(&quot;canary.demo.redhatlabs.dev&quot;);
+print GREEN, $host . &quot;\n&quot;, RESET;
+my $curl = WWW::Curl::Easy-&amp;gt;new;
+$curl-&amp;gt;setopt(CURLOPT_HEADER,1);
+$curl-&amp;gt;setopt(CURLOPT_URL, &apos;https://&apos; . $host);
+$curl-&amp;gt;setopt(CURLOPT_SSL_VERIFYHOST, 0);
+
+my $retcode = $curl-&amp;gt;perform;
+
+if ($retcode == 0) {
+    print(&quot;Transfer went ok\n&quot;);
+    my $response_code = $curl-&amp;gt;getinfo(CURLINFO_HTTP_CODE);
+    print(GREEN, &quot;Received response code: $response_code\n&quot;, RESET, &quot;\n&quot;);
+} else {
+    print(RED, &quot;An error happened: $retcode &quot;. RESET . $curl-&amp;gt;strerror($retcode).&quot; &quot;.$curl-&amp;gt;errbuf.&quot;\n&quot;);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Of course feel free to run this in a loop :) because each record is equally weighted in the SRV you will get a round-robin behaviour.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;perl-srv&quot;&gt;
+  &lt;img src=&quot;/2023/05/perl-srv.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, looking good so far.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_stork_and_java&quot;&gt;Stork and Java&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Of course, the whole point was to try out Stork. Following the &lt;a href=&quot;https://quarkus.io/guides/stork&quot;&gt;Quarkus Stork&lt;/a&gt; getting started guide, i used a simple service&lt;/p&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js&quot;&gt;&lt;/script&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;and configured the &lt;code&gt;canary&lt;/code&gt; stork service as follows:&lt;/p&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js&quot;&gt;&lt;/script&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Unfortunately, this didn&amp;#8217;t work as I expected! The SRV record values were &lt;code&gt;resolved&lt;/code&gt; to IP addresses instead of returning the DNS name fo me to query. The
+issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;quarkus-stork-call-fail.png&quot;&gt;
+  &lt;img src=&quot;/2023/05/quarkus-stork-call-fail.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The Stork documentation spells out this DNS resolution process:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;stork-query-1&quot;&gt;
+  &lt;img src=&quot;/2023/05/stork-query-1.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Looking at the source code, led me to submit this &lt;a href=&quot;https://github.com/smallrye/smallrye-stork/pull/549/files&quot;&gt;PR&lt;/a&gt; which adds in an option so you can skip the DNS resolution step.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So, adding this property using the new version of the Stork library:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;quarkus.stork.canary.service-discovery.resolve-srv=false&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Leads to the DNS names being returned and no the ip addresses:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;stork-query-2&quot;&gt;
+  &lt;img src=&quot;/2023/05/stork-query-2.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Trying out the code and now the Service call works as expected:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;quarkus-stork-call-ok.png&quot;&gt;
+  &lt;img src=&quot;/2023/05/quarkus-stork-call-ok.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;YAY ! 🦍 Checkout &lt;a href=&quot;https://github.com/eformat/stork-quickstart/tree/main&quot;&gt;the source code here&lt;/a&gt; and watch out for the next version of Stork !&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Open Source Web Analytics</title>

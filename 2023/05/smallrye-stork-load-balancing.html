@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - Running Mastodon on OpenShift</title>
+    <title>eformat.me - Open Source Service Discovery and Load Balancing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : Running Mastodon on OpenShift">
-    <meta property="og:title" content="eformat.me - Running Mastodon on OpenShift" />
+    <meta name="description" content="eformat.me : Open Source Service Discovery and Load Balancing">
+    <meta property="og:title" content="eformat.me - Open Source Service Discovery and Load Balancing" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
     <meta property="og:url" content="https://blog.eformat.me" />
-    <meta property="og:description" content="eformat.me : Running Mastodon on OpenShift" />
+    <meta property="og:description" content="eformat.me : Open Source Service Discovery and Load Balancing" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -70,7 +70,7 @@
 	<div class="page-header">
         <div class="row">
             <div class="col-xs-4 col-md-2"><img src="../../img/eformat.me.jpg"></div>
-            <div class="col-xs-12 col-md-8"><h1>Running Mastodon on OpenShift</h1></div>
+            <div class="col-xs-12 col-md-8"><h1>Open Source Service Discovery and Load Balancing</h1></div>
         </div>
 	</div>
 
@@ -81,143 +81,195 @@
         <p>
             <em>
                 <time itemprop="datePublished"
-                      datetime="2022-12-31">
-                    31 December 2022
+                      datetime="2023-05-25">
+                    25 May 2023
                 </time>
             </em>
         </p>
 
-        <meta itemprop="name" content="Running Mastodon on OpenShift"/>
+        <meta itemprop="name" content="Open Source Service Discovery and Load Balancing"/>
 
         <div itemprop="author" itemscope itemtype="http://schema.org/Person">
             <meta itemprop="name" content="Mike Hepburn"/>
         </div>
         <meta itemprop="inLanguage" content="en-US"/>
-        <meta itemprop="url" content="https://blog.eformat.me/2022/12/mastodon-openshift.html"/>
-        <meta itemprop="discussionUrl" content="https://blog.eformat.me/2022/12/mastodon-openshift.html#disqus_thread"/>
+        <meta itemprop="url" content="https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html"/>
+        <meta itemprop="discussionUrl" content="https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html#disqus_thread"/>
 
 
 
         <p>Tags :
-        <meta itemprop="keywords" content="openshift,social,fediverse,mastodon"/>
-        <a href="../../tags/openshift.html">openshift</a>, <a href="../../tags/social.html">social</a>, <a href="../../tags/fediverse.html">fediverse</a>, <a href="../../tags/mastodon.html">mastodon</a>
+        <meta itemprop="keywords" content="quarkus,service discovery,load balancing,java"/>
+        <a href="../../tags/quarkus.html">quarkus</a>, <a href="../../tags/service discovery.html">service discovery</a>, <a href="../../tags/load balancing.html">load balancing</a>, <a href="../../tags/java.html">java</a>
         </p>
 
-        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/12/mastodon-openshift.html" data-via="eformat" data-text="Running Mastodon on OpenShift" data-lang="en">Tweeter</a-->
+        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html" data-via="eformat" data-text="Open Source Service Discovery and Load Balancing" data-lang="en">Tweeter</a-->
         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/12/mastodon-openshift.html"></div>
+        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html"></div>
 
         <div itemprop="blogPost">
-        <p><div class="sect1">
-<h2 id="_join_the_fediverse_with_openshift">Join the Fediverse with OpenShift</h2>
+        <p><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Who knew that <strong>fediverse</strong> was a portmanteau of "federation" and "universe" ? an ensemble of interconnected servers that are used for microblogging. If you are itching to try out your own Mastodon instance on OpenShift
-i have just the <a href="https://github.com/eformat/openshift-mastodon">helm template</a> for you.</p>
+<p><a href="https://smallrye.io/smallrye-stork/">Stork</a> is a service discovery and client-side load-balancing framework. Its one of those critical services you
+find out you need when doing distributed services programming. Have a read of the docs, it integrates into common open source tooling such as Hashi&#8217;s <a href="https://www.consul.io">Consul</a> as
+well as a host of others. Even-though OpenShift/Kubernetes has a built-in support for service discovery and load-balancing, you may need more flexibility to carefully select
+the service instance you want.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dns_srv_for_service_discovery">DNS SRV for Service Discovery</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I wanted to try out good 'ol fashioned <a href="https://en.wikipedia.org/wiki/SRV_record">SRV Records</a> as a means to testing out the client side service discovery in Stork. Many people forget that
+DNS itself supports service discovery for high service availability. It is still very commonly used, especially in mobile/telco.</p>
 </div>
 <div class="paragraph">
-<p>It should be as simple as logging into OpenShift and running helm, where <em>CLUSTER_DOMAIN</em> is your cluster apps domain name.</p>
+<p>My test case would be to create a DNS SRV record that queries OpenShift Cluster Canary Application endpoints. I&#8217;m using Route53 for DNS so you can read the
+<a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html#SRVFormat">SRV Records format here</a>. The first three records are priority, weight, and port.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . \
-  --create-namespace --namespace mastodon \
-  --set mastodon.local_domain=mastodon.&lt;CLUSTER DOMAIN&gt;</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">1 10 443 canary-openshift-ingress-canary.apps.sno.eformat.me
+1 10 443 canary-openshift-ingress-canary.apps.baz.eformat.me</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This will get you a basic server installed, using the lastest Mastodon image. You should change the <em>values.yaml</em> to adjust the default passwords and secrets prior to deploying anything other than a play-around instance - see the README.md for how to use rake to generate new secrets. Once deployed, you should see these pods running in your <strong>mastodon</strong> namespace.</p>
-</div>
-<div id="lightbox"></div>
-<div class="imageblock id="mastodon-pods">
-  <img src="/2022/12/mastodon-pods.png" class="zoom">
-</div>
-<div class="sect2">
-<h3 id="_a_note_on_s3">A note on S3</h3>
-<div class="paragraph">
-<p>Mastodon can store its microblogging images in S3. The helm chart uses a <a href="https://min.io">minio</a> instance running in OpenShift. In the default configuration, we want the s3 links to be publicly available via anonymous read-only access with the link, but not listable. For now we use the aws cli client to upload this policy manually post-install.</p>
+<p>If you curl one of these, you get a <code>Healthcheck requested</code> back if the service is running.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc -n mastodon port-forward svc/my-fediverse-minio 9000:9000
-cat &lt;&lt; 'EOF' &gt; /tmp/mastodon-policy.json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": [
-          "*"
-        ]
-      },
-      "Resource": [
-        "arn:aws:s3:::mastodon/*"
-      ],
-      "Sid": ""
-    }
-  ]
+<pre class="prettyprint highlight"><code data-lang="bash">curl https://canary-openshift-ingress-canary.apps.sno.eformat.me
+Healthcheck requested</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, in my example, you can get a full list of SRV record values by querying:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">dig SRV canary.demo.redhatlabs.dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coding_a_quick_client">Coding a Quick Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s query the SRV record and see if my OpenShift clusters are healthy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="perl5"># sudo dnf install -y perl-Net-DNS perl-WWW-Curl
+use Net::DNS;
+use WWW::Curl::Easy;
+use Term::ANSIColor qw(:constants);
+
+sub lookup {
+  my ($dc) = @_;
+  my $res = Net::DNS::Resolver-&gt; new;
+  my $query = $res-&gt;send($dc, "SRV");
+  if ($query) {
+      foreach $rr ($query-&gt;answer) {
+          next unless $rr-&gt;type eq 'SRV';
+          # return first found
+          # there's no _ldaps SRV record
+          return $rr-&gt;target;
+      }
+  } else {
+      print("SRV lookup failed: " . $res-&gt;errorstring);
+  }
+  return;
 }
-EOF
 
-export AWS_PROFILE=minio
-aws --endpoint-url http://localhost:9000 s3api put-bucket-policy --bucket mastodon --policy file:///tmp/mastodon-policy.json</code></pre>
+my $host = lookup("canary.demo.redhatlabs.dev");
+print GREEN, $host . "\n", RESET;
+my $curl = WWW::Curl::Easy-&gt;new;
+$curl-&gt;setopt(CURLOPT_HEADER,1);
+$curl-&gt;setopt(CURLOPT_URL, 'https://' . $host);
+$curl-&gt;setopt(CURLOPT_SSL_VERIFYHOST, 0);
+
+my $retcode = $curl-&gt;perform;
+
+if ($retcode == 0) {
+    print("Transfer went ok\n");
+    my $response_code = $curl-&gt;getinfo(CURLINFO_HTTP_CODE);
+    print(GREEN, "Received response code: $response_code\n", RESET, "\n");
+} else {
+    print(RED, "An error happened: $retcode ". RESET . $curl-&gt;strerror($retcode)." ".$curl-&gt;errbuf."\n");
+}</code></pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_logging_in_adding_users">Logging In, Adding users</h3>
 <div class="paragraph">
-<p>By default users can self register to your mastodon instance. The user on boarding workflow uses email, so you can deploy using SMTP services. For example a popular service like <a href="https://www.mailgun.com">mailgun</a> with your credentials would look something like this:</p>
+<p>Of course feel free to run this in a loop :) because each record is equally weighted in the SRV you will get a round-robin behaviour.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="perl-srv">
+  <img src="/2023/05/perl-srv.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>So, looking good so far.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stork_and_java">Stork and Java</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Of course, the whole point was to try out Stork. Following the <a href="https://quarkus.io/guides/stork">Quarkus Stork</a> getting started guide, i used a simple service</p>
+</div>
+<script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
+<div class="paragraph">
+<p>and configured the <code>canary</code> stork service as follows:</p>
+</div>
+<script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
+<div class="paragraph">
+<p>Unfortunately, this didn&#8217;t work as I expected! The SRV record values were <code>resolved</code> to IP addresses instead of returning the DNS name fo me to query. The
+issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-fail.png">
+  <img src="/2023/05/quarkus-stork-call-fail.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>The Stork documentation spells out this DNS resolution process:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-1">
+  <img src="/2023/05/stork-query-1.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Looking at the source code, led me to submit this <a href="https://github.com/smallrye/smallrye-stork/pull/549/files">PR</a> which adds in an option so you can skip the DNS resolution step.</p>
+</div>
+<div class="paragraph">
+<p>So, adding this property using the new version of the Stork library:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">helm upgrade --install my-fediverse . \
-  --set mastodon.smtp_server=smtp.mailgun.org \
-  --set mastodon.smtp_login=postmaster@example.com \
-  --set mastodon.smtp_password=123456 \
-  --set mastodon.smtp_from_address=mastodon@example.com. \
-  --create-namespace --namespace mastodon</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">quarkus.stork.canary.service-discovery.resolve-srv=false</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you do not want to set up SMTP just yet, we can also use a manual method. Browse to your mastodon front page and select <strong>Create Account</strong>.</p>
+<p>Leads to the DNS names being returned and no the ip addresses:</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="mastodon-front-page">
-  <img src="/2022/12/mastodon-front-page.png" class="zoom">
+<div class="imageblock id="stork-query-2">
+  <img src="/2023/05/stork-query-2.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>This will let you sign up. We can rsh into the mastodon pod to manually approve the user. I signed up as <strong>eformat</strong> and also gave myself the <em>Admin</em> role.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc rsh $(oc get pods -l app.kubernetes.io/name=mastodon-streaming-mastodon -o name)
-
-RAILS_ENV=production bin/tootctl accounts modify eformat --confirm
-RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You should see <strong>OK</strong> printed out when running these commands. Now log back in to mastodon and you should be able to right-click <strong>Preferences</strong> to administer the server.</p>
+<p>Trying out the code and now the Service call works as expected:</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="mastodon-admin">
-  <img src="/2022/12/mastodon-admin.png" class="zoom">
+<div class="imageblock id="quarkus-stork-call-ok.png">
+  <img src="/2023/05/quarkus-stork-call-ok.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>I updated the server thumbnail which is stored in your minio s3.</p>
-</div>
-<div id="lightbox"></div>
-<div class="imageblock id="mastodon-server-thumb">
-  <img src="/2022/12/mastodon-server-thumb.png" class="zoom">
-</div>
-<div class="paragraph">
-<p>🏅That&#8217;s it !! you can find all of the <a href="https://docs.joinmastodon.org/admin/config">docs and configuration guides</a> online for mastodon.</p>
-</div>
+<p>YAY ! 🦍 Checkout <a href="https://github.com/eformat/stork-quickstart/tree/main">the source code here</a> and watch out for the next version of Stork !</p>
 </div>
 </div>
 </div></p>
@@ -373,7 +425,7 @@ RAILS_ENV=production bin/tootctl accounts modify eformat --role Admin</code></pr
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu May 25 06:06:23 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu May 25 06:06:22 UTC 2023</a></p>
       </div>
     </div>
     
