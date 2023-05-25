@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - optaplanner</title>
+    <title>eformat.me - stork</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : optaplanner">
-    <meta property="og:title" content="eformat.me - optaplanner" />
+    <meta name="description" content="eformat.me : stork">
+    <meta property="og:title" content="eformat.me - stork" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/optaplanner.html" />
-    <meta property="og:description" content="eformat.me : optaplanner" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/stork.html" />
+    <meta property="og:description" content="eformat.me : stork" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -70,7 +70,7 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: optaplanner</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: stork</h1></div>
             </div>
 	</div>
 
@@ -79,82 +79,182 @@
     <div class="col-sm-8">
         
             
-                <a href="../2022/11/optaplanner-quarkus.html"><h1>AI Constraints Programming with Quarkus and OptaPlanner</h1></a>
-                <p>04 November 2022</p>
+                <a href="../2023/05/smallrye-stork-load-balancing.html"><h1>Service Discovery and Load Balancing with Stork</h1></a>
+                <p>25 May 2023</p>
 
                 <p>Tags :
-                <a href="quarkus.html">quarkus</a>, <a href="constraints.html">constraints</a>, <a href="optaplanner.html">optaplanner</a>, <a href="java.html">java</a>
+                <a href="quarkus.html">quarkus</a>, <a href="service discovery.html">service discovery</a>, <a href="stork.html">stork</a>, <a href="load balancing.html">load balancing</a>, <a href="java.html">java</a>
                 </p>
 
-                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2022/11/optaplanner-quarkus.html" data-text="AI Constraints Programming with Quarkus and OptaPlanner" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html" data-text="Service Discovery and Load Balancing with Stork" data-via="eformat" data-lang="en">Tweeter</a-->
                 <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2022/11/optaplanner-quarkus.html"></div>
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html"></div>
 
-                <p><div class="sect1">
-<h2 id="_ai_on_quarkus_i_love_it_when_an_optaplan_comes_together">AI on Quarkus: I love it when an OptaPlan comes together</h2>
+                <p><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>I have been meaning to look at <a href="https://www.optaplanner.org/">OptaPlanner</a> for ages. All i can say is <em>"Sorry Geoffrey De Smet, you are a goddamn genius and i should have played with OptaPlanner way sooner".</em></p>
+<p><a href="https://smallrye.io/smallrye-stork/">Stork</a> is a service discovery and client-side load-balancing framework. Its one of those critical services you
+find out you need when doing distributed services programming. Have a read of the docs, it integrates into common open source tooling such as Hashi&#8217;s <a href="https://www.consul.io">Consul</a> as
+well as a host of others. Even-though OpenShift/Kubernetes has a built-in support for service discovery and load-balancing, you may need more flexibility to carefully select
+the service instance you want.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dns_srv_for_service_discovery">DNS SRV for Service Discovery</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I wanted to try out good 'ol fashioned <a href="https://en.wikipedia.org/wiki/SRV_record">SRV Records</a> as a means to testing out the client side service discovery in Stork. Many people forget that
+DNS itself supports service discovery for high service availability. It is still very commonly used, especially in mobile/telco.</p>
 </div>
 <div class="paragraph">
-<p>So, i watched this video to see how to get started.</p>
+<p>My test case would be to create a DNS SRV record that queries OpenShift Cluster Canary Application endpoints. I&#8217;m using Route53 for DNS so you can read the
+<a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html#SRVFormat">SRV Records format here</a>. The first three records are priority, weight, and port.</p>
 </div>
-<div class="videoblock">
+<div class="listingblock">
 <div class="content">
-<iframe src="https://www.youtube.com/embed/3N3NoDs3Ylc?rel=0" frameborder="0" allowfullscreen></iframe>
+<pre class="prettyprint highlight"><code data-lang="bash">1 10 443 canary-openshift-ingress-canary.apps.sno.eformat.me
+1 10 443 canary-openshift-ingress-canary.apps.baz.eformat.me</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>So much fun ! 😁 to code.</p>
+<p>If you curl one of these, you get a <code>Healthcheck requested</code> back if the service is running.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">curl https://canary-openshift-ingress-canary.apps.sno.eformat.me
+Healthcheck requested</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, in my example, you can get a full list of SRV record values by querying:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">dig SRV canary.demo.redhatlabs.dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coding_a_quick_client">Coding a Quick Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a quick and dirty client to make use of the SRV record I reach out for my favourite tools, yes Perl 🐫🐫🐫 !</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s query the SRV record and see if my OpenShift clusters are healthy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="perl5"># sudo dnf install -y perl-Net-DNS perl-WWW-Curl
+use Net::DNS;
+use WWW::Curl::Easy;
+use Term::ANSIColor qw(:constants);
+
+sub lookup {
+  my ($dc) = @_;
+  my $res = Net::DNS::Resolver-&gt; new;
+  my $query = $res-&gt;send($dc, "SRV");
+  if ($query) {
+      foreach $rr ($query-&gt;answer) {
+          next unless $rr-&gt;type eq 'SRV';
+          # return first found
+          return $rr-&gt;target;
+      }
+  } else {
+      print("SRV lookup failed: " . $res-&gt;errorstring);
+  }
+  return;
+}
+
+my $host = lookup("canary.demo.redhatlabs.dev");
+print GREEN, $host . "\n", RESET;
+my $curl = WWW::Curl::Easy-&gt;new;
+$curl-&gt;setopt(CURLOPT_HEADER,1);
+$curl-&gt;setopt(CURLOPT_URL, 'https://' . $host);
+$curl-&gt;setopt(CURLOPT_SSL_VERIFYHOST, 0);
+
+my $retcode = $curl-&gt;perform;
+
+if ($retcode == 0) {
+    print("Transfer went ok\n");
+    my $response_code = $curl-&gt;getinfo(CURLINFO_HTTP_CODE);
+    print(GREEN, "Received response code: $response_code\n", RESET, "\n");
+} else {
+    print(RED, "An error happened: $retcode ". RESET . $curl-&gt;strerror($retcode)." ".$curl-&gt;errbuf."\n");
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Of course feel free to run this in a loop :) because each record is equally weighted in the SRV you will get a round-robin behaviour.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="quarkus-school-timetabling-screenshot">
-  <img src="/2022/11/quarkus-school-timetabling-screenshot.png" class="zoom">
-  <div class="title">Figure - Quarkus School Timetable</div>
+<div class="imageblock id="perl-srv">
+  <img src="/2023/05/perl-srv.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>There were a couple of long learnt lessons i remembered whilst playing with the code.</p>
+<p>So, looking good so far.</p>
 </div>
-<div class="paragraph">
-<p>(1) Domain Driven Design</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_stork_and_java">Stork and Java</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>To get at the heart of constraints programming you need a good object class hierarchy, one that is driven by your business domain. Thanks Eric Evans for the gift that keeps giving - DDD (and UML) is perfect to help you out here.</p>
+<p>Of course, the whole point was to try out Stork. Following the <a href="https://quarkus.io/guides/stork">Quarkus Stork</a> getting started guide, I used a simple rest client service</p>
+</div>
+<script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
+<div class="paragraph">
+<p>and configured the <code>canary</code> stork service as follows:</p>
+</div>
+<script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
+<div class="paragraph">
+<p>Unfortunately, this didn&#8217;t work as I expected! The SRV record values were <code>resolved</code> to IP addresses instead of returning the DNS name for me to query. The
+issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="ddd-school-timetable-classes">
-  <img src="/2022/11/ddd-school-timetable-classes.png" class="zoom">
-  <div class="title">Figure - Class Hierarchy</div>
+<div class="imageblock id="quarkus-stork-call-fail.png">
+  <img src="/2023/05/quarkus-stork-call-fail.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>You need to have a clean and well thought out class heirarchy so that wiring in OptaPlanner will work for you. I can see several iterations and workshop sessions ensuing to get to a workable and correct understanding of the problem domain.</p>
+<p>The Stork documentation spells out this DNS resolution process:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-1">
+  <img src="/2023/05/stork-query-1.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>(2) Constraints Programming</p>
+<p>Looking at the source code, led me to submit this <a href="https://github.com/smallrye/smallrye-stork/pull/549/files">PR</a> which adds in an option so that you can skip the DNS resolution step.</p>
 </div>
 <div class="paragraph">
-<p>I went looking for some code i helped write some 15 years ago ! A <a href="https://en.wikipedia.org/wiki/Constraint_programming">Constraint</a> based programming model we had written in C++</p>
+<p>So, adding this property using the new version of the Stork library:</p>
 </div>
-<script src="https://gist.github.com/eformat/87efba0e2ec717ff077852c5924766ec.js"></script>
-<div class="paragraph">
-<p>We had a whole bunch of Production classes used for calculating different trades types and their values. You added these <em>productions</em> into a solver class heirarcy and if you had the right <a href="https://en.wikipedia.org/wiki/Degrees_of_freedom">degrees of freedom</a> your trade calculation would be successful. The beauty of it was the solver would spit out any parameter you had not specified, as long as it was possible to calculate it based on the production rules.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">quarkus.stork.canary.service-discovery.resolve-srv=false</code></pre>
 </div>
-<div class="paragraph">
-<p>OptaPlanner viscerally reminded me of that code and experience, and started me thinking about how to use it for a similar use case.</p>
-</div>
-<script src="https://gist.github.com/eformat/6551fe9434bb0a810321c83bd07adee2.js"></script>
-<div class="paragraph">
-<p>I am now a fan 🥰</p>
 </div>
 <div class="paragraph">
-<p>One last lesson from the OptaPlanner crew was their use of a a new static doc-generation system, their docs are a thing of beauty i have to say, <a href="https://jbake.org">JBake</a> which I am using to write this blog with. Thanks for all the fish 🐟 🐠 Geoff.</p>
+<p>Leads to the DNS names being returned and no the ip addresses:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="stork-query-2">
+  <img src="/2023/05/stork-query-2.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>OptaPlanner Quickstarts Code - <a href="https://github.com/kiegroup/optaplanner-quickstarts" class="bare">https://github.com/kiegroup/optaplanner-quickstarts</a></p>
+<p>Trying out the code and now the Service call works as expected:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-stork-call-ok.png">
+  <img src="/2023/05/quarkus-stork-call-ok.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>YAY ! 🦍 Checkout <a href="https://github.com/eformat/stork-quickstart/tree/main">the source code here</a> and watch out for the next version of Stork !</p>
 </div>
 </div>
 </div></p>
-                <p><a href="2022/11/optaplanner-quarkus.html#disqus_thread">Commentaires</a></p>
+                <p><a href="2023/05/smallrye-stork-load-balancing.html#disqus_thread">Commentaires</a></p>
             
 
         

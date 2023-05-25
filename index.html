@@ -86,7 +86,7 @@
                         </div>
                         <meta itemprop="inLanguage" content="en-US"/>
                         <a itemprop="url" href="2023/05/smallrye-stork-load-balancing.html">
-                            <h1 itemprop="name">Open Source Service Discovery and Load Balancing</h1>
+                            <h1 itemprop="name">Service Discovery and Load Balancing with Stork</h1>
                         </a>
                         <p>
                             <time itemprop="datePublished"
@@ -96,11 +96,11 @@
                         </p>
 
                         <p>Tags :
-                            <meta itemprop="keywords" content="quarkus,service discovery,load balancing,java"/>
-                            <a href="tags/quarkus.html">quarkus</a>, <a href="tags/service discovery.html">service discovery</a>, <a href="tags/load balancing.html">load balancing</a>, <a href="tags/java.html">java</a>
+                            <meta itemprop="keywords" content="quarkus,service discovery,stork,load balancing,java"/>
+                            <a href="tags/quarkus.html">quarkus</a>, <a href="tags/service discovery.html">service discovery</a>, <a href="tags/stork.html">stork</a>, <a href="tags/load balancing.html">load balancing</a>, <a href="tags/java.html">java</a>
                         </p>
 
-                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html" data-text="Open Source Service Discovery and Load Balancing" data-via="eformat" data-lang="en">Tweeter</a-->
+                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html" data-text="Service Discovery and Load Balancing with Stork" data-via="eformat" data-lang="en">Tweeter</a-->
                         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
                         <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/05/smallrye-stork-load-balancing.html"></div>
 
@@ -155,7 +155,7 @@ Healthcheck requested</code></pre>
 <h2 id="_coding_a_quick_client">Coding a Quick Client</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !</p>
+<p>For a quick and dirty client to make use of the SRV record I reach out for my favourite tools, yes Perl 🐫🐫🐫 !</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s query the SRV record and see if my OpenShift clusters are healthy.</p>
@@ -175,7 +175,6 @@ sub lookup {
       foreach $rr ($query-&gt;answer) {
           next unless $rr-&gt;type eq 'SRV';
           # return first found
-          # there's no _ldaps SRV record
           return $rr-&gt;target;
       }
   } else {
@@ -218,7 +217,7 @@ if ($retcode == 0) {
 <h2 id="_stork_and_java">Stork and Java</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Of course, the whole point was to try out Stork. Following the <a href="https://quarkus.io/guides/stork">Quarkus Stork</a> getting started guide, i used a simple service</p>
+<p>Of course, the whole point was to try out Stork. Following the <a href="https://quarkus.io/guides/stork">Quarkus Stork</a> getting started guide, I used a simple rest client service</p>
 </div>
 <script src="https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js"></script>
 <div class="paragraph">
@@ -226,7 +225,7 @@ if ($retcode == 0) {
 </div>
 <script src="https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js"></script>
 <div class="paragraph">
-<p>Unfortunately, this didn&#8217;t work as I expected! The SRV record values were <code>resolved</code> to IP addresses instead of returning the DNS name fo me to query. The
+<p>Unfortunately, this didn&#8217;t work as I expected! The SRV record values were <code>resolved</code> to IP addresses instead of returning the DNS name for me to query. The
 issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.</p>
 </div>
 <div id="lightbox"></div>
@@ -241,7 +240,7 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
   <img src="/2023/05/stork-query-1.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>Looking at the source code, led me to submit this <a href="https://github.com/smallrye/smallrye-stork/pull/549/files">PR</a> which adds in an option so you can skip the DNS resolution step.</p>
+<p>Looking at the source code, led me to submit this <a href="https://github.com/smallrye/smallrye-stork/pull/549/files">PR</a> which adds in an option so that you can skip the DNS resolution step.</p>
 </div>
 <div class="paragraph">
 <p>So, adding this property using the new version of the Stork library:</p>
@@ -371,6 +370,8 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                     
                         <li><a href="tags/social.html">social</a> (1)</li>
                     
+                        <li><a href="tags/stork.html">stork</a> (1)</li>
+                    
                         <li><a href="tags/streaming.html">streaming</a> (1)</li>
                     
                         <li><a href="tags/vault.html">vault</a> (1)</li>
@@ -390,7 +391,7 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu May 25 06:06:23 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu May 25 20:52:28 UTC 2023</a></p>
       </div>
     </div>
     

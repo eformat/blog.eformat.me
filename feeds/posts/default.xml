@@ -6,12 +6,12 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 25 May 2023 06:06:23 +0000</pubDate>
-      <lastBuildDate>Thu, 25 May 2023 06:06:23 +0000</lastBuildDate>
+      <pubDate>Thu, 25 May 2023 20:52:28 +0000</pubDate>
+      <lastBuildDate>Thu, 25 May 2023 20:52:28 +0000</lastBuildDate>
 
       
       <item>
-          <title>Open Source Service Discovery and Load Balancing</title>
+          <title>Service Discovery and Load Balancing with Stork</title>
           <link>https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html</link>
           <pubDate>Thu, 25 May 2023 00:00:00 +0000</pubDate>
           <guid isPermaLink="false">https://blog.eformat.me/2023/05/smallrye-stork-load-balancing.html</guid>
@@ -66,7 +66,7 @@ Healthcheck requested&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&quot;_coding_a_quick_client&quot;&gt;Coding a Quick Client&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;For a quick and dirty client to make use of the SRV record i reach out for my favourite tools, yes Perl 🐫🐫🐫 !&lt;/p&gt;
+&lt;p&gt;For a quick and dirty client to make use of the SRV record I reach out for my favourite tools, yes Perl 🐫🐫🐫 !&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;Let&amp;#8217;s query the SRV record and see if my OpenShift clusters are healthy.&lt;/p&gt;
@@ -86,7 +86,6 @@ sub lookup {
       foreach $rr ($query-&amp;gt;answer) {
           next unless $rr-&amp;gt;type eq &apos;SRV&apos;;
           # return first found
-          # there&apos;s no _ldaps SRV record
           return $rr-&amp;gt;target;
       }
   } else {
@@ -129,7 +128,7 @@ if ($retcode == 0) {
 &lt;h2 id=&quot;_stork_and_java&quot;&gt;Stork and Java&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Of course, the whole point was to try out Stork. Following the &lt;a href=&quot;https://quarkus.io/guides/stork&quot;&gt;Quarkus Stork&lt;/a&gt; getting started guide, i used a simple service&lt;/p&gt;
+&lt;p&gt;Of course, the whole point was to try out Stork. Following the &lt;a href=&quot;https://quarkus.io/guides/stork&quot;&gt;Quarkus Stork&lt;/a&gt; getting started guide, I used a simple rest client service&lt;/p&gt;
 &lt;/div&gt;
 &lt;script src=&quot;https://gist.github.com/eformat/ef15dcd163d245aa2d6594627482f542.js&quot;&gt;&lt;/script&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
@@ -137,7 +136,7 @@ if ($retcode == 0) {
 &lt;/div&gt;
 &lt;script src=&quot;https://gist.github.com/eformat/1311409e0e7f1a60ece148a34288f754.js&quot;&gt;&lt;/script&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Unfortunately, this didn&amp;#8217;t work as I expected! The SRV record values were &lt;code&gt;resolved&lt;/code&gt; to IP addresses instead of returning the DNS name fo me to query. The
+&lt;p&gt;Unfortunately, this didn&amp;#8217;t work as I expected! The SRV record values were &lt;code&gt;resolved&lt;/code&gt; to IP addresses instead of returning the DNS name for me to query. The
 issue with just an IP address is that Routing in OpenShift requires the HEAD/Location to be set properly so the correct endpoint Route can be routed and queried using HAProxy.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
@@ -152,7 +151,7 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
   &lt;img src=&quot;/2023/05/stork-query-1.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Looking at the source code, led me to submit this &lt;a href=&quot;https://github.com/smallrye/smallrye-stork/pull/549/files&quot;&gt;PR&lt;/a&gt; which adds in an option so you can skip the DNS resolution step.&lt;/p&gt;
+&lt;p&gt;Looking at the source code, led me to submit this &lt;a href=&quot;https://github.com/smallrye/smallrye-stork/pull/549/files&quot;&gt;PR&lt;/a&gt; which adds in an option so that you can skip the DNS resolution step.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;So, adding this property using the new version of the Stork library:&lt;/p&gt;
