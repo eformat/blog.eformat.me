@@ -79,6 +79,281 @@
     <div class="col-sm-8">
         
             
+                <a href="../2023/06/graphql-federation-quarkus.html"><h1>GraphQL Federation with Quarkus</h1></a>
+                <p>16 June 2023</p>
+
+                <p>Tags :
+                <a href="quarkus.html">quarkus</a>, <a href="graphql.html">graphql</a>, <a href="apollo.html">apollo</a>, <a href="api.html">api</a>, <a href="teams.html">teams</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/06/graphql-federation-quarkus.html" data-text="GraphQL Federation with Quarkus" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/06/graphql-federation-quarkus.html"></div>
+
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A canonical example using Quarkus GraphQL Federation and the Apollo Gateway server.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_new_age_of_apis">New Age of API&#8217;s</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For some time now I have been following and using graphql as an API mechanism. If you have not heard of it, there are many <a href="https://www.apollographql.com/docs/intro/benefits">great resources</a> that talk about the benefits. Another <a href="https://graphql.org/learn/">great learning site is here</a>. For me, some obvious benefits of GraphQL include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>eliminates over-fetching of data from an API</p>
+</li>
+<li>
+<p>code a graphql API that can easily change without having to modify all the client code</p>
+</li>
+<li>
+<p>you don&#8217;t end up with hundreds of REST API&#8217;s for every single use case that come up</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In particular though - the composable nature of <strong>Federated</strong> graphql schemas is what catches my eye. Some early adopters like Netflix have blogged
+about their engineering efforts in this area.</p>
+</div>
+<div class="paragraph">
+<p>In particular checkout Netflix&#8217;s <a href="https://netflixtechblog.com/how-netflix-content-engineering-makes-a-federated-graph-searchable-5c0c1c7d7eaf"><strong>Studio Search</strong></a>
+and <a href="https://netflixtechblog.com/data-movement-in-netflix-studio-via-data-mesh-3fddcceb1059"><strong>DataMesh</strong></a> blogs</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="netflix-studio-search">
+  <img src="/2023/06/netflix-studio-search.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>By using a Federated Graph with graphql, different departments within the company can control and contribute independently the API&#8217;s that compose StudioSearch.</p>
+</div>
+<div class="paragraph">
+<p>For me, this also fits in with a <strong>Team Topology</strong> view of the world - where individual stream aligned business teams can control their bits of the graph, whilst contributing to the whole fairly autonomously.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_issues_of_code">Issues of Code</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Graphql was born in a nodejs ecosystem. But of course we ❤ Java, and in particular, Quarkus has a <a href="https://quarkus.io/guides/smallrye-graphql"> smallrye graphql️ implementation</a>.</p>
+</div>
+<div class="paragraph">
+<p>There has been a long-running <a href="https://github.com/smallrye/smallrye-graphql/issues/521">RFE</a> for adding GraphQL Federation to Quarkus. I would say in general things are looking pretty good these days with the addition of federation into the underlying <a href="https://smallrye.io/smallrye-graphql/2.2.1/federation/">smallrye implementation</a>.</p>
+</div>
+<div class="paragraph">
+<p>The other day, I was following this <a href="https://github.com/quarkusio/quarkus/issues/30180">bug</a> around resolving entities and was thinking to myself "this should work OK now!!" - so I went ahead and played around with the code. What resulted was a nice simple working
+example of graphql federation.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="federated-subgraph">
+  <img src="/2023/06/federated-subgraph.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>In the picture of Apollo&#8217;s Explorer - the Product{id, name} are sourced from the Product subgraph, and the Product{review} from the Review subgraph.</p>
+</div>
+<div class="paragraph">
+<p>🤠 The <a href="https://github.com/eformat/quarkus-graphql-issue">Source Code is HERE</a> so you can follow along. 🤠</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_example_in_detail">The Example in Detail</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let me explain it a bit more in detail. There are three pieces to the simple architecture - a gateway component (apollo server), and two Quarkus graphql API&#8217;s (Product, Review).</p>
+</div>
+<div class="paragraph">
+<p>You can run the two Quarkus graphql API&#8217;s using maven, and for any one of them, browse to the Quarkus Developer UI by hitting the 'd' key in the terminal. For example:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-dev-ui">
+  <img src="/2023/06/quarkus-dev-ui.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Use the Smallrye GraphQL panel to browse the individual schema, and to run individual queries using GrapQi against the single API e.g. for the Product api</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/graphql-productById.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>we can run ProductByID and see the result for the fields we desire.</p>
+</div>
+<div class="paragraph">
+<p>Now, in the Review service, we use a Federated Entity <a href="https://www.apollographql.com/docs/federation/entities">that you can read about here</a> to extend the Product with a Review.</p>
+</div>
+<div class="paragraph">
+<p>The jey bit of Java code is the annotations that make this happen in the Review module&#8217;s Product domain model class i.e. <code>@Extends</code> and <code>@Key</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">@Extends
+@Key(fields = "id")
+public class Product {
+    private Review review;
+    // getters and setters not shown
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this way, we are extending the Product from the Product API with a Review.</p>
+</div>
+<div class="paragraph">
+<p>We can query the individual graphql schemas in the DevUI or from the command line using curl.</p>
+</div>
+<div class="paragraph">
+<p>Product API</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl http://localhost:8081/graphql/schema.graphql
+
+union _Entity = Product
+
+type Product @key(fields : "id") {
+  id: ID
+  name: String
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "All Products"
+  allProducts: [Product]
+  "Find product by ID"
+  productById(id: String): Product @provides(fields : "id")
+}
+
+type _Service {
+  sdl: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Review API</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl http://localhost:8082/graphql/schema.graphql
+
+union _Entity = Product | Review
+
+type Product @extends @key(fields : "id") {
+  id: ID
+  review: Review
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "Find product by ID"
+  productById(id: String): Product
+  "Find review by ID"
+  reviewById(id: String): Review
+}
+
+type Review @key(fields : "id") {
+  id: ID
+  product: Product
+  rating: Int
+  text: String
+}
+
+type _Service {
+  sdl: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can see that the Product {id review} is provided by the Review API whilst the Product {id name} is provided by the Product API. You can also Query for Reviews and Products independently.</p>
+</div>
+<div class="paragraph">
+<p>I have ommitted all the scalars and directives in the schema output above that are generated by setting these application properties:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">quarkus.smallrye-graphql.schema-include-scalars=true
+quarkus.smallrye-graphql.schema-include-directives=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These are required by the gateway when it <strong>introspects</strong> the grapql schema to compose the one <strong>Supergraph</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Now to the gateway piece, which is run using apollo nodejs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">gateway$ npm run start
+
+&gt; start
+&gt; nodemon gateway.js
+
+[nodemon] 2.0.22
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node gateway.js`
+🚀  Server ready at: http://localhost:4000/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you browse to the apollo endpoint, it will take you to the Sandbox which is very similar to the Quarkus GraphQi interface (the sandbox connects a websocket to your localhost:4000 port eventhough it appears on a cloud hosted url). It shows a nice schema view for the supergraph:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/apollo-fed-schema.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>You can also query this using curl which is harder and a bit uglier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl -s -X POST http://localhost:4000/graphql -H "Content-Type: application/json" --data-binary '{"query":"{\n\t__schema{\n queryType {\n fields{\n name\n }\n }\n }\n}"}' | jq .
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "fields": [
+          {
+            "name": "allProducts"
+          },
+          {
+            "name": "productById"
+          },
+          {
+            "name": "reviewById"
+          }
+        ]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The important bit is this is the federated Supergraph .. so when we query for Product - we can ask for the Product {id name review} fields and the gateway resolves the entities for us, yay !!</p>
+</div>
+<div class="paragraph">
+<p>The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not suppport the newish <code>application/graphql+json</code> Mime Type yet despite PR&#8217;s ;) inclding one from me!</p>
+</div>
+<div class="paragraph">
+<p>Hope you Enjoy! there is a wealth of fun stuff to code with using graphql (go lookup Mutations next!) 👾👾👾</p>
+</div>
+</div>
+</div></p>
+                <p><a href="2023/06/graphql-federation-quarkus.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2023/05/smallrye-stork-load-balancing.html"><h1>Service Discovery and Load Balancing with Stork</h1></a>
                 <p>25 May 2023</p>
 
@@ -365,6 +640,9 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                 <li><a href="java.html">java</a> (3)</li>
                 
 
+                <li><a href="quarkus.html">quarkus</a> (3)</li>
+                
+
                 <li><a href="aiml.html">aiml</a> (2)</li>
                 
 
@@ -374,9 +652,6 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                 <li><a href="gpu.html">gpu</a> (2)</li>
                 
 
-                <li><a href="quarkus.html">quarkus</a> (2)</li>
-                
-
                 <li><a href="stable diffusion.html">stable diffusion</a> (2)</li>
                 
 
@@ -384,6 +659,12 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                 
 
                 <li><a href="analytics.html">analytics</a> (1)</li>
+                
+
+                <li><a href="api.html">api</a> (1)</li>
+                
+
+                <li><a href="apollo.html">apollo</a> (1)</li>
                 
 
                 <li><a href="aws.html">aws</a> (1)</li>
@@ -417,6 +698,9 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                 
 
                 <li><a href="frr.html">frr</a> (1)</li>
+                
+
+                <li><a href="graphql.html">graphql</a> (1)</li>
                 
 
                 <li><a href="load balancing.html">load balancing</a> (1)</li>
@@ -467,6 +751,9 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
                 <li><a href="streaming.html">streaming</a> (1)</li>
                 
 
+                <li><a href="teams.html">teams</a> (1)</li>
+                
+
                 <li><a href="vault.html">vault</a> (1)</li>
                 
 
@@ -485,7 +772,7 @@ issue with just an IP address is that Routing in OpenShift requires the HEAD/Loc
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Thu May 25 20:52:28 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Fri Jun 16 06:09:10 UTC 2023</a></p>
       </div>
     </div>
     

@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     
-    <title>eformat.me - disconnected</title>
+    <title>eformat.me - teams</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="eformat.me : disconnected">
-    <meta property="og:title" content="eformat.me - disconnected" />
+    <meta name="description" content="eformat.me : teams">
+    <meta property="og:title" content="eformat.me - teams" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
-    <meta property="og:url" content="https://blog.eformat.me/tags/disconnected.html" />
-    <meta property="og:description" content="eformat.me : disconnected" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/teams.html" />
+    <meta property="og:description" content="eformat.me : teams" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="eformat.me" />
 
@@ -70,7 +70,7 @@
 	<div class="page-header">
             <div class="row">
                 <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
-                <div class="col-xs-12 col-md-8"><h1>Tag: disconnected</h1></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: teams</h1></div>
             </div>
 	</div>
 
@@ -79,214 +79,277 @@
     <div class="col-sm-8">
         
             
-                <a href="../2023/04/disconnected-registries.html"><h1>OpenShift Install, Semi-Connected Registries and Mirror by Digest Images</h1></a>
-                <p>12 April 2023</p>
+                <a href="../2023/06/graphql-federation-quarkus.html"><h1>GraphQL Federation with Quarkus</h1></a>
+                <p>16 June 2023</p>
 
                 <p>Tags :
-                <a href="openshift.html">openshift</a>, <a href="gitops.html">gitops</a>, <a href="registries.html">registries</a>, <a href="disconnected.html">disconnected</a>
+                <a href="quarkus.html">quarkus</a>, <a href="graphql.html">graphql</a>, <a href="apollo.html">apollo</a>, <a href="api.html">api</a>, <a href="teams.html">teams</a>
                 </p>
 
-                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/04/disconnected-registries.html" data-text="OpenShift Install, Semi-Connected Registries and Mirror by Digest Images" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2023/06/graphql-federation-quarkus.html" data-text="GraphQL Federation with Quarkus" data-via="eformat" data-lang="en">Tweeter</a-->
                 <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/04/disconnected-registries.html"></div>
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2023/06/graphql-federation-quarkus.html"></div>
 
                 <p><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>I have been working with disconnected OpenShift clusters quite a lot recently. One of the things you need to deal with is disconnected registries and mirror by digest images.</p>
+<p>A canonical example using Quarkus GraphQL Federation and the Apollo Gateway server.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_quay_transparent_proxy_pull_through_cache">Quay Transparent Proxy-Pull Through Cache</h2>
+<h2 id="_new_age_of_apis">New Age of API&#8217;s</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are a couple general approaches to configuring registries when disconnected. The <a href="https://docs.openshift.com/container-platform/4.12/installing/disconnected_install/index.html">product documentation</a> has great depth of detail about using a Quay Mirror Registry. This is the right approach when wanting disconnected. The downside when you are testing things out in a lab is the mirror import process is both time-consuming and uses a lot of disk space.</p>
+<p>For some time now I have been following and using graphql as an API mechanism. If you have not heard of it, there are many <a href="https://www.apollographql.com/docs/intro/benefits">great resources</a> that talk about the benefits. Another <a href="https://graphql.org/learn/">great learning site is here</a>. For me, some obvious benefits of GraphQL include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>eliminates over-fetching of data from an API</p>
+</li>
+<li>
+<p>code a graphql API that can easily change without having to modify all the client code</p>
+</li>
+<li>
+<p>you don&#8217;t end up with hundreds of REST API&#8217;s for every single use case that come up</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>One approach i have become fond of is a what i call a <code>semi-connected</code> method, where your clusters' use a <a href="https://www.youtube.com/watch?v=oVlRDuCD6ic">Quay Transparent Proxy-Pull Through Cache</a> to speed things up. This still uses disk space, but you don&#8217;t need to import all the images before installing a cluster.</p>
+<p>In particular though - the composable nature of <strong>Federated</strong> graphql schemas is what catches my eye. Some early adopters like Netflix have blogged
+about their engineering efforts in this area.</p>
 </div>
 <div class="paragraph">
-<p>After you install the quay mirror registry on the provisioning host, set this in your <code>config.yaml</code> and restart the quay pods or service:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">FEATURE_PROXY_CACHE: true</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This setup mimics what you would need to do when disconnected i.e. we always pull from the mirror registry when installing - but it is quicker to test as the mirror registry is connected. When configuring the OpenShift install method, the pull secret i use is <strong>just</strong> to the mirror. More on that below.</p>
-</div>
-<div class="paragraph">
-<p>If you also set the cache timeout for your Organisations to be months or even years! then your images will hang around for a long time.</p>
-</div>
-<div class="paragraph">
-<p>For installing OpenShift, you really need (at a minimum) two mirror organisations. I set up these two (admin is a default):</p>
+<p>In particular checkout Netflix&#8217;s <a href="https://netflixtechblog.com/how-netflix-content-engineering-makes-a-federated-graph-searchable-5c0c1c7d7eaf"><strong>Studio Search</strong></a>
+and <a href="https://netflixtechblog.com/data-movement-in-netflix-studio-via-data-mesh-3fddcceb1059"><strong>DataMesh</strong></a> blogs</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="quay-mirror-orgs">
-  <img src="/2023/04/quay-mirror-orgs.png" class="zoom">
+<div class="imageblock id="netflix-studio-search">
+  <img src="/2023/06/netflix-studio-search.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>Where each Organisation points to these registries:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">registry-redhat-io -&gt; registry.redhat.io
-ocp4-mirror -&gt; quay.io/openshift-release-dev</code></pre>
-</div>
+<p>By using a Federated Graph with graphql, different departments within the company can control and contribute independently the API&#8217;s that compose StudioSearch.</p>
 </div>
 <div class="paragraph">
-<p>One nice trick is that you can <strong>base64 decode</strong> your Red Hat <strong>pull-secret</strong> (you download this from cloud.redhat.com) and use those credentials in the Organisation mirror registry setup for authentication.</p>
+<p>For me, this also fits in with a <strong>Team Topology</strong> view of the world - where individual stream aligned business teams can control their bits of the graph, whilst contributing to the whole fairly autonomously.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_ocp_install_configuration">OCP Install Configuration</h2>
+<h2 id="_issues_of_code">Issues of Code</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Now comes for the tricky part - configuring your OpenShift installer setup. There are a several ways to do this. The one you use depends on your install method and how you wish to control the <strong>registries.conf</strong> that gets configured for you cluster nodes.</p>
+<p>Graphql was born in a nodejs ecosystem. But of course we ❤ Java, and in particular, Quarkus has a <a href="https://quarkus.io/guides/smallrye-graphql"> smallrye graphql️ implementation</a>.</p>
 </div>
 <div class="paragraph">
-<p>I have been working with the <strong>Agent-based</strong> installer method for Bare Metal (i fake it on libvirt with sushy) - you can <a href="https://github.com/eformat/acm-gitops-ocp">check out all the code here</a>.</p>
+<p>There has been a long-running <a href="https://github.com/smallrye/smallrye-graphql/issues/521">RFE</a> for adding GraphQL Federation to Quarkus. I would say in general things are looking pretty good these days with the addition of federation into the underlying <a href="https://smallrye.io/smallrye-graphql/2.2.1/federation/">smallrye implementation</a>.</p>
 </div>
 <div class="paragraph">
-<p>The issue i think everyone quickly discovers is that the OpenShift installer sets all mirror&#8217;s by digest to be true i.e. <strong>mirror-by-digest-only = true</strong>. If you check the <a href="https://github.com/openshift/installer">installer code</a> its here:</p>
+<p>The other day, I was following this <a href="https://github.com/quarkusio/quarkus/issues/30180">bug</a> around resolving entities and was thinking to myself "this should work OK now!!" - so I went ahead and played around with the code. What resulted was a nice simple working
+example of graphql federation.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="ocp-installer-boostrap">
-  <img src="/2023/04/ocp-installer-boostrap.png" class="zoom">
+<div class="imageblock id="federated-subgraph">
+  <img src="/2023/06/federated-subgraph.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>Setting mirror by digest to true is intentional, it helps stop image spoofing or getting an image from a moving tag.</p>
+<p>In the picture of Apollo&#8217;s Explorer - the Product{id, name} are sourced from the Product subgraph, and the Product{review} from the Review subgraph.</p>
 </div>
 <div class="paragraph">
-<p>Unfortunately not all Operators pull by digest either. In fact the deployments that are part of the <strong>openshift-marketplace</strong> do not. So after a cluster install we see Image Pull errors like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc get pods -n openshift-marketplace
-NAME                                   READY   STATUS             RESTARTS      AGE
-certified-operators-d2nd9              0/1     ImagePullBackOff   0             15h
-certified-operators-pqrlz              0/1     ImagePullBackOff   0             15h
-community-operators-7kpbm              0/1     ImagePullBackOff   0             15h
-community-operators-k662l              0/1     ImagePullBackOff   0             15h
-marketplace-operator-84457bfc9-v22db   1/1     Running            4 (15h ago)   16h
-redhat-marketplace-kjrt9               0/1     ImagePullBackOff   0             15h
-redhat-marketplace-sqch2               0/1     ImagePullBackOff   0             15h
-redhat-operators-4m4gt                 0/1     ImagePullBackOff   0             15h
-redhat-operators-62z6x                 0/1     ImagePullBackOff   0             15h</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>And checking one of the pods we see it is trying to pull by tag:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc describe pod certified-operators-d2nd9
-Normal  BackOff  2m2s (x4179 over 15h)  kubelet  Back-off pulling image "registry.redhat.io/redhat/certified-operator-index:v4.12"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Unfortunately you cannot configure <strong>ImageContentSourcePolicy</strong> for <strong>mirror-by-digest-only = false</strong> so (currently) the only solution is to apply MachineConfig <strong>post</strong> your install as a day#2 thing as documented in this <a href="https://access.redhat.com/solutions/4817401">Knowledge Base Article</a></p>
-</div>
-<div class="paragraph">
-<p>Hopefully in an upcoming OpenShift relaease (4.13 or 4.14) we will be able to use the <strong>new API&#8217;s for CRDs ImageDigestMirrorSet ImageTagMirrorSet</strong> - see <a href="https://issues.redhat.com/browse/OCPNODE-521">Allow mirroring images by tags</a> RFE for more details on these changes.</p>
-</div>
-<div class="paragraph">
-<p>For now though, i use <strong>butane</strong> and MachineConfig as per the KB article at post install time to configure <strong>mirror-by-digest-only = false</strong> for my mirror registries that need it. From my <a href="https://github.com/eformat/acm-gitops-ocp">git repo</a>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">butane 99-master-mirror-by-digest-registries.bu -o 99-master-mirror-by-digest-registries.yaml
-oc apply -f 99-master-mirror-by-digest-registries.yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will reboot your nodes to apply the MCP, you may add or change the butane template(s) and yaml to suit the nodes you need to target e.g. masters or workers (or any other) node role. In my case it&#8217;s targeting a SNO cluster so master is fine.</p>
-</div>
-<div class="paragraph">
-<p>All going well your marketplace pods should now pull images and run OK</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">$ oc get pods -n openshift-marketplace
-NAME                                   READY   STATUS    RESTARTS   AGE
-certified-operators-d2nd9              1/1     Running   0          16h
-community-operators-k662l              1/1     Running   0          16h
-marketplace-operator-84457bfc9-v22db   1/1     Running   5          16h
-redhat-marketplace-kjrt9               1/1     Running   0          16h
-redhat-operators-62z6x                 1/1     Running   0          16h</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A word of warning when using the Assited Installer / Agent Installer method. If you try to set <strong>mirror-by-digest-only = false</strong> registries in your <strong>AgentServiceConfig</strong> using the provided ConfigMap e.g. something like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: quay-mirror-config
-  namespace: multicluster-engine
-  labels:
-    app: assisted-service
-data:
-  LOG_LEVEL: "debug"
-  ca-bundle.crt: |
-    -----BEGIN CERTIFICATE-----
-    ! Put you CA for your mirror registry here !
-    -----END CERTIFICATE-----
-
-  registries.conf: |
-    unqualified-search-registries = ["registry.redhat.io", "registry.access.redhat.com", "docker.io"]
-
-    [[registry]]
-      prefix = ""
-      location = "registry.redhat.io/redhat"
-      mirror-by-digest-only = false
-      [[registry.mirror]]
-        location = "quay.eformat.me:8443/registry-redhat-io/redhat"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The registry mirror setting will get reset to <strong>mirror-by-digest-only = true</strong> by the installer.</p>
-</div>
-<div class="paragraph">
-<p>Similarly, if you try and set MachineConfig in the <strong>ignitionConfigOverride</strong> in the <strong>InfraEnv</strong> e.g.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: agent-install.openshift.io/v1beta1
-kind: InfraEnv
-...
-  # User for modify ignition during discovery
-  ignitionConfigOverride: '{"ignition": {"version": "3.1.0"}, "storage": {"files": [{"path": "/etc/containers/registries.conf", "mode": 420, "overwrite": true, "user": { "name": "root"},"contents": {"source": "data:text/plain;base64,dW5xd..."}}]}}'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>it also gets overriden by the installer. I tried both these methods and failed 😭😭</p>
+<p>🤠 The <a href="https://github.com/eformat/quarkus-graphql-issue">Source Code is HERE</a> so you can follow along. 🤠</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_summary">Summary</h2>
+<h2 id="_the_example_in_detail">The Example in Detail</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For now, the only way to configure <strong>mirror-by-digest-only = false</strong> is via MachineConfig <strong>post-install</strong>.</p>
+<p>Let me explain it a bit more in detail. There are three pieces to the simple architecture - a gateway component (apollo server), and two Quarkus graphql API&#8217;s (Product, Review).</p>
 </div>
 <div class="paragraph">
-<p>You can always <strong>try</strong> and only mirror images by digest, just remember that various operators and components may not be configured this work this way.</p>
+<p>You can run the two Quarkus graphql API&#8217;s using maven, and for any one of them, browse to the Quarkus Developer UI by hitting the 'd' key in the terminal. For example:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-dev-ui">
+  <img src="/2023/06/quarkus-dev-ui.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>The future looks bright with the new API&#8217;s, as this has been a long-standing issue now.</p>
+<p>Use the Smallrye GraphQL panel to browse the individual schema, and to run individual queries using GrapQi against the single API e.g. for the Product api</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/graphql-productById.png" class="zoom">
 </div>
 <div class="paragraph">
-<p>🏅Good luck installing out there !!</p>
+<p>we can run ProductByID and see the result for the fields we desire.</p>
+</div>
+<div class="paragraph">
+<p>Now, in the Review service, we use a Federated Entity <a href="https://www.apollographql.com/docs/federation/entities">that you can read about here</a> to extend the Product with a Review.</p>
+</div>
+<div class="paragraph">
+<p>The jey bit of Java code is the annotations that make this happen in the Review module&#8217;s Product domain model class i.e. <code>@Extends</code> and <code>@Key</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">@Extends
+@Key(fields = "id")
+public class Product {
+    private Review review;
+    // getters and setters not shown
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this way, we are extending the Product from the Product API with a Review.</p>
+</div>
+<div class="paragraph">
+<p>We can query the individual graphql schemas in the DevUI or from the command line using curl.</p>
+</div>
+<div class="paragraph">
+<p>Product API</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl http://localhost:8081/graphql/schema.graphql
+
+union _Entity = Product
+
+type Product @key(fields : "id") {
+  id: ID
+  name: String
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "All Products"
+  allProducts: [Product]
+  "Find product by ID"
+  productById(id: String): Product @provides(fields : "id")
+}
+
+type _Service {
+  sdl: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Review API</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl http://localhost:8082/graphql/schema.graphql
+
+union _Entity = Product | Review
+
+type Product @extends @key(fields : "id") {
+  id: ID
+  review: Review
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "Find product by ID"
+  productById(id: String): Product
+  "Find review by ID"
+  reviewById(id: String): Review
+}
+
+type Review @key(fields : "id") {
+  id: ID
+  product: Product
+  rating: Int
+  text: String
+}
+
+type _Service {
+  sdl: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can see that the Product {id review} is provided by the Review API whilst the Product {id name} is provided by the Product API. You can also Query for Reviews and Products independently.</p>
+</div>
+<div class="paragraph">
+<p>I have ommitted all the scalars and directives in the schema output above that are generated by setting these application properties:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">quarkus.smallrye-graphql.schema-include-scalars=true
+quarkus.smallrye-graphql.schema-include-directives=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These are required by the gateway when it <strong>introspects</strong> the grapql schema to compose the one <strong>Supergraph</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Now to the gateway piece, which is run using apollo nodejs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">gateway$ npm run start
+
+&gt; start
+&gt; nodemon gateway.js
+
+[nodemon] 2.0.22
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node gateway.js`
+🚀  Server ready at: http://localhost:4000/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you browse to the apollo endpoint, it will take you to the Sandbox which is very similar to the Quarkus GraphQi interface (the sandbox connects a websocket to your localhost:4000 port eventhough it appears on a cloud hosted url). It shows a nice schema view for the supergraph:</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/apollo-fed-schema.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>You can also query this using curl which is harder and a bit uglier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">$ curl -s -X POST http://localhost:4000/graphql -H "Content-Type: application/json" --data-binary '{"query":"{\n\t__schema{\n queryType {\n fields{\n name\n }\n }\n }\n}"}' | jq .
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "fields": [
+          {
+            "name": "allProducts"
+          },
+          {
+            "name": "productById"
+          },
+          {
+            "name": "reviewById"
+          }
+        ]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The important bit is this is the federated Supergraph .. so when we query for Product - we can ask for the Product {id name review} fields and the gateway resolves the entities for us, yay !!</p>
+</div>
+<div class="paragraph">
+<p>The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not suppport the newish <code>application/graphql+json</code> Mime Type yet despite PR&#8217;s ;) inclding one from me!</p>
+</div>
+<div class="paragraph">
+<p>Hope you Enjoy! there is a wealth of fun stuff to code with using graphql (go lookup Mutations next!) 👾👾👾</p>
 </div>
 </div>
 </div></p>
-                <p><a href="2023/04/disconnected-registries.html#disqus_thread">Commentaires</a></p>
+                <p><a href="2023/06/graphql-federation-quarkus.html#disqus_thread">Commentaires</a></p>
             
 
         

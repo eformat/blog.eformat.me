@@ -6,9 +6,277 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Thu, 25 May 2023 20:52:28 +0000</pubDate>
-      <lastBuildDate>Thu, 25 May 2023 20:52:28 +0000</lastBuildDate>
+      <pubDate>Fri, 16 Jun 2023 06:09:10 +0000</pubDate>
+      <lastBuildDate>Fri, 16 Jun 2023 06:09:10 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>GraphQL Federation with Quarkus</title>
+          <link>https://blog.eformat.me/2023/06/graphql-federation-quarkus.html</link>
+          <pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/06/graphql-federation-quarkus.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A canonical example using Quarkus GraphQL Federation and the Apollo Gateway server.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_new_age_of_apis&quot;&gt;New Age of API&amp;#8217;s&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For some time now I have been following and using graphql as an API mechanism. If you have not heard of it, there are many &lt;a href=&quot;https://www.apollographql.com/docs/intro/benefits&quot;&gt;great resources&lt;/a&gt; that talk about the benefits. Another &lt;a href=&quot;https://graphql.org/learn/&quot;&gt;great learning site is here&lt;/a&gt;. For me, some obvious benefits of GraphQL include:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;eliminates over-fetching of data from an API&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;code a graphql API that can easily change without having to modify all the client code&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;you don&amp;#8217;t end up with hundreds of REST API&amp;#8217;s for every single use case that come up&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In particular though - the composable nature of &lt;strong&gt;Federated&lt;/strong&gt; graphql schemas is what catches my eye. Some early adopters like Netflix have blogged
+about their engineering efforts in this area.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In particular checkout Netflix&amp;#8217;s &lt;a href=&quot;https://netflixtechblog.com/how-netflix-content-engineering-makes-a-federated-graph-searchable-5c0c1c7d7eaf&quot;&gt;&lt;strong&gt;Studio Search&lt;/strong&gt;&lt;/a&gt;
+and &lt;a href=&quot;https://netflixtechblog.com/data-movement-in-netflix-studio-via-data-mesh-3fddcceb1059&quot;&gt;&lt;strong&gt;DataMesh&lt;/strong&gt;&lt;/a&gt; blogs&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;netflix-studio-search&quot;&gt;
+  &lt;img src=&quot;/2023/06/netflix-studio-search.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By using a Federated Graph with graphql, different departments within the company can control and contribute independently the API&amp;#8217;s that compose StudioSearch.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For me, this also fits in with a &lt;strong&gt;Team Topology&lt;/strong&gt; view of the world - where individual stream aligned business teams can control their bits of the graph, whilst contributing to the whole fairly autonomously.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_issues_of_code&quot;&gt;Issues of Code&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Graphql was born in a nodejs ecosystem. But of course we ❤ Java, and in particular, Quarkus has a &lt;a href=&quot;https://quarkus.io/guides/smallrye-graphql&quot;&gt; smallrye graphql️ implementation&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There has been a long-running &lt;a href=&quot;https://github.com/smallrye/smallrye-graphql/issues/521&quot;&gt;RFE&lt;/a&gt; for adding GraphQL Federation to Quarkus. I would say in general things are looking pretty good these days with the addition of federation into the underlying &lt;a href=&quot;https://smallrye.io/smallrye-graphql/2.2.1/federation/&quot;&gt;smallrye implementation&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The other day, I was following this &lt;a href=&quot;https://github.com/quarkusio/quarkus/issues/30180&quot;&gt;bug&lt;/a&gt; around resolving entities and was thinking to myself &quot;this should work OK now!!&quot; - so I went ahead and played around with the code. What resulted was a nice simple working
+example of graphql federation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;federated-subgraph&quot;&gt;
+  &lt;img src=&quot;/2023/06/federated-subgraph.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In the picture of Apollo&amp;#8217;s Explorer - the Product{id, name} are sourced from the Product subgraph, and the Product{review} from the Review subgraph.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;🤠 The &lt;a href=&quot;https://github.com/eformat/quarkus-graphql-issue&quot;&gt;Source Code is HERE&lt;/a&gt; so you can follow along. 🤠&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_the_example_in_detail&quot;&gt;The Example in Detail&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Let me explain it a bit more in detail. There are three pieces to the simple architecture - a gateway component (apollo server), and two Quarkus graphql API&amp;#8217;s (Product, Review).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can run the two Quarkus graphql API&amp;#8217;s using maven, and for any one of them, browse to the Quarkus Developer UI by hitting the &apos;d&apos; key in the terminal. For example:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;quarkus-dev-ui&quot;&gt;
+  &lt;img src=&quot;/2023/06/quarkus-dev-ui.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Use the Smallrye GraphQL panel to browse the individual schema, and to run individual queries using GrapQi against the single API e.g. for the Product api&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;graphql-productById&quot;&gt;
+  &lt;img src=&quot;/2023/06/graphql-productById.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;we can run ProductByID and see the result for the fields we desire.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now, in the Review service, we use a Federated Entity &lt;a href=&quot;https://www.apollographql.com/docs/federation/entities&quot;&gt;that you can read about here&lt;/a&gt; to extend the Product with a Review.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The jey bit of Java code is the annotations that make this happen in the Review module&amp;#8217;s Product domain model class i.e. &lt;code&gt;@Extends&lt;/code&gt; and &lt;code&gt;@Key&lt;/code&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;java&quot;&gt;@Extends
+@Key(fields = &quot;id&quot;)
+public class Product {
+    private Review review;
+    // getters and setters not shown
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In this way, we are extending the Product from the Product API with a Review.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can query the individual graphql schemas in the DevUI or from the command line using curl.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Product API&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ curl http://localhost:8081/graphql/schema.graphql
+
+union _Entity = Product
+
+type Product @key(fields : &quot;id&quot;) {
+  id: ID
+  name: String
+}
+
+&quot;Query root&quot;
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  &quot;All Products&quot;
+  allProducts: [Product]
+  &quot;Find product by ID&quot;
+  productById(id: String): Product @provides(fields : &quot;id&quot;)
+}
+
+type _Service {
+  sdl: String!
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Review API&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ curl http://localhost:8082/graphql/schema.graphql
+
+union _Entity = Product | Review
+
+type Product @extends @key(fields : &quot;id&quot;) {
+  id: ID
+  review: Review
+}
+
+&quot;Query root&quot;
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  &quot;Find product by ID&quot;
+  productById(id: String): Product
+  &quot;Find review by ID&quot;
+  reviewById(id: String): Review
+}
+
+type Review @key(fields : &quot;id&quot;) {
+  id: ID
+  product: Product
+  rating: Int
+  text: String
+}
+
+type _Service {
+  sdl: String!
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We can see that the Product {id review} is provided by the Review API whilst the Product {id name} is provided by the Product API. You can also Query for Reviews and Products independently.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I have ommitted all the scalars and directives in the schema output above that are generated by setting these application properties:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;quarkus.smallrye-graphql.schema-include-scalars=true
+quarkus.smallrye-graphql.schema-include-directives=true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;These are required by the gateway when it &lt;strong&gt;introspects&lt;/strong&gt; the grapql schema to compose the one &lt;strong&gt;Supergraph&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now to the gateway piece, which is run using apollo nodejs:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;gateway$ npm run start
+
+&amp;gt; start
+&amp;gt; nodemon gateway.js
+
+[nodemon] 2.0.22
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node gateway.js`
+🚀  Server ready at: http://localhost:4000/&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you browse to the apollo endpoint, it will take you to the Sandbox which is very similar to the Quarkus GraphQi interface (the sandbox connects a websocket to your localhost:4000 port eventhough it appears on a cloud hosted url). It shows a nice schema view for the supergraph:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;graphql-productById&quot;&gt;
+  &lt;img src=&quot;/2023/06/apollo-fed-schema.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can also query this using curl which is harder and a bit uglier:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;$ curl -s -X POST http://localhost:4000/graphql -H &quot;Content-Type: application/json&quot; --data-binary &apos;{&quot;query&quot;:&quot;{\n\t__schema{\n queryType {\n fields{\n name\n }\n }\n }\n}&quot;}&apos; | jq .
+{
+  &quot;data&quot;: {
+    &quot;__schema&quot;: {
+      &quot;queryType&quot;: {
+        &quot;fields&quot;: [
+          {
+            &quot;name&quot;: &quot;allProducts&quot;
+          },
+          {
+            &quot;name&quot;: &quot;productById&quot;
+          },
+          {
+            &quot;name&quot;: &quot;reviewById&quot;
+          }
+        ]
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The important bit is this is the federated Supergraph .. so when we query for Product - we can ask for the Product {id name review} fields and the gateway resolves the entities for us, yay !!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not suppport the newish &lt;code&gt;application/graphql+json&lt;/code&gt; Mime Type yet despite PR&amp;#8217;s ;) inclding one from me!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Hope you Enjoy! there is a wealth of fun stuff to code with using graphql (go lookup Mutations next!) 👾👾👾&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Service Discovery and Load Balancing with Stork</title>
