@@ -222,6 +222,6 @@ $ curl -s -X POST http://localhost:4000/graphql -H "Content-Type: application/js
 
 The important bit is this is the federated Supergraph .. so when we query for Product - we can ask for the Product {id name review} fields and the gateway resolves the entities for us, yay !!
 
-The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not suppport the newish `application/graphql+json` Mime Type yet despite PR's ;) inclding one from me!
+The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not support the newish `application/graphql+json` Mime Type yet despite PR's ;) https://github.com/apollographql/federation/pull/1767[including one from me]!
 
 Hope you Enjoy! there is a wealth of fun stuff to code with using graphql (go lookup Mutations next!) 👾👾👾
