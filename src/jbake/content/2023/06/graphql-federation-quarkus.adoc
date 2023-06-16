@@ -1,0 +1,227 @@
+= GraphQL Federation with Quarkus
+:jbake-date: 2023-06-16
+:jbake-type: post
+:jbake-tags: quarkus,graphql,apollo,api,teams
+:jbake-status: published
+
+A canonical example using Quarkus GraphQL Federation and the Apollo Gateway server.
+
+== New Age of API's
+
+For some time now I have been following and using graphql as an API mechanism. If you have not heard of it, there are many https://www.apollographql.com/docs/intro/benefits[great resources] that talk about the benefits. Another https://graphql.org/learn/[great learning site is here]. For me, some obvious benefits of GraphQL include:
+
+- eliminates over-fetching of data from an API
+- code a graphql API that can easily change without having to modify all the client code
+- you don't end up with hundreds of REST API's for every single use case that come up
+
+In particular though - the composable nature of *Federated* graphql schemas is what catches my eye. Some early adopters like Netflix have blogged
+about their engineering efforts in this area.
+
+In particular checkout Netflix's https://netflixtechblog.com/how-netflix-content-engineering-makes-a-federated-graph-searchable-5c0c1c7d7eaf[*Studio Search*]
+and https://netflixtechblog.com/data-movement-in-netflix-studio-via-data-mesh-3fddcceb1059[*DataMesh*] blogs
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="netflix-studio-search">
+  <img src="/2023/06/netflix-studio-search.png" class="zoom">
+</div>
+++++
+
+By using a Federated Graph with graphql, different departments within the company can control and contribute independently the API's that compose StudioSearch.
+
+For me, this also fits in with a *Team Topology* view of the world - where individual stream aligned business teams can control their bits of the graph, whilst contributing to the whole fairly autonomously.
+
+== Issues of Code
+
+Graphql was born in a nodejs ecosystem. But of course we ❤ Java, and in particular, Quarkus has a https://quarkus.io/guides/smallrye-graphql[ smallrye graphql️ implementation].
+
+There has been a long-running https://github.com/smallrye/smallrye-graphql/issues/521[RFE] for adding GraphQL Federation to Quarkus. I would say in general things are looking pretty good these days with the addition of federation into the underlying https://smallrye.io/smallrye-graphql/2.2.1/federation/[smallrye implementation].
+
+The other day, I was following this https://github.com/quarkusio/quarkus/issues/30180[bug] around resolving entities and was thinking to myself "this should work OK now!!" - so I went ahead and played around with the code. What resulted was a nice simple working
+example of graphql federation.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="federated-subgraph">
+  <img src="/2023/06/federated-subgraph.png" class="zoom">
+</div>
+++++
+
+In the picture of Apollo's Explorer - the Product{id, name} are sourced from the Product subgraph, and the Product{review} from the Review subgraph.
+
+🤠 The https://github.com/eformat/quarkus-graphql-issue[Source Code is HERE] so you can follow along. 🤠
+
+== The Example in Detail
+
+Let me explain it a bit more in detail. There are three pieces to the simple architecture - a gateway component (apollo server), and two Quarkus graphql API's (Product, Review).
+
+You can run the two Quarkus graphql API's using maven, and for any one of them, browse to the Quarkus Developer UI by hitting the 'd' key in the terminal. For example:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="quarkus-dev-ui">
+  <img src="/2023/06/quarkus-dev-ui.png" class="zoom">
+</div>
+++++
+
+Use the Smallrye GraphQL panel to browse the individual schema, and to run individual queries using GrapQi against the single API e.g. for the Product api
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/graphql-productById.png" class="zoom">
+</div>
+++++
+
+we can run ProductByID and see the result for the fields we desire.
+
+Now, in the Review service, we use a Federated Entity https://www.apollographql.com/docs/federation/entities[that you can read about here] to extend the Product with a Review.
+
+The jey bit of Java code is the annotations that make this happen in the Review module's Product domain model class i.e. `@Extends` and `@Key`:
+
+[source,java,options="wrap"]
+----
+@Extends
+@Key(fields = "id")
+public class Product {
+    private Review review;
+    // getters and setters not shown
+}
+----
+
+In this way, we are extending the Product from the Product API with a Review.
+
+We can query the individual graphql schemas in the DevUI or from the command line using curl.
+
+Product API
+
+[source,bash,options="wrap"]
+----
+$ curl http://localhost:8081/graphql/schema.graphql
+
+union _Entity = Product
+
+type Product @key(fields : "id") {
+  id: ID
+  name: String
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "All Products"
+  allProducts: [Product]
+  "Find product by ID"
+  productById(id: String): Product @provides(fields : "id")
+}
+
+type _Service {
+  sdl: String!
+}
+----
+
+Review API
+
+[source,bash,options="wrap"]
+----
+$ curl http://localhost:8082/graphql/schema.graphql
+
+union _Entity = Product | Review
+
+type Product @extends @key(fields : "id") {
+  id: ID
+  review: Review
+}
+
+"Query root"
+type Query {
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+  "Find product by ID"
+  productById(id: String): Product
+  "Find review by ID"
+  reviewById(id: String): Review
+}
+
+type Review @key(fields : "id") {
+  id: ID
+  product: Product
+  rating: Int
+  text: String
+}
+
+type _Service {
+  sdl: String!
+}
+----
+
+We can see that the Product {id review} is provided by the Review API whilst the Product {id name} is provided by the Product API. You can also Query for Reviews and Products independently.
+
+I have ommitted all the scalars and directives in the schema output above that are generated by setting these application properties:
+
+[source,bash,options="wrap"]
+----
+quarkus.smallrye-graphql.schema-include-scalars=true
+quarkus.smallrye-graphql.schema-include-directives=true
+----
+
+These are required by the gateway when it *introspects* the grapql schema to compose the one *Supergraph*.
+
+Now to the gateway piece, which is run using apollo nodejs:
+
+[source,bash,options="wrap"]
+----
+gateway$ npm run start
+
+> start
+> nodemon gateway.js
+
+[nodemon] 2.0.22
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node gateway.js`
+🚀  Server ready at: http://localhost:4000/
+----
+
+If you browse to the apollo endpoint, it will take you to the Sandbox which is very similar to the Quarkus GraphQi interface (the sandbox connects a websocket to your localhost:4000 port eventhough it appears on a cloud hosted url). It shows a nice schema view for the supergraph:
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="graphql-productById">
+  <img src="/2023/06/apollo-fed-schema.png" class="zoom">
+</div>
+++++
+
+You can also query this using curl which is harder and a bit uglier:
+
+[source,bash,options="wrap"]
+----
+$ curl -s -X POST http://localhost:4000/graphql -H "Content-Type: application/json" --data-binary '{"query":"{\n\t__schema{\n queryType {\n fields{\n name\n }\n }\n }\n}"}' | jq .
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "fields": [
+          {
+            "name": "allProducts"
+          },
+          {
+            "name": "productById"
+          },
+          {
+            "name": "reviewById"
+          }
+        ]
+      }
+    }
+  }
+}
+----
+
+The important bit is this is the federated Supergraph .. so when we query for Product - we can ask for the Product {id name review} fields and the gateway resolves the entities for us, yay !!
+
+The one little hack required for the Apollo code to work with Quarkus, it is documented in the README. Apollo does not suppport the newish `application/graphql+json` Mime Type yet despite PR's ;) inclding one from me!
+
+Hope you Enjoy! there is a wealth of fun stuff to code with using graphql (go lookup Mutations next!) 👾👾👾
