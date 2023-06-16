@@ -77,7 +77,7 @@ we can run ProductByID and see the result for the fields we desire.
 
 Now, in the Review service, we use a Federated Entity https://www.apollographql.com/docs/federation/entities[that you can read about here] to extend the Product with a Review.
 
-The jey bit of Java code is the annotations that make this happen in the Review module's Product domain model class i.e. `@Extends` and `@Key`:
+The key bit of Java code is the annotations that make this happen in the Review module's Product domain model class i.e. `@Extends` and `@Key`:
 
 [source,java,options="wrap"]
 ----
