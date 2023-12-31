@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 31 Dec 2023 02:04:15 +0000</pubDate>
-      <lastBuildDate>Sun, 31 Dec 2023 02:04:15 +0000</lastBuildDate>
+      <pubDate>Sun, 31 Dec 2023 03:41:30 +0000</pubDate>
+      <lastBuildDate>Sun, 31 Dec 2023 03:41:30 +0000</lastBuildDate>
 
       
       <item>
@@ -274,7 +274,7 @@ spec:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;One thing to note is the careful use of &lt;code&gt;syncPolicy&lt;/code&gt; options[&lt;a href=&quot;https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/&quot; class=&quot;bare&quot;&gt;https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/&lt;/a&gt;]. I explicitly do not want to set &lt;code&gt;prune: true&lt;/code&gt; for example, so leaving deleting turned off. You will want to tune deletion behaviour using Policy, in particular the PolicyGenerator setting called &lt;code&gt;pruneObjectBehavior&lt;/code&gt; which can take various values such as &lt;code&gt;None|DeleteAll&lt;/code&gt;. It is also worth setting &lt;code&gt;policyAnnotations: {&quot;argocd.argoproj.io/compare-options&quot;: &quot;IgnoreExtraneous&quot;}&lt;/code&gt; in the PolicyGenerator so that ArgoCD shows the correct sync status.&lt;/p&gt;
+&lt;p&gt;One thing to note is the careful use of &lt;code&gt;syncPolicy&lt;/code&gt; &lt;a href=&quot;https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/&quot;&gt;options&lt;/a&gt;. I explicitly do not want to set &lt;code&gt;prune: true&lt;/code&gt; for example, so leaving deleting turned off. You will want to tune deletion behaviour using Policy, in particular the PolicyGenerator setting called &lt;code&gt;pruneObjectBehavior&lt;/code&gt; which can take various values such as &lt;code&gt;None|DeleteAll&lt;/code&gt;. It is also worth setting &lt;code&gt;policyAnnotations: {&quot;argocd.argoproj.io/compare-options&quot;: &quot;IgnoreExtraneous&quot;}&lt;/code&gt; in the PolicyGenerator so that ArgoCD shows the correct sync status.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
