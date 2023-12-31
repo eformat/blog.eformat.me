@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2023-06-16</lastmod>
+        <lastmod>2023-12-31</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2023-06-16</lastmod>
+        <lastmod>2023-12-31</lastmod>
     </url>
 
     <url>
@@ -27,7 +27,7 @@
         <loc>https://blog.eformat.me/tags/openshift.html</loc>
         
 
-        <lastmod>2023-05-07</lastmod>
+        <lastmod>2023-12-24</lastmod>
     </url>
 
     <url>
@@ -38,17 +38,17 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/acm.html</loc>
+        
+
+        <lastmod>2023-12-24</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/bgp.html</loc>
         
 
         <lastmod>2023-02-02</lastmod>
-    </url>
-
-    <url>
-        <loc>https://blog.eformat.me/tags/acm.html</loc>
-        
-
-        <lastmod>2023-02-17</lastmod>
     </url>
 
     <url>
@@ -178,10 +178,17 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/policy.html</loc>
+        
+
+        <lastmod>2023-12-24</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/gitops.html</loc>
         
 
-        <lastmod>2023-04-12</lastmod>
+        <lastmod>2023-12-24</lastmod>
     </url>
 
     <url>
@@ -310,6 +317,11 @@
         <lastmod>2022-11-02</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2023/12/gitops-acm.html</loc>
+        <lastmod>2023-12-24</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2023/06/graphql-federation-quarkus.html</loc>

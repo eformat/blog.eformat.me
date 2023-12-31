@@ -6,9 +6,340 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Fri, 16 Jun 2023 06:24:31 +0000</pubDate>
-      <lastBuildDate>Fri, 16 Jun 2023 06:24:31 +0000</lastBuildDate>
+      <pubDate>Sun, 31 Dec 2023 02:04:15 +0000</pubDate>
+      <lastBuildDate>Sun, 31 Dec 2023 02:04:15 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>OpenShift SRE ❤️ GitOps + Policy as Code</title>
+          <link>https://blog.eformat.me/2023/12/gitops-acm.html</link>
+          <pubDate>Sun, 24 Dec 2023 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2023/12/gitops-acm.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Within the enterprise - deploying and managing a fleet of OpenShift clusters can be a challenge. There are multiple ways and means to achieve your goals. I will lay out my favourite patterns and methods and a few tips and tricks I commonly use. In particular the methodology around using GitOps and Policy as Code.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_gitops_everything_as_code_and_kubernetes_native&quot;&gt;GitOps, Everything as Code and Kubernetes Native&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://openpracticelibrary.com/practice/everything-as-code/&quot;&gt;&lt;strong&gt;Everything as Code&lt;/strong&gt;&lt;/a&gt; is the practice of treating all parts of the systems as code. This means storing the configuration in a Source Code repository such as git. By storing the configuration as code, environments can be life-cycled and recreated whenever they are needed. So why go to this effort ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(1) &lt;strong&gt;Traceability&lt;/strong&gt; - storing your config in git implies controls are in place to track who/why a config changes has been made. Changes can be applied and reverted. Changes can be tracked to a single user who made the change.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(2) &lt;strong&gt;Repeatable&lt;/strong&gt; - moving from one cloud provider to another should be simple in modern application development. Picking a deployment target can be like shopping around for the best price that week. By storing all things as code, systems can be re-created quickly in various providers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(3) &lt;strong&gt;Tested&lt;/strong&gt; - infrastructure and code can be rolled out, validated, promoted into production environments with confidence and assurance it behaves as expected.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(4) &lt;strong&gt;Phoenix Server&lt;/strong&gt; - no more fear of a servers&apos; configuration drifiting. If a server needs to be patched or just dies, it&amp;#8217;s OK. We can recreate it again from the stored configuration.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;(5) &lt;strong&gt;Shared Understanding&lt;/strong&gt; - when cross-functional teams use Everything as Code to desribe parts of their Product they are developing together, they increase the shared understanding between Developers and Operations, they speak the same language and use the same frameworks.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;So How do we do it - &lt;a href=&quot;https://openpracticelibrary.com/practice/gitops/&quot;&gt;&lt;strong&gt;GitOps&lt;/strong&gt;&lt;/a&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;GitOps is a pattern to manage flow of work from development to production though Git Operations. The concept behind GitOps is quite straightforward.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Everything as Code: Git is always the source of truth on what happens in the system&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Deployments, tests, rollbacks are always controlled through a Git flow&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;No manual deployments/changes: If you need to make a change, you need to make a Git operation such as commit + push, or raise a pull request.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The most popular GitOps tools in use today are ArgoCD and Flux. We use ArgoCD as the GitOps controller in OpenShift. This is supported as the &quot;RedHat OpenShift GitOps Operator&quot;. We can align how our teams use and setup GitOps and their tooling - we are following patterns written about &lt;a href=&quot;https://github.com/redhat-cop/helm-charts/blob/main/charts/gitops-operator/TEAM_DOCS.md&quot;&gt;&lt;strong&gt;here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;When using OpenShift, we have a strong desire to stick to Kubernetes native methods of configuring the cluster, the middleware that runs upon it, as well as the applications - all using k8s native methods. I won&amp;#8217;t cover deploying resources outside a cluster all that much - this usually needs other tools to help provision them. Some can be configured using the &lt;a href=&quot;https://kubernetes.io/docs/concepts/extend-kubernetes/operator/&quot;&gt;&lt;strong&gt;Operator Pattern&lt;/strong&gt;&lt;/a&gt;, some may need tools like &lt;a href=&quot;https://www.crossplane.io/&quot;&gt;&lt;strong&gt;Crossplane&lt;/strong&gt;&lt;/a&gt; to provision against cloud API&amp;#8217;s. For now, we will assume that we have a hybrid or public cloud that provides storage, compute and networking services - all made available to us.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_code_structure&quot;&gt;Code Structure&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Take some time to organise your code. When you scale out your configuration to multiple environments/clusters/clouds - you need to be able to scale out individual bits of your repository, especially using folders. We use &lt;a href=&quot;https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/&quot;&gt;&lt;strong&gt;Kustomize&lt;/strong&gt;&lt;/a&gt; heavily - and its use of bases and overlays encourages folders as the main mechanism for growth. Helm templating is also in use - because we need the flexibility to template applications even-though there is always a level of fungibility with templating languages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Our main goal is to keep the code maintainable and discoverable. We need new developers to be able to easily on-board to using the code repo, as we would like to keep the burden of making changes very low. There is a continual tension between having one version of a piece of code that is shared across all your environments, (making it easy to maintain) with the trade-off that the blast radius can be large if an erroneous change is made that causes failures. As our codebase matures - we can code and transition around this tension. For example, we may use copy-and-paste reuse heavily at the start of our efforst to keep the blast radius low (to a single cluster) and gradually migrate the code to a single shared artifact as we become happy with its performance over time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;I like to keep my configuration repo as a git monorepo initially. Code is stored in one simple hierarchy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;gitops-monorepo
+├── applications      | Infrastructure and application configurations
+├── app-of-apps       | Top level patter to define environments/clusters
+├── bootstrap-acm     | Bootstrap our HUB cluster
+├── policy-collection | All day#2 config is stored as configuration policy
+├── README.md         | Always provide some Help !&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The top level is kept quite simple. Applications that may be deployed to different clusters are stored in the &lt;em&gt;application&amp;#8217;s&lt;/em&gt; folder. We use the ArgoCD &lt;a href=&quot;https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#app-of-apps-pattern&quot;&gt;&lt;em&gt;app-of-apps&lt;/em&gt;&lt;/a&gt; pattern to describe Applications that are deployed to each HUB cluster. We have a bootstrap folder for our HUB cluster which is not GitOps - we deploy ACM and ArgoCD from here. We &lt;strong&gt;could&lt;/strong&gt; make this GitOps as well - however there are often manual steps required to get the environment ready for use e.g. creating an external Vault integration, creating cloud credentials etc. All other use case e.g. spoke cluster creation, day#2 configuration, application deployments - are done via GitOps.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A common folder structure for a Kustomize based application is shown below for the infrastructure risk &lt;em&gt;compliance&lt;/em&gt; application. Here we configure the OpenShift Compliance Operator for all our clusters. We use the &lt;strong&gt;base&lt;/strong&gt; folder for common deployment artifacts to all clusters - including the operator, operator group, scan settings and tailored profiles. We can the use the &lt;strong&gt;overlay&lt;/strong&gt; folder to specify environment (develop | nonprod) and cluster (east | west) specific configuration. In this case we are using the &lt;code&gt;PolicyGenerator&lt;/code&gt; in each application definition which is configured to pull secrets from different locations in vault.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;applications/compliance/
+├── input
+│   ├── base
+│   │   ├── kustomization.yaml
+│   │   ├── namespace.yaml
+│   │   ├── operatorgroup.yaml
+│   │   ├── scan-setting-binding.yaml
+│   │   ├── subscription.yaml
+│   │   └── tailored-profile.yaml
+│   └── overlay
+│       ├── develop
+│       │   ├── east
+│       │   │   ├── input
+│       │   │   │   └── kustomization.yaml
+│       │   │   ├── kustomization.yaml
+│       │   │   └── policy-generator-config.yaml
+│       │   └── west
+│       │       ├── input
+│       │       │   └── kustomization.yaml
+│       │       ├── kustomization.yaml
+│       │       └── policy-generator-config.yaml
+│       └── nonprod
+│           ├── east
+│           │   ├── input
+│           │   │   └── kustomization.yaml
+│           │   ├── kustomization.yaml
+│           │   └── policy-generator-config.yaml
+│           └── west
+│               ├── input
+│               │   └── kustomization.yaml
+│               ├── kustomization.yaml
+│               └── policy-generator-config.yaml&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The one time I break this pattern - is when considering the Production environment. Often in highly regulated industries, production must be treated separately and often has stricter change control requirements surrounding it. This may include different git flows. For small, high trust teams, trunk based development is one of the best methods to keep the flow of changes coming! Often the closer you get to production though, a change in git flow techniques is required. So for Production, pull requests only.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;NonProduction repo - no PR&apos;s required, trunk based development in place.
+Production repo - PR&apos;s required.&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The trade-off is of course you now have two repositories, often with duplicate code, and must merge from one to the other often. You also have to handle emergency fixes etc. In practice, this is manageable as long as you follow a Software Delivery Lifecycle where changes are made in lower environments first. Your quality and change failure frequency will be better off by doing this. A common pattern is to split out separate applications into separate git repos - and include them as remote repos once they become mature and stable enough.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_hub_and_spoke&quot;&gt;Hub and Spoke&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;literalblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre&gt;https://open-cluster-management.io/concepts/[*Open Cluster Management*] is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as &quot;Advanced Cluster Management (ACM)&quot;. One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The biggest benefit of deploying a HUB cluster with Spokes (managed clusters) is that scale can be achieved through the decoupling of policy based &lt;em&gt;computation and decisions&lt;/em&gt; (which happen on the HUB cluster) and then &lt;em&gt;execution&lt;/em&gt; which happens on the target cluster. So execution is completely off-loaded onto the managed cluster itself. Spoke managed clusters do the work and pull configuration from the HUB independently. This means a HUB does not become a single point of failure during steady state operations and Spoke clusters can number in the hundreds or thousands achieving scale.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;netflix-studio-search&quot;&gt;
+  &lt;img src=&quot;/2023/12/acm-gitops.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By introducing ArgoCD onto the HUB cluster - we can use it to deploy any application or configuration. The primary method is to package all the code as Configuration Policy. By doing this, we have fantastic visibility into each cluster, we control configration with Git and drift is kept to zero using GitOps - if its not in git, it&amp;#8217;s not real !&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Another benefit of using ArgoCD is to hydrate secrets from external vault providers like Hashicorp Vault (many others are supported). That way, any and all configuration (not just Kubernetes Secrets that can be mounted in pods) can be hydrated with values from our secrets vault provider, thus keeping secret values outside of Git itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are more complex ArgoCD/ACM models available e.g. the &lt;a href=&quot;https://cloud.redhat.com/blog/introducing-the-argo-cd-application-pull-controller-for-open-cluster-management&quot;&gt;multi-cluster pull&lt;/a&gt;, push models. However, the benefit here is one of simplicity - we have less moving parts to manage, so it is more anti-fragile. For each environment (develop | nonprod | prod) we deploy separate HUB clusters. That way we can test and promote configuration from the lower environments first (develop | nonprod) before getting to production.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_policy_as_code&quot;&gt;Policy as Code&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Policies are one key way for organisations to ensure software is high quality, easy to use and secure. Policy as code automates the decision-making process to codify and enforce policies in our environment. There are generally two types of policies:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Configuration Policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Constraint Policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;ACM supports both types of policy. Because OpenShift is architected securely out of the box - there are many day#2 configurations that can be used to manage the platform in the manner required within your organisation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Managing Operator configurations is one key way, as is applying MachineConfiguration to your cluster or introducing third party configurations. You can get a long way to configuring a secure, spec-compliant cluster without needing to use any Constraint Policy at all. The OpenSource leader in constraint policy is undoubtedly &lt;a href=&quot;https://github.com/open-policy-agent/opa&quot;&gt;Open Policy Agent (OPA)&lt;/a&gt; which uses the &lt;em&gt;rego language&lt;/em&gt; to encode constraint policy. There are many other choices that do not require the adoption of a specific language, but rather are pure yaml - &lt;a href=&quot;https://kyverno.io/&quot;&gt;Kyverno&lt;/a&gt; has wide adoption.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There is an open source repository &lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main&quot; class=&quot;bare&quot;&gt;https://github.com/stolostron/policy-collection/tree/main&lt;/a&gt; that hosts example policies for Open Cluster Management.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This is a huge benefit as it provides a way to share policies from the community and vendors, as well as removing the burden of haing to write many custom policies yourself. Policies are organised under the &lt;a href=&quot;https://nvd.nist.gov/800-53/Rev4/control/SI-1&quot;&gt;NIST Special Publication 800-53&lt;/a&gt; specification definitions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/stable/SC-System-and-Communications-Protection&quot;&gt;SC-System-and-Communications-Protection&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/stable/AC-Access-Control&quot;&gt;AC-Access-Control&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/stable/CA-Security-Assessment-and-Authorization&quot;&gt;CA-Security-Assessment-and-Authorization&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/stable/CM-Configuration-Management&quot;&gt;CM-Configuration-Management&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/stable/SI-System-and-Information-Integrity&quot;&gt;SI-System-and-Information-Integrity&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;If you follow this naming and grouping convention in your Policy annotations - then you can use the &lt;strong&gt;Governance Dashboard&lt;/strong&gt; in ACM to graphically show you this structure as well.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;federated-subgraph&quot;&gt;
+  &lt;img src=&quot;/2023/12/acm-governance.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In the above picture we have 5 OpenShift clusters in our environment using the NIST 800-53 convention for configuration policy. It becomes is easy to overview an environment to check on configuration drift. SRE&amp;#8217;s can easily determine that their environment configuration is healthy and they can then drill down into individual clusters, or areas of configuration across their entire fleet. Configuration Drift nearly becomes a thing of the past ! as GitOps and ACM ensure configuration policy is applied to all clusters and environments - so troubleshooting configuration management can generally be performed by exception only saving a lot of time and effort.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;federated-subgraph&quot;&gt;
+  &lt;img src=&quot;/2023/12/acm-governance-2.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Even with hundreds of policies applied across multiple clusters, the NIST grouping and policy search allows an SRE to easily find individual policies. So if we wanted to check an Access Control policy - we can see if it is applied in multiple dimensions both across clusters and down to individual cluster level.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Writing policy boilerplate can be very time-consuming. I make heavy use of the awesome &lt;a href=&quot;https://github.com/open-cluster-management-io/policy-generator-plugin/blob/main/docs/policygenerator-reference.yaml&quot;&gt;&lt;strong&gt;PolicyGenerator&lt;/strong&gt;&lt;/a&gt; tool that allows you to specify YAML config using Kustomize (or if you compile this &lt;a href=&quot;https://github.com/open-cluster-management-io/policy-generator-plugin/pull/109&quot;&gt;PR&lt;/a&gt; you can use Helm via Kustomize as well!) and have the policy generated for you. You can see a number of &lt;a href=&quot;https://github.com/stolostron/policy-collection/tree/main/policygenerator/policy-sets&quot;&gt;&lt;strong&gt;PolicySets&lt;/strong&gt;&lt;/a&gt; that use the PolicyGenerator that can be used straight away in your code base.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_app_of_apps&quot;&gt;App of Apps&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In  our mono repo, I like to use the ArgoCD &lt;a href=&quot;https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#app-of-apps-pattern&quot;&gt;&lt;strong&gt;App Of Apps&lt;/strong&gt;&lt;/a&gt; pattern to declaratively specify all the applications that exist in each HUB cluster. You can then drop ArgoCD &lt;code&gt;Application&lt;/code&gt; YAML definition files into the folder to easily deploy any number of applications.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: develop-app-of-apps
+  namespace: open-cluster-management-global-set
+  labels:
+    rht-gitops.com/open-cluster-management-global-set: policies
+spec:
+  destination:
+    namespace: open-cluster-management-global-set
+    server: &apos;https://kubernetes.default.svc&apos;
+  project: default
+  source:
+    path: app-of-apps/develop/my-dev-hub-cluster-01
+    directory:
+      include: &quot;*.yaml&quot;
+    repoURL: https://git/gitops-monorepo.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+    - Validate=true&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;One thing to note is the careful use of &lt;code&gt;syncPolicy&lt;/code&gt; options[&lt;a href=&quot;https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/&quot; class=&quot;bare&quot;&gt;https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/&lt;/a&gt;]. I explicitly do not want to set &lt;code&gt;prune: true&lt;/code&gt; for example, so leaving deleting turned off. You will want to tune deletion behaviour using Policy, in particular the PolicyGenerator setting called &lt;code&gt;pruneObjectBehavior&lt;/code&gt; which can take various values such as &lt;code&gt;None|DeleteAll&lt;/code&gt;. It is also worth setting &lt;code&gt;policyAnnotations: {&quot;argocd.argoproj.io/compare-options&quot;: &quot;IgnoreExtraneous&quot;}&lt;/code&gt; in the PolicyGenerator so that ArgoCD shows the correct sync status.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_argocd_vault_plugin&quot;&gt;ArgoCD Vault Plugin&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Managing secrets is an important concern from day zero. The two main methods in popluar use today take different approaches. The first has encrypted secrets in the codebase. The second - my preferred, is to keep secret values out of our code base altogether by using a secrets vault. There are many ways to achieve this depending on the type of vault in use and the integration points needed at scale. For the GitOps model I drew out earlier, we can make use of the &lt;a href=&quot;https://argocd-vault-plugin.readthedocs.io/en/stable/&quot;&gt;&lt;strong&gt;ArgoCD Vault Plugin&lt;/strong&gt;&lt;/a&gt; and the &lt;a href=&quot;https://github.com/eformat/argocd-vault-sidecar&quot;&gt;&lt;strong&gt;sidecar pattern&lt;/strong&gt;&lt;/a&gt; to hydrating secrets values in all of our configuration. This has the benefit of being able to hydrate secrets values into Policy code directly as well as creating secrets for pods to mount.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;My sidecar configMap for ArgoCD contains the three methods I use to call the AVP plugin using helm, Kustomize or via straight YAML. Note that Kustomize has the helm plugin enabled using these flags &lt;code&gt;--enable-alpha-plugins --enable-helm build&lt;/code&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;  helm-plugin.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: argocd-vault-plugin-helm
+    spec:
+      init:
+        command: [sh, -c]
+        args: [&quot;helm dependency build&quot;]
+      generate:
+        command: [&quot;bash&quot;, &quot;-c&quot;]
+        args: [&apos;helm template &quot;$ARGOCD_APP_NAME&quot; -n &quot;$ARGOCD_APP_NAMESPACE&quot; -f &amp;lt;(echo &quot;$ARGOCD_ENV_HELM_VALUES&quot;) . | argocd-vault-plugin generate -s open-cluster-management-global-set:team-avp-credentials -&apos;]
+  kustomize-plugin.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: argocd-vault-plugin-kustomize
+    spec:
+      generate:
+        command: [&quot;sh&quot;, &quot;-c&quot;]
+        args: [&quot;kustomize --enable-alpha-plugins --enable-helm build . | argocd-vault-plugin -s open-cluster-management-global-set:team-avp-credentials generate -&quot;]
+  vault-plugin.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: argocd-vault-plugin
+    spec:
+      generate:
+        command: [&quot;sh&quot;, &quot;-c&quot;]
+        args: [&quot;argocd-vault-plugin -s open-cluster-management-global-set:team-avp-credentials generate ./&quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And from our ArgoCD &lt;code&gt;ApplicationSet&lt;/code&gt; or &lt;code&gt;Application&lt;/code&gt; all you need to do is specify the plugin name:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;yaml&quot;&gt;        plugin:
+          name: argocd-vault-plugin-kustomize&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;You can read more about it &lt;a href=&quot;https://blog.eformat.me/2022/11/argocd-patterns-vault.html&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Hope you Enjoy! 🔫🔫🔫&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>GraphQL Federation with Quarkus</title>
