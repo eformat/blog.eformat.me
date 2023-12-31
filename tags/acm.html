@@ -226,10 +226,8 @@ Production repo - PR's required.</code></pre>
 <div class="sect1">
 <h2 id="_hub_and_spoke">Hub and Spoke</h2>
 <div class="sectionbody">
-<div class="literalblock">
-<div class="content">
-<pre>https://open-cluster-management.io/concepts/[*Open Cluster Management*] is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as "Advanced Cluster Management (ACM)". One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.</pre>
-</div>
+<div class="paragraph">
+<p><a href="https://open-cluster-management.io/concepts/"><strong>Open Cluster Management</strong></a> is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as "Advanced Cluster Management (ACM)". One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.</p>
 </div>
 <div class="paragraph">
 <p>The biggest benefit of deploying a HUB cluster with Spokes (managed clusters) is that scale can be achieved through the decoupling of policy based <em>computation and decisions</em> (which happen on the HUB cluster) and then <em>execution</em> which happens on the target cluster. So execution is completely off-loaded onto the managed cluster itself. Spoke managed clusters do the work and pull configuration from the HUB independently. This means a HUB does not become a single point of failure during steady state operations and Spoke clusters can number in the hundreds or thousands achieving scale.</p>
@@ -766,7 +764,7 @@ policies:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun Dec 31 03:41:30 UTC 2023</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun Dec 31 04:08:05 UTC 2023</a></p>
       </div>
     </div>
     

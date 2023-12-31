@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 31 Dec 2023 03:41:30 +0000</pubDate>
-      <lastBuildDate>Sun, 31 Dec 2023 03:41:30 +0000</lastBuildDate>
+      <pubDate>Sun, 31 Dec 2023 04:08:04 +0000</pubDate>
+      <lastBuildDate>Sun, 31 Dec 2023 04:08:04 +0000</lastBuildDate>
 
       
       <item>
@@ -152,10 +152,8 @@ Production repo - PR&apos;s required.&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&quot;sect1&quot;&gt;
 &lt;h2 id=&quot;_hub_and_spoke&quot;&gt;Hub and Spoke&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
-&lt;div class=&quot;literalblock&quot;&gt;
-&lt;div class=&quot;content&quot;&gt;
-&lt;pre&gt;https://open-cluster-management.io/concepts/[*Open Cluster Management*] is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as &quot;Advanced Cluster Management (ACM)&quot;. One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.&lt;/pre&gt;
-&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://open-cluster-management.io/concepts/&quot;&gt;&lt;strong&gt;Open Cluster Management&lt;/strong&gt;&lt;/a&gt; is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as &quot;Advanced Cluster Management (ACM)&quot;. One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;The biggest benefit of deploying a HUB cluster with Spokes (managed clusters) is that scale can be achieved through the decoupling of policy based &lt;em&gt;computation and decisions&lt;/em&gt; (which happen on the HUB cluster) and then &lt;em&gt;execution&lt;/em&gt; which happens on the target cluster. So execution is completely off-loaded onto the managed cluster itself. Spoke managed clusters do the work and pull configuration from the HUB independently. This means a HUB does not become a single point of failure during steady state operations and Spoke clusters can number in the hundreds or thousands achieving scale.&lt;/p&gt;
