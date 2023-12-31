@@ -103,7 +103,7 @@ The trade-off is of course you now have two repositories, often with duplicate c
 
 == Hub and Spoke
 
- https://open-cluster-management.io/concepts/[*Open Cluster Management*] is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as "Advanced Cluster Management (ACM)". One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.
+https://open-cluster-management.io/concepts/[*Open Cluster Management*] is an opensource community that supports managing Kubernetes clusters at scale. Red Hat priductises this as "Advanced Cluster Management (ACM)". One of the key concepts it the support of Configuartion Policy and Placement on clusters using a hub and spoke design.
 
 The biggest benefit of deploying a HUB cluster with Spokes (managed clusters) is that scale can be achieved through the decoupling of policy based _computation and decisions_ (which happen on the HUB cluster) and then _execution_ which happens on the target cluster. So execution is completely off-loaded onto the managed cluster itself. Spoke managed clusters do the work and pull configuration from the HUB independently. This means a HUB does not become a single point of failure during steady state operations and Spoke clusters can number in the hundreds or thousands achieving scale.
 
