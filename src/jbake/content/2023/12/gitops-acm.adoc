@@ -198,7 +198,7 @@ spec:
     - Validate=true
 ----
 
-One thing to note is the careful use of `syncPolicy` options[https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/]. I explicitly do not want to set `prune: true` for example, so leaving deleting turned off. You will want to tune deletion behaviour using Policy, in particular the PolicyGenerator setting called `pruneObjectBehavior` which can take various values such as `None|DeleteAll`. It is also worth setting `policyAnnotations: {"argocd.argoproj.io/compare-options": "IgnoreExtraneous"}` in the PolicyGenerator so that ArgoCD shows the correct sync status.
+One thing to note is the careful use of `syncPolicy` https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/[options]. I explicitly do not want to set `prune: true` for example, so leaving deleting turned off. You will want to tune deletion behaviour using Policy, in particular the PolicyGenerator setting called `pruneObjectBehavior` which can take various values such as `None|DeleteAll`. It is also worth setting `policyAnnotations: {"argocd.argoproj.io/compare-options": "IgnoreExtraneous"}` in the PolicyGenerator so that ArgoCD shows the correct sync status.
 
 == ArgoCD Vault Plugin
 
