@@ -35,7 +35,7 @@ So i need to keep the connections to their myriad of devices running smoothly as
 
 **Mesh Network** - Connectivity via Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.
 
-**VMHost** - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf[change the defaults for bridge mode to]:
+**VMHost** - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eth0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf[change the defaults for bridge mode to]:
 
 [source,bash,options="wrap"]
 ----
@@ -156,13 +156,13 @@ router bgp 64521
  neighbor metallb remote-as 64520
  neighbor 192.168.86.32 peer-group metallb
  neighbor 192.168.86.32 bfd
- neighbor 192.168.86.109 remote-as external
+ neighbor 192.168.86.30 remote-as external
 !
  address-family ipv4 unicast
   neighbor 192.168.86.32 next-hop-self
   neighbor 192.168.86.32 activate
-  neighbor 192.168.86.109 next-hop-self
-  neighbor 192.168.86.109 activate
+  neighbor 192.168.86.30 next-hop-self
+  neighbor 192.168.86.30 activate
  exit-address-family
 !
 line vty
@@ -338,6 +338,8 @@ protocol kernel {
               import none;
               export all;
         };
+}
+protocol kernel {
         ipv6 {
               import none;
               export all;
@@ -447,7 +449,7 @@ We can check on our *FRR* Host the BGP route was seen:
 
 [source,bash,options="wrap"]
 ----
-[root@rhel8 ~]# podman exec -it frr-upstream   vtysh -c "show ip route"
+[root@rhel8 ~]# podman exec -it frr-upstream vtysh -c "show ip route"
 Codes: K - kernel route, C - connected, S - static, R - RIP,
        O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
        T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
