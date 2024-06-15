@@ -1138,7 +1138,7 @@ podman exec -it frr-upstream vtysh -c "show ip bgp neighbor"</code></pre>
 apiVersion: v1
 kind: Namespace
 metadata:
-name: metallb-system
+  name: metallb-system
 spec: {}
 EOF</code></pre>
 </div>
@@ -1150,8 +1150,8 @@ EOF</code></pre>
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-name: metallb-operator
-namespace: metallb-system
+  name: metallb-operator
+  namespace: metallb-system
 spec: {}
 EOF</code></pre>
 </div>
@@ -1163,13 +1163,13 @@ EOF</code></pre>
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-name: metallb-operator-sub
-namespace: metallb-system
+  name: metallb-operator-sub
+  namespace: metallb-system
 spec:
-name: metallb-operator
-channel: "stable"
-source: redhat-operators
-sourceNamespace: openshift-marketplace
+  name: metallb-operator
+  channel: "stable"
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
 EOF</code></pre>
 </div>
 </div>
@@ -1186,11 +1186,11 @@ oc get csv -n metallb-system -o custom-columns='NAME:.metadata.name, VERSION:.sp
 apiVersion: metallb.io/v1beta1
 kind: MetalLB
 metadata:
-name: metallb
-namespace: metallb-system
+  name: metallb
+  namespace: metallb-system
 spec:
-nodeSelector:
-node-role.kubernetes.io/worker: ""
+  nodeSelector:
+  node-role.kubernetes.io/worker: ""
 EOF</code></pre>
 </div>
 </div>
@@ -1201,18 +1201,18 @@ EOF</code></pre>
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-name: address-pool-bgp
-namespace: metallb-system
+  name: address-pool-bgp
+  namespace: metallb-system
 spec:
-addresses:
-- 192.168.155.150/32
-- 192.168.155.151/32
-- 192.168.155.152/32
-- 192.168.155.153/32
-- 192.168.155.154/32
-- 192.168.155.155/32
-autoAssign: true
-protocol: bgp
+  addresses:
+    - 192.168.155.150/32
+    - 192.168.155.151/32
+    - 192.168.155.152/32
+    - 192.168.155.153/32
+    - 192.168.155.154/32
+    - 192.168.155.155/32
+  autoAssign: true
+  protocol: bgp
 EOF</code></pre>
 </div>
 </div>
@@ -1223,15 +1223,15 @@ EOF</code></pre>
 apiVersion: metallb.io/v1beta1
 kind: BFDProfile
 metadata:
-name: test-bfd-prof
-namespace: metallb-system
+  name: test-bfd-prof
+  namespace: metallb-system
 spec:
-detectMultiplier: 37
-echoMode: true
-minimumTtl: 10
-passiveMode: true
-receiveInterval: 35
-transmitInterval: 35
+  detectMultiplier: 37
+  echoMode: true
+  minimumTtl: 10
+  passiveMode: true
+  receiveInterval: 35
+  transmitInterval: 35
 EOF</code></pre>
 </div>
 </div>
@@ -1242,13 +1242,13 @@ EOF</code></pre>
 apiVersion: metallb.io/v1beta1
 kind: BGPPeer
 metadata:
-name: peer-test
-namespace: metallb-system
+  name: peer-test
+  namespace: metallb-system
 spec:
-bfdProfile: test-bfd-prof
-myASN: 64520
-peerASN: 64521
-peerAddress: 192.168.86.23
+  bfdProfile: test-bfd-prof
+  myASN: 64520
+  peerASN: 64521
+  peerAddress: 192.168.86.23
 EOF</code></pre>
 </div>
 </div>
@@ -1258,8 +1258,8 @@ EOF</code></pre>
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement
 metadata:
-name: announce-test
-namespace: metallb-system
+  name: announce-test
+  namespace: metallb-system
 EOF</code></pre>
 </div>
 </div>
@@ -2592,7 +2592,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Mon Jan 01 01:27:20 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sat Jun 15 02:45:47 UTC 2024</a></p>
       </div>
     </div>
     
