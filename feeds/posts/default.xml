@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sat, 15 Jun 2024 02:45:47 +0000</pubDate>
-      <lastBuildDate>Sat, 15 Jun 2024 02:45:47 +0000</lastBuildDate>
+      <pubDate>Sat, 15 Jun 2024 22:29:58 +0000</pubDate>
+      <lastBuildDate>Sat, 15 Jun 2024 22:29:58 +0000</lastBuildDate>
 
       
       <item>
@@ -1300,7 +1300,7 @@ policies:
 &lt;p&gt;&lt;strong&gt;Mesh Network&lt;/strong&gt; - Connectivity via Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;&lt;strong&gt;VMHost&lt;/strong&gt; - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to &lt;a href=&quot;https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf&quot;&gt;change the defaults for bridge mode to&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;VMHost&lt;/strong&gt; - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eth0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to &lt;a href=&quot;https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf&quot;&gt;change the defaults for bridge mode to&lt;/a&gt;:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
@@ -1429,13 +1429,13 @@ router bgp 64521
  neighbor metallb remote-as 64520
  neighbor 192.168.86.32 peer-group metallb
  neighbor 192.168.86.32 bfd
- neighbor 192.168.86.109 remote-as external
+ neighbor 192.168.86.30 remote-as external
 !
  address-family ipv4 unicast
   neighbor 192.168.86.32 next-hop-self
   neighbor 192.168.86.32 activate
-  neighbor 192.168.86.109 next-hop-self
-  neighbor 192.168.86.109 activate
+  neighbor 192.168.86.30 next-hop-self
+  neighbor 192.168.86.30 activate
  exit-address-family
 !
 line vty
@@ -1616,6 +1616,8 @@ protocol kernel {
               import none;
               export all;
         };
+}
+protocol kernel {
         ipv6 {
               import none;
               export all;
@@ -1735,7 +1737,7 @@ Events:
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;[root@rhel8 ~]# podman exec -it frr-upstream   vtysh -c &quot;show ip route&quot;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;[root@rhel8 ~]# podman exec -it frr-upstream vtysh -c &quot;show ip route&quot;
 Codes: K - kernel route, C - connected, S - static, R - RIP,
        O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
        T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,

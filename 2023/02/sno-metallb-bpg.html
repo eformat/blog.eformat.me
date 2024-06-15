@@ -157,7 +157,7 @@
 <p><strong>Mesh Network</strong> - Connectivity via Wifi Mesh, 1G Ethernet around the house, comes with another firewall and port-forwarding facilities.</p>
 </div>
 <div class="paragraph">
-<p><strong>VMHost</strong> - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eht0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to <a href="https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf">change the defaults for bridge mode to</a>:</p>
+<p><strong>VMHost</strong> - Fedora Core box running libvirt/kvm. Has thin-lvm, nvme based storage. Hosts DNS, HTTPD, HAProxy services. Multiple network connections including eth0 which is bridged directly to the lab hosts via br0. When you add the virsh network, also make sure to <a href="https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf">change the defaults for bridge mode to</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -286,13 +286,13 @@ router bgp 64521
  neighbor metallb remote-as 64520
  neighbor 192.168.86.32 peer-group metallb
  neighbor 192.168.86.32 bfd
- neighbor 192.168.86.109 remote-as external
+ neighbor 192.168.86.30 remote-as external
 !
  address-family ipv4 unicast
   neighbor 192.168.86.32 next-hop-self
   neighbor 192.168.86.32 activate
-  neighbor 192.168.86.109 next-hop-self
-  neighbor 192.168.86.109 activate
+  neighbor 192.168.86.30 next-hop-self
+  neighbor 192.168.86.30 activate
  exit-address-family
 !
 line vty
@@ -473,6 +473,8 @@ protocol kernel {
               import none;
               export all;
         };
+}
+protocol kernel {
         ipv6 {
               import none;
               export all;
@@ -592,7 +594,7 @@ Events:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">[root@rhel8 ~]# podman exec -it frr-upstream   vtysh -c "show ip route"
+<pre class="prettyprint highlight"><code data-lang="bash">[root@rhel8 ~]# podman exec -it frr-upstream vtysh -c "show ip route"
 Codes: K - kernel route, C - connected, S - static, R - RIP,
        O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
        T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
@@ -838,7 +840,7 @@ Hello World ! Welcome to OpenShift from welcome-8dcc64fcd-2ktv4:10.128.0.167</co
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sat Jun 15 02:45:46 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sat Jun 15 22:29:57 UTC 2024</a></p>
       </div>
     </div>
     
