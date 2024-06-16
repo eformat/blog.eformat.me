@@ -288,12 +288,13 @@ metadata:
   name: test-bfd-prof
   namespace: metallb-system
 spec:
-  detectMultiplier: 37
-  echoMode: true
-  minimumTtl: 10
+  transmitInterval: 300
+  detectMultiplier: 3
+  receiveInterval: 300
+  echoInterval: 50
+  echoMode: false
   passiveMode: true
-  receiveInterval: 35
-  transmitInterval: 35
+  minimumTtl: 254
 EOF
 ----
 
