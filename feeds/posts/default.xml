@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sat, 15 Jun 2024 22:29:58 +0000</pubDate>
-      <lastBuildDate>Sat, 15 Jun 2024 22:29:58 +0000</lastBuildDate>
+      <pubDate>Sun, 16 Jun 2024 22:51:20 +0000</pubDate>
+      <lastBuildDate>Sun, 16 Jun 2024 22:51:20 +0000</lastBuildDate>
 
       
       <item>
@@ -1565,12 +1565,13 @@ metadata:
   name: test-bfd-prof
   namespace: metallb-system
 spec:
-  detectMultiplier: 37
-  echoMode: true
-  minimumTtl: 10
+  transmitInterval: 300
+  detectMultiplier: 3
+  receiveInterval: 300
+  echoInterval: 50
+  echoMode: false
   passiveMode: true
-  receiveInterval: 35
-  transmitInterval: 35
+  minimumTtl: 254
 EOF&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;

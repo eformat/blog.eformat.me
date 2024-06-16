@@ -404,12 +404,13 @@ metadata:
   name: test-bfd-prof
   namespace: metallb-system
 spec:
-  detectMultiplier: 37
-  echoMode: true
-  minimumTtl: 10
+  transmitInterval: 300
+  detectMultiplier: 3
+  receiveInterval: 300
+  echoInterval: 50
+  echoMode: false
   passiveMode: true
-  receiveInterval: 35
-  transmitInterval: 35
+  minimumTtl: 254
 EOF</code></pre>
 </div>
 </div>
@@ -818,7 +819,7 @@ Hello World ! Welcome to OpenShift from welcome-8dcc64fcd-2ktv4:10.128.0.167</co
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sat Jun 15 22:29:59 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun Jun 16 22:51:22 UTC 2024</a></p>
       </div>
     </div>
     
