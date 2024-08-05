@@ -1,0 +1,400 @@
+= VLANs and OpenShift
+:jbake-date: 2024-07-13
+:jbake-type: post
+:jbake-tags: networking, vlans openshift
+:jbake-status: published
+
+Near enough everyone uses VLANs to segregate machines in their environments. When configuring OpenShift for VLANs there are several considerations to take into account.
+
+== Let's get our VLAN terminology straight
+
+I was checking on the date of the VLAN https://www.ietf.org/rfc/rfc2674.txt[RFC2674] - 1999, so they have been around for a while. Despite it being venerable tech, there is quite a bit of terminology that we need to level set on.
+
+Before we get started - *Bridge forwarding* is generally based on MAC addresses and virtual networks, i.e. Virtual LANs (VLAN).
+
+For an excellent beginner/background read to VLANs - go checkout https://www.oreilly.com/library/view/packet-guide-to/9781449311315/ch04.html[Chapter 4. VLANs and Trunking] from Oreilly. If it's been a while since you
+had to think hard about VLANs and why we need them - this is a great starter.
+
+The first thing get straight on your head is the concept of a *trunk port* and an *access port* modes on switches. Switches can behave in different ways when configured for VLANs and different vendors support different modes.
+For example Cisco switches have access, trunk, general and customer modes.
+
+Access ports are configured on the switch for a single VLAN only. Trunk ports on the other hand, deliver a number or VLANs all together to a port on the switch.
+
+The prevailing standard for VLAN Trunks is the *802.1Q-2022 - IEEE Standard for Local and Metropolitan Area Networks--Bridges and Bridged Networks*, there are others (Cisco), but everyone has standardised today on *dot.1q* as it is known.
+It is a large standards document with lots of details I simply will not get into e.g. if you are a backbone carrier provider - you will need to understand Layer2 concepts such as Q-in-Q (provider bridges) and MAC-in-MAC (provider backbone bridges).
+There may be several levels of tagging or encapsulation that can occur. What we need though are enough of the fundamentals to be able to get OpenShift up and running the right way.
+
+Its worth noting that both access and trunk ports may also be configured *dynamically* - where the switch automatically negotiates which VLAN(s) it is on. This is usually considered bad security practice, but beware it may exist
+in your environment.
+
+Just to confuse matters - there is also the concept of tagged and untagged VLANs. If you are using tcpdump to look at packets, anytime you see *802.1Q* you know the packet is tagged with the VLAN number.
+
+[source,bash,options="wrap"]
+----
+07:48:29.665513 02:3d:54:00:00:04 > ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 2001, p 0, ethertype ARP (0x0806), Ethernet (len 6), IPv4 (len 4),...tell 11.11.11.99, length 28
+----
+
+Untagged VLAN packets often arise from legacy devices or devices that don’t tag their traffic like some wireless access points and simple network attached devices. This makes it possible for untagged traffic to be supported on your VLAN. One common term
+ associated with this behaviour is *Native VLAN*. The Native VLAN is the one into which untagged traffic will be put when it’s received on a *trunk port*.
+
+Native VLAN is not to be confused with the Port VLAN ID or *PVID*. PVID is a single VLAN ID associated with a port. PVID can behave similarly to Native VLAN if the default traffic is not tagged.
+
+So in summary we have:
+
+- `Native VLAN` = a VLAN whose traffic on a port is not tagged. It can be considered the "default" VLAN for the port.
+- `PVID` = Port VLAN ID
+- `PVID + un-tagged-PVID-Only` = Native VLAN
+- `tagAll` = All traffic on the port is VLAN tagged, including the PVID (using 802.1q)
+
+I do not cover VXLANs.
+
+== OpenShift OVN default behaviour
+
+So, how does OpenShift's default SDN behave in the context of VLANs ?
+
+When you install OpenShift, the first thing OVN Kubernetes (*OVNK*) does on your Node is select the default interface (may be a single ethernet - eth0 or a bonded network - bond0) and creates an OVS bridge `br-ex` there. This OVS bridge is given an IPv4 (and also IPv6 if dual stack) address, and it is automatically connected to a number of other OVN bridges and switches. We often term this the `Machine Network` i.e. it is connected to the other machines in your cluster.
+
+By default `br-ex` acts as a trunk port for VLANs and will handle tagged and untagged VLAN traffic. If you have an OpenShift cluster, as a cluster admin, you can see this by going into one of your ovnkube-node pods, for example with Single Node OpenShift (SNO) try:
+
+[source,bash,options="wrap"]
+----
+oc -n openshift-ovn-kubernetes rsh $(oc get pod -n openshift-ovn-kubernetes -l app=ovnkube-node -o name)
+
+sh-5.1# ovs-vsctl get port br-ex tag
+[]
+----
+
+The empty tag array on the OVS bridge is the default - trunk mode setting. We could assign one or mode VLAN tags to this bridge manually e.g.
+
+[source,bash,options="wrap"]
+----
+# assign vlan 2001 tag to br-ex
+ovs-vsctl set port br-ex tag=2001
+ovs-vsctl get port br-ex tag
+2001
+
+# set it back to trunk
+ovs-vsctl set port br-ex tag=[]
+----
+
+== Multi-tenancy and Native VLANs
+
+So how should we set up OpenShift in the context of VLANs? Standard practice within most organisations is to host all servers on VLANs. Therefore, it makes sense if we put the Machine Network on a VLAN. We may also want to support tenant VLANs as well - so what does good look like in this case?
+
+One of the first questions that needs answering is this - "How many NIC's do we have available to us?". For high availability, 2 (or more NIC's) are normally bonded together to provide network connectivity to our cluster nodes. We may also have more set's of NICs available to us via PCIe - which we term *secondary networks*.
+
+Let's take the most common use case - a pair of NICs (ens1, ens2) bonded together (bond0) on a Node with OVS br-ex above them.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="vlan-1">
+  <img src="/2024/07/vlan-1.png" class="zoom">
+</div>
+++++
+
+In this case - the default Machine Network is on VLAN 3 with a tenant network on VLAN 50. They are trunked at the switch port and presented to NICs. VLAN 3 is a `Native VLAN` i.e. is `untagged PVID 3` on the switch. Depending on the switch you have that might appear as follows:
+
+[source,bash,options="wrap"]
+----
+Ethernet9         3 PVID Egress Untagged
+                  50
+----
+
+Your matching OpenShift Agent Config or NMState config for installation of the Machine Network may look something similar to this:
+
+[source,yaml,options="wrap"]
+----
+        - name: bond0
+          type: bond
+          state: up
+          link-aggregation:
+            mode: active-backup
+            options:
+              primary: ens1
+            port:
+              - ens1
+              - ens2
+          ipv4:
+            address:
+              - ip: 192.168.0.25
+                prefix-length: 24
+            dhcp: false
+            enabled: true
+          ipv6:
+            enabled: true
+            dhcp: false
+----
+
+The link-aggregation mode depends on how your VLAN trunk is presented. It is common to bundle VLAN trunks using IEEE 802.3ad - Link Aggregation Control Protocol (*LACP*) - in which case `mode: active-backup` may be instead set to `balance-slb` which gives increased throughput (active-active) or even `balance-tcp` (LACP - active-active).
+
+We use https://docs.openshift.com/container-platform/4.16/networking/multiple_networks/configuring-additional-network.html#configuration-ovnk-additional-networks_configuring-additional-network[Network Attachment Devices] (NADs) and https://docs.openshift.com/container-platform/4.16/virt/vm_networking/virt-connecting-vm-to-linux-bridge.html#virt-creating-linux-bridge-nncp_virt-connecting-vm-to-linux-bridge[Node Network Configuration Policy] (NNCPs) to configure VLAN brige mappings in OVN.
+
+We can then connect Pods and VMs to our VLAN 50 e.g. using a localnet OVNK topology. If you define your NAD in the default Namespace it is available to the whole cluster, else they are Namespace scoped:
+
+[source,yaml,options="wrap"]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: vlan-localnets
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ''
+  desiredState:
+    ovn:
+      bridge-mappings:
+      - bridge: br-ex
+        localnet: default-localnet
+        state: present
+      - bridge: br-ex
+        localnet: vlan50-localnet
+        state: present
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: default-localnet
+  namespace: default
+spec:
+  config: |-
+    { "cniVersion": "0.3.1",
+      "name": "default-localnet",
+      "type": "ovn-k8s-cni-overlay",
+      "topology": "localnet",
+      "netAttachDefName": "default/default-localnet",
+      "ipam": {},
+      "subnets": "192.168.0.0/24"
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: vlan50-localnet
+  namespace: default
+spec:
+  config: |-
+    { "cniVersion": "0.3.1",
+      "name": "vlan50-localnet",
+      "type": "ovn-k8s-cni-overlay",
+      "topology": "localnet",
+      "netAttachDefName": "default/vlan50-localnet",
+      "ipam": {},
+      "subnets": "5.5.5.0/24",
+      "vlanID": 50
+    }
+----
+
+You can then use the NAD name in your VM as follows.
+
+[source,yaml,options="wrap"]
+----
+        devices:
+          interfaces:
+          - name: physnet-dmz
+            bridge: {}
+...
+      networks:
+      - name: physnet
+        multus:
+          networkName: vlan50-localnet
+----
+
+== Multi-tenancy with Trunked and Tagged VLANs
+
+In the case on single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an https://nmstate.io/examples.html#interfaces-ovs-bridge[`ovs-bridge`] to present our tenant VLANs.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="vlan-2">
+  <img src="/2024/07/vlan-2.png" class="zoom">
+</div>
+++++
+
+The important piece here is to install OpenShift machine network on VLAN - `bond0.3`. In this example, we use a switch configured `LACP 802.3ad` link aggregation mode over two physical NIC interfaces. OpenShift will install `br-ex` above the VLAN `bond0.3`
+
+[source,yaml,options="wrap"]
+----
+        - name: bond0.3
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 3
+          ipv4:
+            address:
+              - ip: 172.23.3.3
+                prefix-length: 24
+            dhcp: false
+            enabled: true
+          ipv6:
+            enabled: true
+            dhcp: false
+        - name: bond0
+          type: bond
+          state: up
+          link-aggregation:
+            mode: 802.3ad
+            options:
+              lacp_rate: slow
+              miimon: 110
+            port:
+              - ens1
+              - ens2
+----
+
+If you do not have LACP setup at your switch, you may go for a simpler link aggregation configuration e.g `balance-xor`
+
+[source,yaml,options="wrap"]
+----
+          link-aggregation:
+            mode: balance-xor
+            options:
+              miimon: 1000
+----
+
+After installation i.e. day#2 - we can then configure using NNCPs for our `br-vlans` using the `ovs-brigde`.
+
+[source,yaml,options="wrap"]
+----
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br-vlans
+spec:
+  desiredState:
+    interfaces:
+      - name: ovs0
+        type: ovs-interface
+        state: up
+        ipv4:
+          dhcp: false
+          enabled: false
+        ipv6:
+          dhcp: false
+          enabled: false
+      - name: br-vlans
+        type: ovs-bridge
+        state: up
+        bridge:
+          allow-extra-patch-ports: true
+          options:
+            stp: false
+          port:
+            - name: ovs0
+            - name: bond0
+              vlan:
+                mode: trunk
+                trunk-tags:
+                - id-range:
+                    min: 2001
+                    max: 2005
+    route-rules:
+      config:
+        - ip-to: 172.30.0.0/16
+          priority: 998
+          route-table: 254
+        - ip-to: 10.128.0.0/14
+          priority: 998
+          route-table: 254
+        - ip-to: 169.254.169.0/29
+          priority: 998
+          route-table: 254
+----
+
+Here we use the `trunk-tags` and `id-range` to specify our Tenant VLANs on `br-vlans`.
+
+Don't forget to specify this bridge setting - `allow-extra-patch-ports: true` else OVS will not be able to patch in your NAD/localnet ports above the `ovs-bridge`.
+
+Also note the inclusion of `route-rules` defining the machine network, the pod network and the loop-back interface used for Router Shards. Table `254` is the default routing table for the Node.
+
+And in the picture, the VLAN 2001 NNCP configuration would look like this:
+
+[source,yaml,options="wrap"]
+----
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: br-vlans.2001
+spec:
+  desiredState:
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 10.0.201.2
+              prefix-length: 24
+          enabled: true
+        name: br-vlans.2001
+        state: up
+        type: vlan
+        vlan:
+          base-iface: ovs0
+          id: 2001
+----
+
+== A Second set of NICs
+
+If you have the luxury of a second set of NICs this can be very useful for tenant VLAN configuration.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="vlan-3">
+  <img src="/2024/07/vlan-3.png" class="zoom">
+</div>
+++++
+
+Once you have more NICs at your disposal, further segregation is also possible e.g. tenant VLANs on secondary NICs.
+
+You may also have other use cases for those NICs e.f. dedicated Storage Networks.
+
+== MetalLB and VRFs
+
+When using multiple VLANs on premise with Bare Metal, it may be the case that you have to support more advanced use cases and constraints. You may need to support:
+
+- different DCGW's configured per VLAN
+- overlapping CIDRs
+
+We can use OVNK, MetalLB and NMState in OpenShift https://docs.openshift.com/container-platform/4.16/networking/metallb/metallb-configure-return-traffic.html[to provide symmetric routing, traffic segregation, and support clients on different networks with overlapping CIDR addresses]. This is a Tech Preview feature, but solves these use cases by introducing https://docs.kernel.org/networking/vrf.html[linux VRF's] into the mix. VRFs are a lookup table of routes that we use on a per-VLAN/VRF basis.
+
+++++
+<div id="lightbox"></div>
+<div class="imageblock id="vlan-4">
+  <img src="/2024/07/vlan-4.png" class="zoom">
+</div>
+++++
+
+We add in a VRF above our tenant VLAN:
+
+[source,yaml,options="wrap"]
+----
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: metallb-vrf2001
+spec:
+  desiredState:
+    interfaces:
+      - name: vrf2001
+        state: up
+        type: vrf
+        vrf:
+          port:
+            - br-vlans.2001
+          route-table-id: 2001
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          metric: 150
+          next-hop-address: 10.0.201.1
+          next-hop-interface: br-vlans.2001
+          table-id: 2001
+  maxUnavailable: 1
+----
+
+With this setup - we can now use tenant VLANs with different routing tables.
+
+If you want to read more about what's coming in future OpenShift releases, checkout the https://github.com/openshift/enhancements/blob/146a9ea79f35169eb5aba7416125a82cb8d5fdb4/enhancements/network/multi-network-vrfs.md[enhancement request for multiple VRF's upstream].
+
+Hope you Enjoy! 🔫🔫🔫
