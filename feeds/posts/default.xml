@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Mon, 5 Aug 2024 01:24:23 +0000</pubDate>
-      <lastBuildDate>Mon, 5 Aug 2024 01:24:23 +0000</lastBuildDate>
+      <pubDate>Tue, 6 Aug 2024 00:30:06 +0000</pubDate>
+      <lastBuildDate>Tue, 6 Aug 2024 00:30:06 +0000</lastBuildDate>
 
       
       <item>
@@ -262,7 +262,7 @@ spec:
 &lt;h2 id=&quot;_multi_tenancy_with_trunked_and_tagged_vlans&quot;&gt;Multi-tenancy with Trunked and Tagged VLANs&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;In the case on single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an &lt;a href=&quot;https://nmstate.io/examples.html#interfaces-ovs-bridge&quot;&gt;&lt;code&gt;ovs-bridge&lt;/code&gt;&lt;/a&gt; to present our tenant VLANs.&lt;/p&gt;
+&lt;p&gt;In the case of single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an extra &lt;a href=&quot;https://nmstate.io/examples.html#interfaces-ovs-bridge&quot;&gt;&lt;code&gt;ovs-bridge&lt;/code&gt;&lt;/a&gt; to present our tenant VLANs.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
 &lt;div class=&quot;imageblock id=&quot;vlan-2&quot;&gt;
@@ -313,7 +313,7 @@ spec:
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;After installation i.e. day#2 - we can then configure using NNCPs for our &lt;code&gt;br-vlans&lt;/code&gt; using the &lt;code&gt;ovs-brigde&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;After installation i.e. day#2 - we can then configure using NNCPs for our &lt;code&gt;br-vlans&lt;/code&gt; using the extra &lt;code&gt;ovs-brigde&lt;/code&gt; named br-vlans.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
@@ -373,6 +373,9 @@ spec:
 &lt;p&gt;Also note the inclusion of &lt;code&gt;route-rules&lt;/code&gt; defining the machine network, the pod network and the loop-back interface used for Router Shards. Table &lt;code&gt;254&lt;/code&gt; is the default routing table for the Node.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;By using a second ovs-bridge for our tenant vlans - it means that we can use the same features we expect from OpenShift i.e. Network Policy, MultiNetworkPolicy, EgressIP etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;And in the picture, the VLAN 2001 NNCP configuration would look like this:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;listingblock&quot;&gt;
@@ -415,6 +418,9 @@ spec:
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;You may also have other use cases for those NICs e.f. dedicated Storage Networks.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;LACP is limited in OpenShift and OVNK to one lacp group per physical set of NICs. Having more sets of NICs allows you to have more LACP groups.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

@@ -354,7 +354,7 @@ spec:
 <h2 id="_multi_tenancy_with_trunked_and_tagged_vlans">Multi-tenancy with Trunked and Tagged VLANs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the case on single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an <a href="https://nmstate.io/examples.html#interfaces-ovs-bridge"><code>ovs-bridge</code></a> to present our tenant VLANs.</p>
+<p>In the case of single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an extra <a href="https://nmstate.io/examples.html#interfaces-ovs-bridge"><code>ovs-bridge</code></a> to present our tenant VLANs.</p>
 </div>
 <div id="lightbox"></div>
 <div class="imageblock id="vlan-2">
@@ -405,7 +405,7 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>After installation i.e. day#2 - we can then configure using NNCPs for our <code>br-vlans</code> using the <code>ovs-brigde</code>.</p>
+<p>After installation i.e. day#2 - we can then configure using NNCPs for our <code>br-vlans</code> using the extra <code>ovs-brigde</code> named br-vlans.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -465,6 +465,9 @@ spec:
 <p>Also note the inclusion of <code>route-rules</code> defining the machine network, the pod network and the loop-back interface used for Router Shards. Table <code>254</code> is the default routing table for the Node.</p>
 </div>
 <div class="paragraph">
+<p>By using a second ovs-bridge for our tenant vlans - it means that we can use the same features we expect from OpenShift i.e. Network Policy, MultiNetworkPolicy, EgressIP etc.</p>
+</div>
+<div class="paragraph">
 <p>And in the picture, the VLAN 2001 NNCP configuration would look like this:</p>
 </div>
 <div class="listingblock">
@@ -507,6 +510,9 @@ spec:
 </div>
 <div class="paragraph">
 <p>You may also have other use cases for those NICs e.f. dedicated Storage Networks.</p>
+</div>
+<div class="paragraph">
+<p>LACP is limited in OpenShift and OVNK to one lacp group per physical set of NICs. Having more sets of NICs allows you to have more LACP groups.</p>
 </div>
 </div>
 </div>
@@ -750,7 +756,7 @@ spec:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Mon Aug 05 01:24:22 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Tue Aug 06 00:30:05 UTC 2024</a></p>
       </div>
     </div>
     
