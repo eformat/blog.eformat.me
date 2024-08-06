@@ -201,7 +201,7 @@ You can then use the NAD name in your VM as follows.
 
 == Multi-tenancy with Trunked and Tagged VLANs
 
-In the case on single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an https://nmstate.io/examples.html#interfaces-ovs-bridge[`ovs-bridge`] to present our tenant VLANs.
+In the case of single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an extra https://nmstate.io/examples.html#interfaces-ovs-bridge[`ovs-bridge`] to present our tenant VLANs.
 
 ++++
 <div id="lightbox"></div>
@@ -252,7 +252,7 @@ If you do not have LACP setup at your switch, you may go for a simpler link aggr
               miimon: 1000
 ----
 
-After installation i.e. day#2 - we can then configure using NNCPs for our `br-vlans` using the `ovs-brigde`.
+After installation i.e. day#2 - we can then configure using NNCPs for our `br-vlans` using the extra `ovs-brigde` named br-vlans.
 
 [source,yaml,options="wrap"]
 ----
@@ -308,6 +308,8 @@ Don't forget to specify this bridge setting - `allow-extra-patch-ports: true` el
 
 Also note the inclusion of `route-rules` defining the machine network, the pod network and the loop-back interface used for Router Shards. Table `254` is the default routing table for the Node.
 
+By using a second ovs-bridge for our tenant vlans - it means that we can use the same features we expect from OpenShift i.e. Network Policy, MultiNetworkPolicy, EgressIP etc.
+
 And in the picture, the VLAN 2001 NNCP configuration would look like this:
 
 [source,yaml,options="wrap"]
@@ -347,6 +349,8 @@ If you have the luxury of a second set of NICs this can be very useful for tenan
 Once you have more NICs at your disposal, further segregation is also possible e.g. tenant VLANs on secondary NICs.
 
 You may also have other use cases for those NICs e.f. dedicated Storage Networks.
+
+LACP is limited in OpenShift and OVNK to one lacp group per physical set of NICs. Having more sets of NICs allows you to have more LACP groups.
 
 == MetalLB and VRFs
 
