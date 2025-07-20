@@ -41,6 +41,7 @@ This was the **INPUT** for vibe coding, it is a backlog for things we wanted to 
 == Multi Modal Chatbot
 
 Next step - take the image and use the Red Hat Multi Modal Chatbot Demo to evaluate 3 models for Vision to Language:
+
 * Llama-4-Scout-17B-16E-W4A16
 * Granite-vision-3.2-2b
 * Qwen2.5-VL-7B-Instruct-FP8-Dynamic
