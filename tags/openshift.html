@@ -79,6 +79,170 @@
     <div class="col-sm-8">
         
             
+                <a href="../2025/07/etx-ai.html"><h1>Emerging Tech Experience (ETX AI), Vibe Coding, GenAI</h1></a>
+                <p>20 July 2025</p>
+
+                <p>Tags :
+                <a href="ai.html">ai</a>, <a href="rhoai.html">rhoai</a>, <a href="openshift.html">openshift</a>, <a href="llm.html">llm</a>, <a href="genai.html">genai</a>, <a href="llama-stack.html">llama-stack</a>, <a href="emacs.html">emacs</a>, <a href="agentic.html">agentic</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2025/07/etx-ai.html" data-text="Emerging Tech Experience (ETX AI), Vibe Coding, GenAI" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2025/07/etx-ai.html"></div>
+
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>“AI won’t take your job, but someone who understands AI will.” - <em>Economist Richard Baldwin, 2023 World Economic Forum&#8217;s Growth Summit.</em></p>
+</div>
+<div class="paragraph">
+<p>Vibe coding a GitHub project issues list using Red Hat Openshift AI, Agentic AI, MultiModal + MOE Models, MCP Tools in under 45 min.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_things_to_do">Things To Do</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s not often you spend an intensive week to just hack around. A nice break from the day job.</p>
+</div>
+<div class="paragraph">
+<p>Here is the succint work flow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">0. post-it note
+1. eval models -&gt; qwen wins
+2. use qwen VL for first prompt
+2.1. emacs + macros to reformat output
+3. use llama4 scout for second text only prompt gen
+3.1. emacs + macros to reformat output
+4. llama stack playground - mcp::github agentic</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sticky_notes">Sticky notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Given my past, sticky notes have taken over my life - very much like the scene in "The Fall Guy" - just google "sticky notes the fall guy" and watch that movie.</p>
+</div>
+<div class="paragraph">
+<p>This was the <strong>INPUT</strong> for vibe coding, it is a backlog for things we wanted to work on after the hackathon.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/post-it.png" class="zoom">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_modal_chatbot">Multi Modal Chatbot</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next step - take the image and use the Red Hat Multi Modal Chatbot Demo to evaluate 3 models for Vision to Language:
+* Llama-4-Scout-17B-16E-W4A16
+* Granite-vision-3.2-2b
+* Qwen2.5-VL-7B-Instruct-FP8-Dynamic</p>
+</div>
+<div class="paragraph">
+<p>Prompt: <strong>describe line by line each item.</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Qwen2.5-VL-7B-Instruct-FP8-Dynamic</p>
+</div>
+<div class="paragraph">
+<p>Qwen wins for this step.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/multi-modal-chatbot.png" class="zoom">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generate_prompt_for_the_mcpgithub_tool">Generate Prompt for the mcp::github tool</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next step - take the list of tasks, apply <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Keyboard-Macros.html"><strong>emacs + macros</strong></a> to reformat and clean up and generate the prompts for the <strong>mcp::github</strong> tool.</p>
+</div>
+<div class="paragraph">
+<p>Prompt: <strong>create one-shot prompts for each item in this list:</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Llama-4-Scout-17B-16E-W4A16</p>
+</div>
+<div class="paragraph">
+<p>LLama-4-Scout wins for this step (and of course emacs macros 😂)</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/generate-mcp-prompt-1.png" class="zoom">
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/generate-mcp-prompt-2.png" class="zoom">
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/emacs-macros.png" class="zoom">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_use_llamastack_playground_in_rhoai_to_generate_github_issues">Use LLamaStack Playground in RHOAI to generate GitHub issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next step - take the generated prompts from the previous step and use them in the LLamaStack Playground, LLamaStack server and ReAct agent confgured, to call mcp::github to generate GitHub issues.</p>
+</div>
+<div class="paragraph">
+<p>Prompt: <strong> Create a github issue using these parameters {"name":"create_issue","arguments":{"owner":"redhat-ai-services","repo":"etx-agentic-ai","title":"Things To Do: LlamaStack version pinning","body":"DONE"}} DO NOT add any optional parameters.</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Llama-4-Scout-17B-16E-W4A16</p>
+</div>
+<div class="paragraph">
+<p>LLama-4-Scout wins for this step.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/llama-stack-playground.png" class="zoom">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_add_github_issues_to_the_github_project">Add GitHub issues to the GitHub Project</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next step - go to the GitHub project and just select all the <strong>Things To Do</strong> issues we just created.</p>
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/github-project-1.png" class="zoom">
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/github-project-2.png" class="zoom">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_vibe_it_from_a_picture_of_post_it_notes_using_agentic_ai_on_rhoai_to_github_project_issues">Vibe It - From a Picture of Post-It notes, using Agentic AI on RHOAI, to GitHub Project Issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Thank you RedHat Emerging Tech Experience. 💓</p>
+</div>
+<div class="paragraph">
+<p>Hope you Enjoy! 🔫🔫🔫</p>
+</div>
+</div>
+</div></p>
+                <p><a href="2025/07/etx-ai.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+            
                 <a href="../2023/12/gitops-acm.html"><h1>OpenShift SRE ❤️ GitOps + Policy as Code</h1></a>
                 <p>24 December 2023</p>
 
@@ -2451,7 +2615,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
             <ol class="list-unstyled" style="margin-left: 0px">
                 
 
-                <li><a href="openshift.html">openshift</a> (10)</li>
+                <li><a href="openshift.html">openshift</a> (11)</li>
                 
 
                 <li><a href="gitops.html">gitops</a> (4)</li>
@@ -2476,6 +2640,12 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="stable diffusion.html">stable diffusion</a> (2)</li>
+                
+
+                <li><a href="agentic.html">agentic</a> (1)</li>
+                
+
+                <li><a href="ai.html">ai</a> (1)</li>
                 
 
                 <li><a href="analytics.html">analytics</a> (1)</li>
@@ -2508,6 +2678,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="disconnected.html">disconnected</a> (1)</li>
                 
 
+                <li><a href="emacs.html">emacs</a> (1)</li>
+                
+
                 <li><a href="fediverse.html">fediverse</a> (1)</li>
                 
 
@@ -2520,7 +2693,16 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 <li><a href="frr.html">frr</a> (1)</li>
                 
 
+                <li><a href="genai.html">genai</a> (1)</li>
+                
+
                 <li><a href="graphql.html">graphql</a> (1)</li>
+                
+
+                <li><a href="llama-stack.html">llama-stack</a> (1)</li>
+                
+
+                <li><a href="llm.html">llm</a> (1)</li>
                 
 
                 <li><a href="load balancing.html">load balancing</a> (1)</li>
@@ -2557,6 +2739,9 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
                 
 
                 <li><a href="registries.html">registries</a> (1)</li>
+                
+
+                <li><a href="rhoai.html">rhoai</a> (1)</li>
                 
 
                 <li><a href="security.html">security</a> (1)</li>
@@ -2601,7 +2786,7 @@ Environment="KUBELET_PROVIDERID=aws:///&lt;region&gt;/&lt;your original instance
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Tue Aug 06 00:30:06 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun Jul 20 15:59:27 UTC 2025</a></p>
       </div>
     </div>
     

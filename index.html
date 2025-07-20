@@ -85,492 +85,168 @@
                             <meta itemprop="name" content="Mike Hepburn"/>
                         </div>
                         <meta itemprop="inLanguage" content="en-US"/>
-                        <a itemprop="url" href="2024/07/vlans.html">
-                            <h1 itemprop="name">VLANs and OpenShift</h1>
+                        <a itemprop="url" href="2025/07/etx-ai.html">
+                            <h1 itemprop="name">Emerging Tech Experience (ETX AI), Vibe Coding, GenAI</h1>
                         </a>
                         <p>
                             <time itemprop="datePublished"
-                                  datetime="2024-07-13">
-                                13 July 2024
+                                  datetime="2025-07-20">
+                                20 July 2025
                             </time>
                         </p>
 
                         <p>Tags :
-                            <meta itemprop="keywords" content="networking,vlans openshift"/>
-                            <a href="tags/networking.html">networking</a>, <a href="tags/vlans openshift.html">vlans openshift</a>
+                            <meta itemprop="keywords" content="ai,rhoai,openshift,llm,genai,llama-stack,emacs,agentic"/>
+                            <a href="tags/ai.html">ai</a>, <a href="tags/rhoai.html">rhoai</a>, <a href="tags/openshift.html">openshift</a>, <a href="tags/llm.html">llm</a>, <a href="tags/genai.html">genai</a>, <a href="tags/llama-stack.html">llama-stack</a>, <a href="tags/emacs.html">emacs</a>, <a href="tags/agentic.html">agentic</a>
                         </p>
 
-                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2024/07/vlans.html" data-text="VLANs and OpenShift" data-via="eformat" data-lang="en">Tweeter</a-->
+                        <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2025/07/etx-ai.html" data-text="Emerging Tech Experience (ETX AI), Vibe Coding, GenAI" data-via="eformat" data-lang="en">Tweeter</a-->
                         <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
-                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2024/07/vlans.html"></div>
+                        <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2025/07/etx-ai.html"></div>
 
                         <div itemprop="blogPost">
                             <p><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Near enough everyone uses VLANs to segregate machines in their environments. When configuring OpenShift for VLANs there are several considerations to take into account.</p>
+<p>“AI won’t take your job, but someone who understands AI will.” - <em>Economist Richard Baldwin, 2023 World Economic Forum&#8217;s Growth Summit.</em></p>
+</div>
+<div class="paragraph">
+<p>Vibe coding a GitHub project issues list using Red Hat Openshift AI, Agentic AI, MultiModal + MOE Models, MCP Tools in under 45 min.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_lets_get_our_vlan_terminology_straight">Let&#8217;s get our VLAN terminology straight</h2>
+<h2 id="_things_to_do">Things To Do</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>I was checking on the date of the VLAN <a href="https://www.ietf.org/rfc/rfc2674.txt">RFC2674</a> - 1999, so they have been around for a while. Despite it being venerable tech, there is quite a bit of terminology that we need to level set on.</p>
+<p>It&#8217;s not often you spend an intensive week to just hack around. A nice break from the day job.</p>
 </div>
 <div class="paragraph">
-<p>Before we get started - <strong>Bridge forwarding</strong> is generally based on MAC addresses and virtual networks, i.e. Virtual LANs (VLAN).</p>
-</div>
-<div class="paragraph">
-<p>For an excellent beginner/background read to VLANs - go checkout <a href="https://www.oreilly.com/library/view/packet-guide-to/9781449311315/ch04.html">Chapter 4. VLANs and Trunking</a> from Oreilly. If it&#8217;s been a while since you
-had to think hard about VLANs and why we need them - this is a great starter.</p>
-</div>
-<div class="paragraph">
-<p>The first thing get straight on your head is the concept of a <strong>trunk port</strong> and an <strong>access port</strong> modes on switches. Switches can behave in different ways when configured for VLANs and different vendors support different modes.
-For example Cisco switches have access, trunk, general and customer modes.</p>
-</div>
-<div class="paragraph">
-<p>Access ports are configured on the switch for a single VLAN only. Trunk ports on the other hand, deliver a number or VLANs all together to a port on the switch.</p>
-</div>
-<div class="paragraph">
-<p>The prevailing standard for VLAN Trunks is the <strong>802.1Q-2022 - IEEE Standard for Local and Metropolitan Area Networks&#8212;&#8203;Bridges and Bridged Networks</strong>, there are others (Cisco), but everyone has standardised today on <strong>dot.1q</strong> as it is known.
-It is a large standards document with lots of details I simply will not get into e.g. if you are a backbone carrier provider - you will need to understand Layer2 concepts such as Q-in-Q (provider bridges) and MAC-in-MAC (provider backbone bridges).
-There may be several levels of tagging or encapsulation that can occur. What we need though are enough of the fundamentals to be able to get OpenShift up and running the right way.</p>
-</div>
-<div class="paragraph">
-<p>Its worth noting that both access and trunk ports may also be configured <strong>dynamically</strong> - where the switch automatically negotiates which VLAN(s) it is on. This is usually considered bad security practice, but beware it may exist
-in your environment.</p>
-</div>
-<div class="paragraph">
-<p>Just to confuse matters - there is also the concept of tagged and untagged VLANs. If you are using tcpdump to look at packets, anytime you see <strong>802.1Q</strong> you know the packet is tagged with the VLAN number.</p>
+<p>Here is the succint work flow:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">07:48:29.665513 02:3d:54:00:00:04 &gt; ff:ff:ff:ff:ff:ff, ethertype 802.1Q (0x8100), length 46: vlan 2001, p 0, ethertype ARP (0x0806), Ethernet (len 6), IPv4 (len 4),...tell 11.11.11.99, length 28</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Untagged VLAN packets often arise from legacy devices or devices that don’t tag their traffic like some wireless access points and simple network attached devices. This makes it possible for untagged traffic to be supported on your VLAN. One common term
- associated with this behaviour is <strong>Native VLAN</strong>. The Native VLAN is the one into which untagged traffic will be put when it’s received on a <strong>trunk port</strong>.</p>
-</div>
-<div class="paragraph">
-<p>Native VLAN is not to be confused with the Port VLAN ID or <strong>PVID</strong>. PVID is a single VLAN ID associated with a port. PVID can behave similarly to Native VLAN if the default traffic is not tagged.</p>
-</div>
-<div class="paragraph">
-<p>So in summary we have:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Native VLAN</code> = a VLAN whose traffic on a port is not tagged. It can be considered the "default" VLAN for the port.</p>
-</li>
-<li>
-<p><code>PVID</code> = Port VLAN ID</p>
-</li>
-<li>
-<p><code>PVID + un-tagged-PVID-Only</code> = Native VLAN</p>
-</li>
-<li>
-<p><code>tagAll</code> = All traffic on the port is VLAN tagged, including the PVID (using 802.1q)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>I do not cover VXLANs.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_openshift_ovn_default_behaviour">OpenShift OVN default behaviour</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>So, how does OpenShift&#8217;s default SDN behave in the context of VLANs ?</p>
-</div>
-<div class="paragraph">
-<p>When you install OpenShift, the first thing OVN Kubernetes (<strong>OVNK</strong>) does on your Node is select the default interface (may be a single ethernet - eth0 or a bonded network - bond0) and creates an OVS bridge <code>br-ex</code> there. This OVS bridge is given an IPv4 (and also IPv6 if dual stack) address, and it is automatically connected to a number of other OVN bridges and switches. We often term this the <code>Machine Network</code> i.e. it is connected to the other machines in your cluster.</p>
-</div>
-<div class="paragraph">
-<p>By default <code>br-ex</code> acts as a trunk port for VLANs and will handle tagged and untagged VLAN traffic. If you have an OpenShift cluster, as a cluster admin, you can see this by going into one of your ovnkube-node pods, for example with Single Node OpenShift (SNO) try:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">oc -n openshift-ovn-kubernetes rsh $(oc get pod -n openshift-ovn-kubernetes -l app=ovnkube-node -o name)
-
-sh-5.1# ovs-vsctl get port br-ex tag
-[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The empty tag array on the OVS bridge is the default - trunk mode setting. We could assign one or mode VLAN tags to this bridge manually e.g.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash"># assign vlan 2001 tag to br-ex
-ovs-vsctl set port br-ex tag=2001
-ovs-vsctl get port br-ex tag
-2001
-
-# set it back to trunk
-ovs-vsctl set port br-ex tag=[]</code></pre>
+<pre class="prettyprint highlight"><code data-lang="bash">0. post-it note
+1. eval models -&gt; qwen wins
+2. use qwen VL for first prompt
+2.1. emacs + macros to reformat output
+3. use llama4 scout for second text only prompt gen
+3.1. emacs + macros to reformat output
+4. llama stack playground - mcp::github agentic</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_multi_tenancy_and_native_vlans">Multi-tenancy and Native VLANs</h2>
+<h2 id="_sticky_notes">Sticky notes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>So how should we set up OpenShift in the context of VLANs? Standard practice within most organisations is to host all servers on VLANs. Therefore, it makes sense if we put the Machine Network on a VLAN. We may also want to support tenant VLANs as well - so what does good look like in this case?</p>
+<p>Given my past, sticky notes have taken over my life - very much like the scene in "The Fall Guy" - just google "sticky notes the fall guy" and watch that movie.</p>
 </div>
 <div class="paragraph">
-<p>One of the first questions that needs answering is this - "How many NIC&#8217;s do we have available to us?". For high availability, 2 (or more NIC&#8217;s) are normally bonded together to provide network connectivity to our cluster nodes. We may also have more set&#8217;s of NICs available to us via PCIe - which we term <strong>secondary networks</strong>.</p>
-</div>
-<div class="paragraph">
-<p>Let&#8217;s take the most common use case - a pair of NICs (ens1, ens2) bonded together (bond0) on a Node with OVS br-ex above them.</p>
+<p>This was the <strong>INPUT</strong> for vibe coding, it is a backlog for things we wanted to work on after the hackathon.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="vlan-1">
-  <img src="/2024/07/vlan-1.png" class="zoom">
-</div>
-<div class="paragraph">
-<p>In this case - the default Machine Network is on VLAN 3 with a tenant network on VLAN 50. They are trunked at the switch port and presented to NICs. VLAN 3 is a <code>Native VLAN</code> i.e. is <code>untagged PVID 3</code> on the switch. Depending on the switch you have that might appear as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="bash">Ethernet9         3 PVID Egress Untagged
-                  50</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Your matching OpenShift Agent Config or NMState config for installation of the Machine Network may look something similar to this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">        - name: bond0
-          type: bond
-          state: up
-          link-aggregation:
-            mode: active-backup
-            options:
-              primary: ens1
-            port:
-              - ens1
-              - ens2
-          ipv4:
-            address:
-              - ip: 192.168.0.25
-                prefix-length: 24
-            dhcp: false
-            enabled: true
-          ipv6:
-            enabled: true
-            dhcp: false</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The link-aggregation mode depends on how your VLAN trunk is presented. It is common to bundle VLAN trunks using IEEE 802.3ad - Link Aggregation Control Protocol (<strong>LACP</strong>) - in which case <code>mode: active-backup</code> may be instead set to <code>balance-slb</code> which gives increased throughput (active-active) or even <code>balance-tcp</code> (LACP - active-active).</p>
-</div>
-<div class="paragraph">
-<p>We use <a href="https://docs.openshift.com/container-platform/4.16/networking/multiple_networks/configuring-additional-network.html#configuration-ovnk-additional-networks_configuring-additional-network">Network Attachment Devices</a> (NADs) and <a href="https://docs.openshift.com/container-platform/4.16/virt/vm_networking/virt-connecting-vm-to-linux-bridge.html#virt-creating-linux-bridge-nncp_virt-connecting-vm-to-linux-bridge">Node Network Configuration Policy</a> (NNCPs) to configure VLAN brige mappings in OVN.</p>
-</div>
-<div class="paragraph">
-<p>We can then connect Pods and VMs to our VLAN 50 e.g. using a localnet OVNK topology. If you define your NAD in the default Namespace it is available to the whole cluster, else they are Namespace scoped:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">apiVersion: nmstate.io/v1
-kind: NodeNetworkConfigurationPolicy
-metadata:
-  name: vlan-localnets
-spec:
-  nodeSelector:
-    node-role.kubernetes.io/worker: ''
-  desiredState:
-    ovn:
-      bridge-mappings:
-      - bridge: br-ex
-        localnet: default-localnet
-        state: present
-      - bridge: br-ex
-        localnet: vlan50-localnet
-        state: present
----
-apiVersion: k8s.cni.cncf.io/v1
-kind: NetworkAttachmentDefinition
-metadata:
-  name: default-localnet
-  namespace: default
-spec:
-  config: |-
-    { "cniVersion": "0.3.1",
-      "name": "default-localnet",
-      "type": "ovn-k8s-cni-overlay",
-      "topology": "localnet",
-      "netAttachDefName": "default/default-localnet",
-      "ipam": {},
-      "subnets": "192.168.0.0/24"
-    }
----
-apiVersion: k8s.cni.cncf.io/v1
-kind: NetworkAttachmentDefinition
-metadata:
-  name: vlan50-localnet
-  namespace: default
-spec:
-  config: |-
-    { "cniVersion": "0.3.1",
-      "name": "vlan50-localnet",
-      "type": "ovn-k8s-cni-overlay",
-      "topology": "localnet",
-      "netAttachDefName": "default/vlan50-localnet",
-      "ipam": {},
-      "subnets": "5.5.5.0/24",
-      "vlanID": 50
-    }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can then use the NAD name in your VM as follows.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">        devices:
-          interfaces:
-          - name: physnet-dmz
-            bridge: {}
-...
-      networks:
-      - name: physnet
-        multus:
-          networkName: vlan50-localnet</code></pre>
-</div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/post-it.png" class="zoom">
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_multi_tenancy_with_trunked_and_tagged_vlans">Multi-tenancy with Trunked and Tagged VLANs</h2>
+<h2 id="_multi_modal_chatbot">Multi Modal Chatbot</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the case of single bonded NICs where all of our VLANs are tagged and trunked, including the machine Network - we can make use of an extra <a href="https://nmstate.io/examples.html#interfaces-ovs-bridge"><code>ovs-bridge</code></a> to present our tenant VLANs.</p>
+<p>Next step - take the image and use the Red Hat Multi Modal Chatbot Demo to evaluate 3 models for Vision to Language:
+* Llama-4-Scout-17B-16E-W4A16
+* Granite-vision-3.2-2b
+* Qwen2.5-VL-7B-Instruct-FP8-Dynamic</p>
+</div>
+<div class="paragraph">
+<p>Prompt: <strong>describe line by line each item.</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Qwen2.5-VL-7B-Instruct-FP8-Dynamic</p>
+</div>
+<div class="paragraph">
+<p>Qwen wins for this step.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="vlan-2">
-  <img src="/2024/07/vlan-2.png" class="zoom">
-</div>
-<div class="paragraph">
-<p>The important piece here is to install OpenShift machine network on VLAN - <code>bond0.3</code>. In this example, we use a switch configured <code>LACP 802.3ad</code> link aggregation mode over two physical NIC interfaces. OpenShift will install <code>br-ex</code> above the VLAN <code>bond0.3</code></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">        - name: bond0.3
-          type: vlan
-          state: up
-          vlan:
-            base-iface: bond0
-            id: 3
-          ipv4:
-            address:
-              - ip: 172.23.3.3
-                prefix-length: 24
-            dhcp: false
-            enabled: true
-          ipv6:
-            enabled: true
-            dhcp: false
-        - name: bond0
-          type: bond
-          state: up
-          link-aggregation:
-            mode: 802.3ad
-            options:
-              lacp_rate: slow
-              miimon: 110
-            port:
-              - ens1
-              - ens2</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you do not have LACP setup at your switch, you may go for a simpler link aggregation configuration e.g <code>balance-xor</code></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">          link-aggregation:
-            mode: balance-xor
-            options:
-              miimon: 1000</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After installation i.e. day#2 - we can then configure using NNCPs for our <code>br-vlans</code> using the extra <code>ovs-brigde</code> named br-vlans.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">---
-apiVersion: nmstate.io/v1
-kind: NodeNetworkConfigurationPolicy
-metadata:
-  name: br-vlans
-spec:
-  desiredState:
-    interfaces:
-      - name: ovs0
-        type: ovs-interface
-        state: up
-        ipv4:
-          dhcp: false
-          enabled: false
-        ipv6:
-          dhcp: false
-          enabled: false
-      - name: br-vlans
-        type: ovs-bridge
-        state: up
-        bridge:
-          allow-extra-patch-ports: true
-          options:
-            stp: false
-          port:
-            - name: ovs0
-            - name: bond0
-              vlan:
-                mode: trunk
-                trunk-tags:
-                - id-range:
-                    min: 2001
-                    max: 2005
-    route-rules:
-      config:
-        - ip-to: 172.30.0.0/16
-          priority: 998
-          route-table: 254
-        - ip-to: 10.128.0.0/14
-          priority: 998
-          route-table: 254
-        - ip-to: 169.254.169.0/29
-          priority: 998
-          route-table: 254</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Here we use the <code>trunk-tags</code> and <code>id-range</code> to specify our Tenant VLANs on <code>br-vlans</code>.</p>
-</div>
-<div class="paragraph">
-<p>Don&#8217;t forget to specify this bridge setting - <code>allow-extra-patch-ports: true</code> else OVS will not be able to patch in your NAD/localnet ports above the <code>ovs-bridge</code>.</p>
-</div>
-<div class="paragraph">
-<p>Also note the inclusion of <code>route-rules</code> defining the machine network, the pod network and the loop-back interface used for Router Shards. Table <code>254</code> is the default routing table for the Node.</p>
-</div>
-<div class="paragraph">
-<p>By using a second ovs-bridge for our tenant vlans - it means that we can use the same features we expect from OpenShift i.e. Network Policy, MultiNetworkPolicy, EgressIP etc.</p>
-</div>
-<div class="paragraph">
-<p>And in the picture, the VLAN 2001 NNCP configuration would look like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">---
-apiVersion: nmstate.io/v1
-kind: NodeNetworkConfigurationPolicy
-metadata:
-  name: br-vlans.2001
-spec:
-  desiredState:
-    interfaces:
-      - ipv4:
-          address:
-            - ip: 10.0.201.2
-              prefix-length: 24
-          enabled: true
-        name: br-vlans.2001
-        state: up
-        type: vlan
-        vlan:
-          base-iface: ovs0
-          id: 2001</code></pre>
-</div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/multi-modal-chatbot.png" class="zoom">
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_a_second_set_of_nics">A Second set of NICs</h2>
+<h2 id="_generate_prompt_for_the_mcpgithub_tool">Generate Prompt for the mcp::github tool</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you have the luxury of a second set of NICs this can be very useful for tenant VLAN configuration.</p>
+<p>Next step - take the list of tasks, apply <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Keyboard-Macros.html"><strong>emacs + macros</strong></a> to reformat and clean up and generate the prompts for the <strong>mcp::github</strong> tool.</p>
+</div>
+<div class="paragraph">
+<p>Prompt: <strong>create one-shot prompts for each item in this list:</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Llama-4-Scout-17B-16E-W4A16</p>
+</div>
+<div class="paragraph">
+<p>LLama-4-Scout wins for this step (and of course emacs macros 😂)</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="vlan-3">
-  <img src="/2024/07/vlan-3.png" class="zoom">
+<div class="imageblock id="post-it">
+  <img src="/2025/07/generate-mcp-prompt-1.png" class="zoom">
 </div>
-<div class="paragraph">
-<p>Once you have more NICs at your disposal, further segregation is also possible e.g. tenant VLANs on secondary NICs.</p>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/generate-mcp-prompt-2.png" class="zoom">
 </div>
-<div class="paragraph">
-<p>You may also have other use cases for those NICs e.f. dedicated Storage Networks.</p>
-</div>
-<div class="paragraph">
-<p>LACP is limited in OpenShift and OVNK to one lacp group per physical set of NICs. Having more sets of NICs allows you to have more LACP groups.</p>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/emacs-macros.png" class="zoom">
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_metallb_and_vrfs">MetalLB and VRFs</h2>
+<h2 id="_use_llamastack_playground_in_rhoai_to_generate_github_issues">Use LLamaStack Playground in RHOAI to generate GitHub issues</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When using multiple VLANs on premise with Bare Metal, it may be the case that you have to support more advanced use cases and constraints. You may need to support:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>different DCGW&#8217;s configured per VLAN</p>
-</li>
-<li>
-<p>overlapping CIDRs</p>
-</li>
-</ul>
+<p>Next step - take the generated prompts from the previous step and use them in the LLamaStack Playground, LLamaStack server and ReAct agent confgured, to call mcp::github to generate GitHub issues.</p>
 </div>
 <div class="paragraph">
-<p>We can use OVNK, MetalLB and NMState in OpenShift <a href="https://docs.openshift.com/container-platform/4.16/networking/metallb/metallb-configure-return-traffic.html">to provide symmetric routing, traffic segregation, and support clients on different networks with overlapping CIDR addresses</a>. This is a Tech Preview feature, but solves these use cases by introducing <a href="https://docs.kernel.org/networking/vrf.html">linux VRF&#8217;s</a> into the mix. VRFs are a lookup table of routes that we use on a per-VLAN/VRF basis.</p>
+<p>Prompt: <strong> Create a github issue using these parameters {"name":"create_issue","arguments":{"owner":"redhat-ai-services","repo":"etx-agentic-ai","title":"Things To Do: LlamaStack version pinning","body":"DONE"}} DO NOT add any optional parameters.</strong></p>
+</div>
+<div class="paragraph">
+<p>Model: Llama-4-Scout-17B-16E-W4A16</p>
+</div>
+<div class="paragraph">
+<p>LLama-4-Scout wins for this step.</p>
 </div>
 <div id="lightbox"></div>
-<div class="imageblock id="vlan-4">
-  <img src="/2024/07/vlan-4.png" class="zoom">
+<div class="imageblock id="post-it">
+  <img src="/2025/07/llama-stack-playground.png" class="zoom">
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_add_github_issues_to_the_github_project">Add GitHub issues to the GitHub Project</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>We add in a VRF above our tenant VLAN:</p>
+<p>Next step - go to the GitHub project and just select all the <strong>Things To Do</strong> issues we just created.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code data-lang="yaml">---
-apiVersion: nmstate.io/v1
-kind: NodeNetworkConfigurationPolicy
-metadata:
-  name: metallb-vrf2001
-spec:
-  desiredState:
-    interfaces:
-      - name: vrf2001
-        state: up
-        type: vrf
-        vrf:
-          port:
-            - br-vlans.2001
-          route-table-id: 2001
-    routes:
-      config:
-        - destination: 0.0.0.0/0
-          metric: 150
-          next-hop-address: 10.0.201.1
-          next-hop-interface: br-vlans.2001
-          table-id: 2001
-  maxUnavailable: 1</code></pre>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/github-project-1.png" class="zoom">
+</div>
+<div id="lightbox"></div>
+<div class="imageblock id="post-it">
+  <img src="/2025/07/github-project-2.png" class="zoom">
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_vibe_it_from_a_picture_of_post_it_notes_using_agentic_ai_on_rhoai_to_github_project_issues">Vibe It - From a Picture of Post-It notes, using Agentic AI on RHOAI, to GitHub Project Issues</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>With this setup - we can now use tenant VLANs with different routing tables.</p>
-</div>
-<div class="paragraph">
-<p>If you want to read more about what&#8217;s coming in future OpenShift releases, checkout the <a href="https://github.com/openshift/enhancements/blob/146a9ea79f35169eb5aba7416125a82cb8d5fdb4/enhancements/network/multi-network-vrfs.md">enhancement request for multiple VRF&#8217;s upstream</a>.</p>
+<p>Thank you RedHat Emerging Tech Experience. 💓</p>
 </div>
 <div class="paragraph">
 <p>Hope you Enjoy! 🔫🔫🔫</p>
@@ -578,7 +254,7 @@ spec:
 </div>
 </div></p>
                         </div>
-                        <p><a itemprop="discussionUrl" href="2024/07/vlans.html#disqus_thread">Comments</a></p>
+                        <p><a itemprop="discussionUrl" href="2025/07/etx-ai.html#disqus_thread">Comments</a></p>
 
                     </div>
                 
@@ -608,7 +284,7 @@ spec:
                 <h4>Tags</h4>
                 <ol class="list-unstyled" style="margin-left: 0px">
                     
-                        <li><a href="tags/openshift.html">openshift</a> (10)</li>
+                        <li><a href="tags/openshift.html">openshift</a> (11)</li>
                     
                         <li><a href="tags/gitops.html">gitops</a> (4)</li>
                     
@@ -625,6 +301,10 @@ spec:
                         <li><a href="tags/gpu.html">gpu</a> (2)</li>
                     
                         <li><a href="tags/stable diffusion.html">stable diffusion</a> (2)</li>
+                    
+                        <li><a href="tags/agentic.html">agentic</a> (1)</li>
+                    
+                        <li><a href="tags/ai.html">ai</a> (1)</li>
                     
                         <li><a href="tags/analytics.html">analytics</a> (1)</li>
                     
@@ -646,6 +326,8 @@ spec:
                     
                         <li><a href="tags/disconnected.html">disconnected</a> (1)</li>
                     
+                        <li><a href="tags/emacs.html">emacs</a> (1)</li>
+                    
                         <li><a href="tags/fediverse.html">fediverse</a> (1)</li>
                     
                         <li><a href="tags/fedora.html">fedora</a> (1)</li>
@@ -654,7 +336,13 @@ spec:
                     
                         <li><a href="tags/frr.html">frr</a> (1)</li>
                     
+                        <li><a href="tags/genai.html">genai</a> (1)</li>
+                    
                         <li><a href="tags/graphql.html">graphql</a> (1)</li>
+                    
+                        <li><a href="tags/llama-stack.html">llama-stack</a> (1)</li>
+                    
+                        <li><a href="tags/llm.html">llm</a> (1)</li>
                     
                         <li><a href="tags/load balancing.html">load balancing</a> (1)</li>
                     
@@ -679,6 +367,8 @@ spec:
                         <li><a href="tags/pulsar.html">pulsar</a> (1)</li>
                     
                         <li><a href="tags/registries.html">registries</a> (1)</li>
+                    
+                        <li><a href="tags/rhoai.html">rhoai</a> (1)</li>
                     
                         <li><a href="tags/security.html">security</a> (1)</li>
                     
@@ -713,7 +403,7 @@ spec:
     <div id="footer">
       <div class="container">
         <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
-        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Tue Aug 06 00:30:06 UTC 2024</a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0-rc.6</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun Jul 20 15:59:25 UTC 2025</a></p>
       </div>
     </div>
     

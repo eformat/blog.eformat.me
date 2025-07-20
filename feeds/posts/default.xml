@@ -6,9 +6,166 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Tue, 6 Aug 2024 00:30:06 +0000</pubDate>
-      <lastBuildDate>Tue, 6 Aug 2024 00:30:06 +0000</lastBuildDate>
+      <pubDate>Sun, 20 Jul 2025 15:59:25 +0000</pubDate>
+      <lastBuildDate>Sun, 20 Jul 2025 15:59:25 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>Emerging Tech Experience (ETX AI), Vibe Coding, GenAI</title>
+          <link>https://blog.eformat.me/2025/07/etx-ai.html</link>
+          <pubDate>Sun, 20 Jul 2025 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2025/07/etx-ai.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;“AI won’t take your job, but someone who understands AI will.” - &lt;em&gt;Economist Richard Baldwin, 2023 World Economic Forum&amp;#8217;s Growth Summit.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Vibe coding a GitHub project issues list using Red Hat Openshift AI, Agentic AI, MultiModal + MOE Models, MCP Tools in under 45 min.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_things_to_do&quot;&gt;Things To Do&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;It&amp;#8217;s not often you spend an intensive week to just hack around. A nice break from the day job.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Here is the succint work flow:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;0. post-it note
+1. eval models -&amp;gt; qwen wins
+2. use qwen VL for first prompt
+2.1. emacs + macros to reformat output
+3. use llama4 scout for second text only prompt gen
+3.1. emacs + macros to reformat output
+4. llama stack playground - mcp::github agentic&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_sticky_notes&quot;&gt;Sticky notes&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Given my past, sticky notes have taken over my life - very much like the scene in &quot;The Fall Guy&quot; - just google &quot;sticky notes the fall guy&quot; and watch that movie.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This was the &lt;strong&gt;INPUT&lt;/strong&gt; for vibe coding, it is a backlog for things we wanted to work on after the hackathon.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/post-it.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_multi_modal_chatbot&quot;&gt;Multi Modal Chatbot&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next step - take the image and use the Red Hat Multi Modal Chatbot Demo to evaluate 3 models for Vision to Language:
+* Llama-4-Scout-17B-16E-W4A16
+* Granite-vision-3.2-2b
+* Qwen2.5-VL-7B-Instruct-FP8-Dynamic&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Prompt: &lt;strong&gt;describe line by line each item.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Model: Qwen2.5-VL-7B-Instruct-FP8-Dynamic&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Qwen wins for this step.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/multi-modal-chatbot.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_generate_prompt_for_the_mcpgithub_tool&quot;&gt;Generate Prompt for the mcp::github tool&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next step - take the list of tasks, apply &lt;a href=&quot;https://www.gnu.org/software/emacs/manual/html_node/emacs/Keyboard-Macros.html&quot;&gt;&lt;strong&gt;emacs + macros&lt;/strong&gt;&lt;/a&gt; to reformat and clean up and generate the prompts for the &lt;strong&gt;mcp::github&lt;/strong&gt; tool.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Prompt: &lt;strong&gt;create one-shot prompts for each item in this list:&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Model: Llama-4-Scout-17B-16E-W4A16&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;LLama-4-Scout wins for this step (and of course emacs macros 😂)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/generate-mcp-prompt-1.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/generate-mcp-prompt-2.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/emacs-macros.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_use_llamastack_playground_in_rhoai_to_generate_github_issues&quot;&gt;Use LLamaStack Playground in RHOAI to generate GitHub issues&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next step - take the generated prompts from the previous step and use them in the LLamaStack Playground, LLamaStack server and ReAct agent confgured, to call mcp::github to generate GitHub issues.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Prompt: &lt;strong&gt; Create a github issue using these parameters {&quot;name&quot;:&quot;create_issue&quot;,&quot;arguments&quot;:{&quot;owner&quot;:&quot;redhat-ai-services&quot;,&quot;repo&quot;:&quot;etx-agentic-ai&quot;,&quot;title&quot;:&quot;Things To Do: LlamaStack version pinning&quot;,&quot;body&quot;:&quot;DONE&quot;}} DO NOT add any optional parameters.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Model: Llama-4-Scout-17B-16E-W4A16&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;LLama-4-Scout wins for this step.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/llama-stack-playground.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_add_github_issues_to_the_github_project&quot;&gt;Add GitHub issues to the GitHub Project&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Next step - go to the GitHub project and just select all the &lt;strong&gt;Things To Do&lt;/strong&gt; issues we just created.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/github-project-1.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock id=&quot;post-it&quot;&gt;
+  &lt;img src=&quot;/2025/07/github-project-2.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_vibe_it_from_a_picture_of_post_it_notes_using_agentic_ai_on_rhoai_to_github_project_issues&quot;&gt;Vibe It - From a Picture of Post-It notes, using Agentic AI on RHOAI, to GitHub Project Issues&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Thank you RedHat Emerging Tech Experience. 💓&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Hope you Enjoy! 🔫🔫🔫&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>VLANs and OpenShift</title>
