@@ -467,17 +467,13 @@ Then run the example queries:
 ./examples/run_all.sh
 ----
 
-The source code is in github:
-
-* https://github.com/eformat/trino-chart
-
 Or open the Trino Query UI in your browser and start writing SQL that
 thinks.
 
 '''''
 
 _The source code, Helm charts, install script, and all 34 example
-queries are available in the link:.[trino-chart] repository._
+queries are available in the link:.[https://github.com/eformat/trino-chart] repository._
 
 === References
 
