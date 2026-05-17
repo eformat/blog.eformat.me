@@ -278,28 +278,6 @@ catalog.
 loading, OpenShift Routes for external access. Standard Kubernetes
 tooling for day-2 operations.
 
-=== Getting Started
-
-The entire stack deploys in under 10 minutes:
-
-[source,bash]
-----
-export OPENAI_API_KEY=<your-maas-token>
-export OPENAI_BASE_URL=https://your-openshift-ai-endpoint
-export HF_TOKEN=<your-huggingface-token>
-./install.sh
-----
-
-Then run the example queries:
-
-[source,bash]
-----
-./examples/run_all.sh
-----
-
-Or open the Trino Query UI in your browser and start writing SQL that
-thinks.
-
 === Hybrid Search: When Vectors Meet AI Functions
 
 The architecture gets even more interesting when you connect Trino to a
