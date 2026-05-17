@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 17 May 2026 02:53:38 +0000</pubDate>
-      <lastBuildDate>Sun, 17 May 2026 02:53:38 +0000</lastBuildDate>
+      <pubDate>Sun, 17 May 2026 03:06:06 +0000</pubDate>
+      <lastBuildDate>Sun, 17 May 2026 03:06:06 +0000</lastBuildDate>
 
       
       <item>
@@ -54,7 +54,7 @@ think.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Red Hat OpenShift AI&lt;/strong&gt; hosts LLMs as a Model-as-a-Service (MaaS)
-endpoint — in our case, Llama 4 Scout 17B via NVIDIA NIM&lt;/p&gt;
+endpoint — in our case, Llama 4 Scout 17B with NVIDIA&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Trino&lt;/strong&gt; is the distributed SQL engine that federates queries across
