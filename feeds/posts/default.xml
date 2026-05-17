@@ -6,8 +6,8 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 17 May 2026 02:10:31 +0000</pubDate>
-      <lastBuildDate>Sun, 17 May 2026 02:10:31 +0000</lastBuildDate>
+      <pubDate>Sun, 17 May 2026 02:22:59 +0000</pubDate>
+      <lastBuildDate>Sun, 17 May 2026 02:22:59 +0000</lastBuildDate>
 
       
       <item>
@@ -45,7 +45,7 @@ think.&lt;/p&gt;
 &lt;h3 id=&quot;_the_architecture&quot;&gt;The Architecture&lt;/h3&gt;
 &lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
 &lt;div class=&quot;imageblock&quot; id=&quot;architecture&quot;&gt;
-  &lt;img src=&quot;architecture.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;img src=&quot;/2026/05/architecture.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;The stack runs entirely on OpenShift:&lt;/p&gt;
@@ -92,7 +92,7 @@ built-in functions that transform and enrich text data using large
 language models, without leaving your SQL environment.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;imageblock&quot; id=&quot;data-flow&quot;&gt;
-  &lt;img src=&quot;data-flow.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;img src=&quot;/2026/05/data-flow.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;Seven functions cover the most common text analysis patterns:&lt;/p&gt;
@@ -203,14 +203,14 @@ graph example extracting technologies from semantically related
 developer articles:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;imageblock&quot; id=&quot;trino-query-ui&quot;&gt;
-  &lt;img src=&quot;trino-query-ui.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;img src=&quot;/2026/05/trino-query-ui.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;And the Trino cluster dashboard showing active workers processing AI
 function queries in parallel across the distributed engine:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;imageblock&quot; id=&quot;trino-ui&quot;&gt;
-  &lt;img src=&quot;trino-ui.png&quot; class=&quot;zoom&quot;&gt;
+  &lt;img src=&quot;/2026/05/trino-ui.png&quot; class=&quot;zoom&quot;&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
