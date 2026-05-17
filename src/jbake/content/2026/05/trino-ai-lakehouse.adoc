@@ -29,7 +29,7 @@ think.
 ++++
 <div id="lightbox"></div>
 <div class="imageblock" id="architecture">
-  <img src="architecture.png" class="zoom">
+  <img src="/2026/05/architecture.png" class="zoom">
 </div>
 ++++
 
@@ -60,7 +60,7 @@ language models, without leaving your SQL environment.
 
 ++++
 <div class="imageblock" id="data-flow">
-  <img src="data-flow.png" class="zoom">
+  <img src="/2026/05/data-flow.png" class="zoom">
 </div>
 ++++
 
@@ -125,7 +125,7 @@ developer articles:
 
 ++++
 <div class="imageblock" id="trino-query-ui">
-  <img src="trino-query-ui.png" class="zoom">
+  <img src="/2026/05/trino-query-ui.png" class="zoom">
 </div>
 ++++
 
@@ -134,7 +134,7 @@ function queries in parallel across the distributed engine:
 
 ++++
 <div class="imageblock" id="trino-ui">
-  <img src="trino-ui.png" class="zoom">
+  <img src="/2026/05/trino-ui.png" class="zoom">
 </div>
 ++++
 
