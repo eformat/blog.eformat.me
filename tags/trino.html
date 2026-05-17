@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    
+    <title>eformat.me - trino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="eformat.me : trino">
+    <meta property="og:title" content="eformat.me - trino" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://blog.eformat.me/img/eformat.me.jpg" />
+    <meta property="og:url" content="https://blog.eformat.me/tags/trino.html" />
+    <meta property="og:description" content="eformat.me : trino" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:site_name" content="eformat.me" />
+
+    <!-- Le styles -->
+    <link href="../css/lightbox.css" rel="stylesheet">
+    <link href="../css/yeti/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link href="../css/asciidoctor.css" rel="stylesheet">
+    <!-- link href="/css/bootstrap-theme.min.css" rel="stylesheet" -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!--<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">-->
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    <!-- WebAnalytics -->
+    <script defer data-domain="blog.eformat.me" src="https://plausible.apps.sno.eformat.me/js/script.js"></script>
+  </head>
+  <body>
+    <div id="wrap">
+
+	
+	      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">eformat.me</a>
+          </div>
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav">
+              <li><a href="https://github.com/eformat" target="github:eformat">Github</a></li>
+              <li><a href="../archive.html">Archives</a></li>
+              <li><a href="../feeds/posts/default.xml">Flux RSS</a></li>
+              <li><a href="https://plausible.apps.sno.eformat.me/blog.eformat.me" target="eformat:analytics">Analytics</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+      <div class="container">
+
+
+	<div class="page-header">
+            <div class="row">
+                <div class="col-xs-4 col-md-2"><img src="../img/eformat.me.jpg"></div>
+                <div class="col-xs-12 col-md-8"><h1>Tag: trino</h1></div>
+            </div>
+	</div>
+
+    <div class="row">
+
+    <div class="col-sm-8">
+        
+            
+                <a href="../2026/05/trino-ai-lakehouse.html"><h1>When SQL Meets GenAI: Building an Intelligent Lakehouse on OpenShift</h1></a>
+                <p>17 May 2026</p>
+
+                <p>Tags :
+                <a href="trino.html">trino</a>, <a href="ai.html">ai</a>, <a href="genai.html">genai</a>, <a href="iceberg.html">iceberg</a>, <a href="openshift.html">openshift</a>, <a href="openshiftai.html">openshiftai</a>, <a href="lakehouse.html">lakehouse</a>, <a href="minio.html">minio</a>, <a href="nessie.html">nessie</a>, <a href="sql.html">sql</a>
+                </p>
+
+                <!--a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.eformat.me/2026/05/trino-ai-lakehouse.html" data-text="When SQL Meets GenAI: Building an Intelligent Lakehouse on OpenShift" data-via="eformat" data-lang="en">Tweeter</a-->
+                <!--script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script-->
+                <div class="g-plusone" data-size="medium" data-href="http://www.eformat.me/2026/05/trino-ai-lakehouse.html"></div>
+
+                <p><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Connecting data to LLMs using Trino AI Functions, Apache Iceberg, and
+Red Hat OpenShift AI</em></p>
+</div>
+<hr>
+<div class="paragraph">
+<p>Cloud data platforms like
+<a href="https://docs.databricks.com/aws/en/large-language-models/ai-functions">Databricks</a>
+and
+<a href="https://docs.snowflake.com/en/user-guide/ml-functions/classification">Snowflake</a>
+are racing to embed AI directly into SQL. With Trino’s AI Functions, the
+open-source ecosystem now has the same capability — and on Red Hat
+OpenShift AI, you can bring your own models, your own data, and your own
+infrastructure.</p>
+</div>
+<div class="paragraph">
+<p>This post walks through an architecture that connects a modern Iceberg
+lakehouse to LLM-hosted models using nothing but SQL. No Python
+notebooks. No ETL pipelines. No ML frameworks. Just SQL queries that
+think.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_architecture">The Architecture</h3>
+<div id="lightbox"></div>
+<div class="imageblock" id="architecture">
+  <img src="architecture.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>The stack runs entirely on OpenShift:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Red Hat OpenShift AI</strong> hosts LLMs as a Model-as-a-Service (MaaS)
+endpoint — in our case, Llama 4 Scout 17B via NVIDIA NIM</p>
+</li>
+<li>
+<p><strong>Trino</strong> is the distributed SQL engine that federates queries across
+multiple data sources</p>
+</li>
+<li>
+<p><strong>Apache Iceberg</strong> on <strong>MinIO S3</strong> provides the open table format
+lakehouse, managed by a <strong>Nessie</strong> catalog server</p>
+</li>
+<li>
+<p><strong>PostgreSQL</strong> (with pgvector) adds a relational/vector data source</p>
+</li>
+<li>
+<p><strong>HuggingFace datasets</strong> (hotel reviews, financial news) provide
+real-world text data for AI function demos</p>
+</li>
+<li>
+<p><strong>Trino Query UI</strong> gives analysts a web-based SQL editor</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The key insight: Trino sits at the center, federating across data
+sources <em>and</em> LLM endpoints in a single query. A data analyst can join
+Iceberg tables with PostgreSQL, run sentiment analysis on the results,
+classify them by category, and generate an executive summary — all in
+one SQL statement.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_are_ai_functions">What Are AI Functions?</h3>
+<div class="paragraph">
+<p>Trino AI Functions let you call an LLM directly from SQL. They’re
+built-in functions that transform and enrich text data using large
+language models, without leaving your SQL environment.</p>
+</div>
+<div class="imageblock" id="data-flow">
+  <img src="data-flow.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>Seven functions cover the most common text analysis patterns:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 34%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">What It Does</th>
+<th class="tableblock halign-left valign-top">Example Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_analyze_sentiment(text)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classifies text as positive, negative,
+neutral, or mixed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Customer feedback triage, threat detection</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify(text, labels)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assigns text to one of your predefined
+categories</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log categorization, spam detection, risk classification</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_extract(text, labels)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pulls structured data from unstructured
+text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Entity extraction from logs, parsing incident reports</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_fix_grammar(text)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Corrects grammar and improves readability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cleaning noisy log data, polishing reports</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_gen(prompt)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generates new text from a prompt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Executive
+summaries, threat reports, daily briefings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_mask(text, labels)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replaces sensitive data with <code>[MASKED]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PII
+redaction, compliance exports</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_translate(text, language)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translates text to a target language</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multilingual log analysis, international collaboration</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The functions connect to any OpenAI-compatible endpoint. On OpenShift
+AI, that means you can use any model served via vLLM, NVIDIA NIM, or the
+MaaS gateway — keeping your data and models within your own
+infrastructure.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_this_matters_data_meets_model">Why This Matters: Data Meets Model</h3>
+<div class="paragraph">
+<p>Traditional approaches to applying AI to enterprise data involve
+extracting data, running it through Python notebooks, calling APIs, and
+loading results back. This creates fragile pipelines, data movement
+overhead, and security concerns.</p>
+</div>
+<div class="paragraph">
+<p>With AI Functions in SQL:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Data stays in place.</strong> Queries run where the data lives — S3,
+PostgreSQL, or any Trino-connected source. No ETL to a separate ML
+environment.</p>
+</li>
+<li>
+<p><strong>Models are services.</strong> The LLM is an API call, not a deployment you
+manage in your notebook. OpenShift AI handles serving, scaling, and GPU
+allocation.</p>
+</li>
+<li>
+<p><strong>SQL is the interface.</strong> Data engineers and analysts already know SQL.
+No new frameworks, no new languages, no new tools.</p>
+</li>
+<li>
+<p><strong>Results are composable.</strong> AI function outputs are regular SQL columns
+— you can filter, join, aggregate, and export them like any other data.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_query_ui_in_action">The Query UI in Action</h3>
+<div class="paragraph">
+<p>The Trino Query UI lets analysts write and execute AI-enriched SQL
+queries directly in the browser — no CLI required. Here’s the knowledge
+graph example extracting technologies from semantically related
+developer articles:</p>
+</div>
+<div class="imageblock" id="trino-query-ui">
+  <img src="trino-query-ui.png" class="zoom">
+</div>
+<div class="paragraph">
+<p>And the Trino cluster dashboard showing active workers processing AI
+function queries in parallel across the distributed engine:</p>
+</div>
+<div class="imageblock" id="trino-ui">
+  <img src="trino-ui.png" class="zoom">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_34_examples_from_security_analysis_to_financial_intelligence">34 Examples: From Security Analysis to Financial Intelligence</h3>
+<div class="paragraph">
+<p>We built 34 example queries that demonstrate every AI function across
+three domains: cybersecurity log analysis, financial intelligence, and
+developer knowledge base search. Here’s the breakdown:</p>
+</div>
+<div class="sect3">
+<h4 id="_self_contained_examples_inline_data">Self-Contained Examples (inline data)</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 12%;">
+<col style="width: 36%;">
+<col style="width: 52%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">#</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">AI Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">01-03</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sentiment analysis — insider threats, phishing emails, support
+requests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_analyze_sentiment</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">04-07</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classification — firewall logs, phishing subjects, SIEM alerts,
+web requests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">08-10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Entity extraction — authentication logs, file integrity
+monitoring, process logs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_extract</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11-12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Grammar correction — firewall logs, IDS alerts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_fix_grammar</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13-14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text generation — threat report summary, anomaly explanation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_gen</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15-16</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PII masking — login events, firewall logs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_mask</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17-18</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translation — Japanese firewall logs, Spanish IDS alerts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_translate</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_lakehouse_examples_real_data_from_s3">Lakehouse Examples (real data from S3)</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 9%;">
+<col style="width: 23%;">
+<col style="width: 34%;">
+<col style="width: 34%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">#</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">AI Functions</th>
+<th class="tableblock halign-left valign-top">Data Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review intelligence pipeline</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_analyze_sentiment</code><br>
+<code>ai_classify</code> + <code>ai_extract</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17K hotel reviews</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Executive summary from guest feedback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_gen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17K hotel reviews</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">21</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PII-safe multilingual review export</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_mask</code> + <code>ai_fix_grammar</code><br>
+<code>ai_translate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17K hotel reviews</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Market mood ring — AI vs human labels</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_analyze_sentiment</code><br>
+<code>ai_gen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100K financial news</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">23</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Financial threat intelligence</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify</code> + <code>ai_extract</code><br>
+<code>ai_mask</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100K financial news</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">24</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multilingual trading desk</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_translate</code> + <code>ai_analyze_sentiment</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100K financial news</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">25</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AI editorial pipeline</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_fix_grammar</code> + <code>ai_gen</code> + <code>ai_classify</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100K financial news</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">26</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Daily analyst morning briefing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_gen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100K financial news</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The lakehouse examples are the most interesting because they combine
+multiple AI functions in a single query against real data stored in
+Apache Iceberg on S3. For example, the <em>Market Mood Ring</em> (example 22)
+cross-validates AI sentiment against human-assigned labels and explains
+disagreements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="sql">WITH sample AS (
+    SELECT text, label AS human_label,
+           ai_analyze_sentiment(text) AS ai_sentiment
+    FROM lakehouse.finance.financial_news TABLESAMPLE BERNOULLI (0.05)
+    LIMIT 5
+)
+SELECT substr(text, 1, 80) AS snippet,
+       human_label, ai_sentiment,
+       CASE WHEN human_label != ai_sentiment THEN 'DISAGREE' ELSE 'AGREE' END AS verdict,
+       ai_gen('In one sentence, explain why this financial news might be seen as '
+              || ai_sentiment || ': ' || substr(text, 1, 500)) AS reasoning
+FROM sample;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the <em>Daily Briefing</em> (example 26) aggregates negative financial news
+into an analyst morning report:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="sql">WITH bad_news AS (
+    SELECT text FROM lakehouse.finance.financial_news TABLESAMPLE BERNOULLI (0.5)
+    WHERE label = 'negative' LIMIT 10
+)
+SELECT ai_gen(
+    'You are a senior financial analyst. Write a concise morning briefing (5 bullet
+    points max) summarizing the key risks and themes. Include actionable
+    recommendations: ' ||
+    (SELECT json_format(CAST(array_agg(text) AS JSON)) FROM bad_news)
+) AS morning_briefing;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These aren’t toy examples. They query 100,000 real financial news
+articles stored as Iceberg tables on MinIO S3, with the LLM inference
+happening in parallel across Trino workers.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_part_of_a_modern_data_mesh">Part of a Modern Data Mesh</h3>
+<div class="paragraph">
+<p>This architecture isn’t just a demo — it’s a pattern for how enterprises
+can operationalize AI within a data mesh strategy:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Data Products.</strong> Each Iceberg table (hotel reviews, financial news,
+vector embeddings) is a self-describing data product with its own
+schema, quality guarantees, and access controls.</p>
+</li>
+<li>
+<p><strong>Federated Governance.</strong> Trino federates across MinIO S3, PostgreSQL,
+and benchmark datasets without moving data. Domain teams own their
+sources; Trino provides a unified query layer.</p>
+</li>
+<li>
+<p><strong>AI as a Shared Capability.</strong> The LLM endpoint is a platform service —
+any domain team can call <code>ai_classify()</code> or <code>ai_gen()</code> from their SQL
+queries without provisioning GPUs or managing model lifecycles.</p>
+</li>
+<li>
+<p><strong>Open Standards.</strong> Apache Iceberg, S3-compatible storage,
+OpenAI-compatible API, and SQL. No proprietary lock-in — swap MinIO for
+AWS S3, swap the LLM for Claude or GPT, swap Nessie for AWS Glue. The
+architecture is portable.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_openshift_ai_the_platform_advantage">OpenShift AI: The Platform Advantage</h3>
+<div class="paragraph">
+<p>Running this on Red Hat OpenShift AI provides specific advantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Model Serving at Scale.</strong> OpenShift AI’s MaaS gateway handles model
+serving, load balancing, and GPU scheduling. Models are exposed as
+simple REST endpoints that Trino calls via the OpenAI-compatible
+protocol.</p>
+</li>
+<li>
+<p><strong>Security by Default.</strong> OpenShift’s Security Context Constraints (SCCs)
+enforce non-root containers, capability dropping, and namespace
+isolation. Data never leaves the cluster.</p>
+</li>
+<li>
+<p><strong>One-Click Deployment.</strong> The entire stack — MinIO, Nessie, Trino, Query
+UI — deploys with a single <code>./install.sh</code> script. Environment variables
+configure the LLM endpoint, S3 credentials, and optional PostgreSQL
+catalog.</p>
+</li>
+<li>
+<p><strong>Kubernetes-Native Operations.</strong> Helm charts, K8s Jobs for data
+loading, OpenShift Routes for external access. Standard Kubernetes
+tooling for day-2 operations.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_getting_started">Getting Started</h3>
+<div class="paragraph">
+<p>The entire stack deploys in under 10 minutes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">export OPENAI_API_KEY=&lt;your-maas-token&gt;
+export OPENAI_BASE_URL=https://your-openshift-ai-endpoint
+export HF_TOKEN=&lt;your-huggingface-token&gt;
+./install.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then run the example queries:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">./examples/run_all.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or open the Trino Query UI in your browser and start writing SQL that
+thinks.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hybrid_search_when_vectors_meet_ai_functions">Hybrid Search: When Vectors Meet AI Functions</h3>
+<div class="paragraph">
+<p>The architecture gets even more interesting when you connect Trino to a
+vector database. Our PostgreSQL instance (with pgvector) stores 154,000
+document chunks from every article on
+<a href="https://developers.redhat.com">developers.redhat.com</a>, each with a
+768-dimensional embedding vector. These embeddings power the
+<a href="https://chatbot-dev-red-rag.apps.ocp.cloud.rhai-tmm.dev/">Red Hat
+Developer RAG chatbot</a>.</p>
+</div>
+<div class="paragraph">
+<p>With Trino, we can compute cosine similarity in pure SQL — no pgvector
+operators needed — and combine it with AI functions for hybrid semantic
++ AI analysis:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="sql">-- Cosine similarity computed entirely in Trino SQL
+reduce(
+    zip_with(a.embedding, b.embedding,
+             (x, y) -&gt; CAST(x AS double) * CAST(y AS double)),
+    DOUBLE '0.0', (s, x) -&gt; s + x, s -&gt; s
+) / (sqrt(...) * sqrt(...)) AS cosine_similarity</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This opens up powerful patterns that neither vector search nor AI
+functions can achieve alone:</p>
+</div>
+<div class="sect3">
+<h4 id="_vector_search_ai_examples">Vector Search + AI Examples</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 9%;">
+<col style="width: 21%;">
+<col style="width: 31%;">
+<col style="width: 39%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">#</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">What It Does</th>
+<th class="tableblock halign-left valign-top">Functions Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">27</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Semantic Reading List</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find articles similar to a seed by cosine
+similarity, generate a curated reading list</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cosine similarity<br>
+<code>ai_gen</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topic Discovery</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classify random knowledge base chunks into Red Hat
+product areas</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">29</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content Quality Audit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Analyze tone and fix grammar across the
+knowledge base</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_analyze_sentiment</code> + <code>ai_fix_grammar</code><br>
+<code>ai_classify</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Knowledge Graph</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find semantically related articles, extract
+technologies and products mentioned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cosine similarity + <code>ai_extract</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">31</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multilingual Knowledge Base</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find similar articles, translate to
+Japanese and Korean on-the-fly</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cosine similarity + <code>ai_translate</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For example, the <em>Semantic Reading List</em> (example 27) finds the 5 most
+similar articles to an LLM tutorial using cosine similarity over
+768-dimensional embeddings, then asks the LLM to generate a recommended
+reading list:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="sql">WITH seed AS (
+    SELECT embedding AS seed_vec
+    FROM vectordb.public.langchain_pg_embedding
+    WHERE json_extract_scalar(cmetadata, '$.title') LIKE '%LLM%'
+    LIMIT 1
+),
+similar_docs AS (
+    SELECT DISTINCT
+        json_extract_scalar(e.cmetadata, '$.title') AS title,
+        json_extract_scalar(e.cmetadata, '$.source') AS url,
+        -- cosine similarity in pure Trino SQL
+        reduce(zip_with(e.embedding, s.seed_vec,
+               (a, b) -&gt; CAST(a AS double) * CAST(b AS double)),
+               DOUBLE '0.0', (st, x) -&gt; st + x, st -&gt; st)
+        / (sqrt(reduce(transform(e.embedding, ...), ...))
+         * sqrt(reduce(transform(s.seed_vec, ...), ...)))
+        AS similarity
+    FROM vectordb.public.langchain_pg_embedding e
+    CROSS JOIN seed s
+    ORDER BY similarity DESC
+    LIMIT 5
+)
+SELECT ai_gen(
+    'Create a recommended reading list from these articles: ' ||
+    (SELECT json_format(CAST(array_agg(title) AS JSON))
+     FROM similar_docs)
+) AS reading_list;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The result: a semantically curated, LLM-summarized reading list — built
+from a single SQL query that spans a vector database and an LLM
+endpoint. In one run, it surfaced articles on Llama Stack, AI
+safeguards, Compressed Granite, and AI Agents — all semantically related
+to the seed article, ranked by embedding similarity, and summarized by
+the LLM.</p>
+</div>
+<div class="paragraph">
+<p>And the <em>Knowledge Graph</em> (example 30) maps the technology landscape
+around a topic by finding related articles via embedding similarity,
+then extracting products, technologies, and programming languages from
+each:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>"Accelerate model training on OpenShift AI..."   0.7742  {product=SFTTrainer, language=Python, technology=Trainer}
+"Accelerated expert-parallel distributed..."     0.6786  {product=granite-4.0, language=Python, technology=FSDP}
+"Optimizing LLMs for accuracy | RHEL AI..."      0.6617  {product=tokenizer, language=Python, technology=LINUX}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is hybrid search in its purest form: vector similarity narrows the
+search space, AI functions enrich and structure the results, and SQL
+ties it all together. No external search infrastructure, no separate ML
+pipeline — just a query.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_federated_queries_joining_across_data_sources">Federated Queries: Joining Across Data Sources</h3>
+<div class="paragraph">
+<p>The real power emerges when you join data across catalogs. Trino
+federates queries across the Iceberg lakehouse on S3 and PostgreSQL in a
+single statement — something no single database can do alone.</p>
+</div>
+<div class="sect3">
+<h4 id="_cross_catalog_examples">Cross-Catalog Examples</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 9%;">
+<col style="width: 23%;">
+<col style="width: 33%;">
+<col style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">#</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Data Sources</th>
+<th class="tableblock halign-left valign-top">AI Functions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">News-to-Docs: match financial news to KB articles</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lakehouse.finance</code> + <code>vectordb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify</code> + <code>ai_gen</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">33</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reviews-to-Architecture: hotel complaints as software lessons</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lakehouse.reviews</code> + <code>vectordb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_classify</code> + <code>ai_gen</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">34</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Federated Intelligence Briefing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lakehouse.finance</code> + <code>vectordb</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ai_gen</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The <em>Federated Intelligence Briefing</em> (example 34) is the most ambitious
+— it pulls negative tech news from the S3 lakehouse, finds related Red
+Hat developer articles from PostgreSQL, and generates a structured
+intelligence report connecting market risks to technology solutions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="sql">WITH negative_news AS (
+    SELECT text FROM lakehouse.finance.financial_news     -- Iceberg on S3
+    WHERE label = 'negative' AND text LIKE '%technology%'
+    LIMIT 5
+),
+kb_highlights AS (
+    SELECT json_extract_scalar(cmetadata, '$.title') AS title
+    FROM vectordb.public.langchain_pg_embedding            -- PostgreSQL
+    WHERE json_extract_scalar(cmetadata, '$.title') LIKE '%OpenShift%'
+    LIMIT 5
+)
+SELECT ai_gen(                                             -- LLM via MaaS
+    'Write an intelligence briefing connecting these market risks: ' ||
+    (SELECT json_format(...) FROM negative_news) ||
+    ' to these technology solutions: ' ||
+    (SELECT json_format(...) FROM kb_highlights)
+) AS intelligence_briefing;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A single SQL query that reads from S3, reads from PostgreSQL, calls an
+LLM, and produces an executive-ready intelligence report. Three data
+sources, one query, zero data movement.</p>
+</div>
+<div class="paragraph">
+<p>The results are striking. In one run, the briefing automatically
+connected the SolarWinds supply-chain breach to OpenShift Service Mesh
+as a mitigation strategy, linked Uber’s service outages to Quarkus
+serverless architecture as a resilience pattern, and recommended
+OpenShift Pipelines for CI/CD hardening in response to Oracle’s manual
+support struggles. The LLM drew these connections entirely on its own —
+the query just put the right data in front of it by federating across an
+S3 data lake and a PostgreSQL knowledge base in a single SQL statement.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_getting_started_2">Getting Started</h3>
+<div class="paragraph">
+<p>The entire stack deploys in under 10 minutes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">export OPENAI_API_KEY=&lt;your-maas-token&gt;
+export OPENAI_BASE_URL=https://your-openshift-ai-endpoint
+export HF_TOKEN=&lt;your-huggingface-token&gt;
+export POSTGRES_HOST=postgres.your-namespace.svc.cluster.local
+./install.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then run the example queries:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="bash">./examples/run_all.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The source code is in github:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/eformat/trino-chart" class="bare">https://github.com/eformat/trino-chart</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Or open the Trino Query UI in your browser and start writing SQL that
+thinks.</p>
+</div>
+<hr>
+<div class="paragraph">
+<p><em>The source code, Helm charts, install script, and all 34 example
+queries are available in the <a href=".">trino-chart</a> repository.</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_references">References</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://trino.io/docs/current/functions/ai.html">Trino AI Functions
+Documentation</a></p>
+</li>
+<li>
+<p><a href="https://levelup.gitconnected.com/trino-471-when-sql-meets-ai-and-s3-gets-easier-0ce690334b34">Trino
+471: When SQL Meets AI and S3 Gets Easier</a></p>
+</li>
+<li>
+<p><a href="https://docs.databricks.com/aws/en/large-language-models/ai-functions">Databricks
+AI Functions</a></p>
+</li>
+<li>
+<p><a href="https://docs.snowflake.com/en/user-guide/ml-functions/classification">Snowflake
+ML Functions</a></p>
+</li>
+<li>
+<p><a href="https://iceberg.apache.org/">Apache Iceberg</a></p>
+</li>
+<li>
+<p><a href="https://projectnessie.org/">Project Nessie</a></p>
+</li>
+<li>
+<p><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai">Red
+Hat OpenShift AI</a></p>
+</li>
+</ul>
+</div>
+</div></p>
+                <p><a href="2026/05/trino-ai-lakehouse.html#disqus_thread">Commentaires</a></p>
+            
+
+        
+
+    </div>
+
+    <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="sidebar-module sidebar-module-inset">
+            <h4>Mike Hepburn</h4>
+            <p>This is really working out great.</p>
+            <ul>
+                <li><a href="https://twitter.com/eformat">@eformat</a></li>
+            </ul>
+        </div>
+
+
+        <div class="sidebar-module">
+            <h4>Tags</h4>
+            <ol class="list-unstyled" style="margin-left: 0px">
+                
+
+                <li><a href="openshift.html">openshift</a> (12)</li>
+                
+
+                <li><a href="gitops.html">gitops</a> (4)</li>
+                
+
+                <li><a href="java.html">java</a> (3)</li>
+                
+
+                <li><a href="quarkus.html">quarkus</a> (3)</li>
+                
+
+                <li><a href="acm.html">acm</a> (2)</li>
+                
+
+                <li><a href="ai.html">ai</a> (2)</li>
+                
+
+                <li><a href="aiml.html">aiml</a> (2)</li>
+                
+
+                <li><a href="argocd.html">argocd</a> (2)</li>
+                
+
+                <li><a href="genai.html">genai</a> (2)</li>
+                
+
+                <li><a href="gpu.html">gpu</a> (2)</li>
+                
+
+                <li><a href="stable diffusion.html">stable diffusion</a> (2)</li>
+                
+
+                <li><a href="agentic.html">agentic</a> (1)</li>
+                
+
+                <li><a href="analytics.html">analytics</a> (1)</li>
+                
+
+                <li><a href="api.html">api</a> (1)</li>
+                
+
+                <li><a href="apollo.html">apollo</a> (1)</li>
+                
+
+                <li><a href="aws.html">aws</a> (1)</li>
+                
+
+                <li><a href="bgp.html">bgp</a> (1)</li>
+                
+
+                <li><a href="bird.html">bird</a> (1)</li>
+                
+
+                <li><a href="constraints.html">constraints</a> (1)</li>
+                
+
+                <li><a href="cost.html">cost</a> (1)</li>
+                
+
+                <li><a href="devops.html">devops</a> (1)</li>
+                
+
+                <li><a href="disconnected.html">disconnected</a> (1)</li>
+                
+
+                <li><a href="emacs.html">emacs</a> (1)</li>
+                
+
+                <li><a href="fediverse.html">fediverse</a> (1)</li>
+                
+
+                <li><a href="fedora.html">fedora</a> (1)</li>
+                
+
+                <li><a href="flink.html">flink</a> (1)</li>
+                
+
+                <li><a href="frr.html">frr</a> (1)</li>
+                
+
+                <li><a href="graphql.html">graphql</a> (1)</li>
+                
+
+                <li><a href="iceberg.html">iceberg</a> (1)</li>
+                
+
+                <li><a href="lakehouse.html">lakehouse</a> (1)</li>
+                
+
+                <li><a href="llama-stack.html">llama-stack</a> (1)</li>
+                
+
+                <li><a href="llm.html">llm</a> (1)</li>
+                
+
+                <li><a href="load balancing.html">load balancing</a> (1)</li>
+                
+
+                <li><a href="mastodon.html">mastodon</a> (1)</li>
+                
+
+                <li><a href="metallb.html">metallb</a> (1)</li>
+                
+
+                <li><a href="minio.html">minio</a> (1)</li>
+                
+
+                <li><a href="nessie.html">nessie</a> (1)</li>
+                
+
+                <li><a href="networking.html">networking</a> (1)</li>
+                
+
+                <li><a href="openshiftai.html">openshiftai</a> (1)</li>
+                
+
+                <li><a href="optaplanner.html">optaplanner</a> (1)</li>
+                
+
+                <li><a href="patterns.html">patterns</a> (1)</li>
+                
+
+                <li><a href="platform.html">platform</a> (1)</li>
+                
+
+                <li><a href="platform as product.html">platform as product</a> (1)</li>
+                
+
+                <li><a href="plausible.html">plausible</a> (1)</li>
+                
+
+                <li><a href="policy.html">policy</a> (1)</li>
+                
+
+                <li><a href="pulsar.html">pulsar</a> (1)</li>
+                
+
+                <li><a href="registries.html">registries</a> (1)</li>
+                
+
+                <li><a href="rhoai.html">rhoai</a> (1)</li>
+                
+
+                <li><a href="security.html">security</a> (1)</li>
+                
+
+                <li><a href="service discovery.html">service discovery</a> (1)</li>
+                
+
+                <li><a href="sno.html">sno</a> (1)</li>
+                
+
+                <li><a href="social.html">social</a> (1)</li>
+                
+
+                <li><a href="sql.html">sql</a> (1)</li>
+                
+
+                <li><a href="stork.html">stork</a> (1)</li>
+                
+
+                <li><a href="streaming.html">streaming</a> (1)</li>
+                
+
+                <li><a href="teams.html">teams</a> (1)</li>
+                
+
+                <li><a href="trino.html">trino</a> (1)</li>
+                
+
+                <li><a href="vault.html">vault</a> (1)</li>
+                
+
+                <li><a href="vlans openshift.html">vlans openshift</a> (1)</li>
+                
+
+                <li><a href="web.html">web</a> (1)</li>
+                
+            </ol>
+        </div>
+    </div>
+
+    </div>
+
+		</div>
+		<div id="push"></div>
+    </div>
+    
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">Blog posts are published under Creative Commons license by-nc-sa <em>Creative Commons by-nc-sa</em>. <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a></p>
+        <p class="text-muted credit">&copy; 2023 | Baked with <a href="http://jbake.org">JBake v2.7.0</a><a href="https://github.com/eformat/blog.eformat.me/actions"> | Published Sun May 17 02:10:34 UTC 2026</a></p>
+      </div>
+    </div>
+    
+    <!-- Javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../js/lightbox.js"></script>
+
+    <!--script type="text/javascript">
+        window.___gcfg = {lang: 'en'};
+
+        (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/platform.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+    </script-->
+
+    <!--script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-', '');
+      ga('send', 'pageview');
+
+    </script-->
+    
+  </body>
+</html>
+

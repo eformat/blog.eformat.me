@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://blog.eformat.me/index.html</loc>
-        <lastmod>2025-07-20</lastmod>
+        <lastmod>2026-05-17</lastmod>
     </url>
     <url>
         <loc>https://blog.eformat.me/archive.html</loc>
-        <lastmod>2025-07-20</lastmod>
+        <lastmod>2026-05-17</lastmod>
     </url>
 
     <url>
@@ -132,7 +132,7 @@
         <loc>https://blog.eformat.me/tags/genai.html</loc>
         
 
-        <lastmod>2025-07-20</lastmod>
+        <lastmod>2026-05-17</lastmod>
     </url>
 
     <url>
@@ -174,7 +174,7 @@
         <loc>https://blog.eformat.me/tags/ai.html</loc>
         
 
-        <lastmod>2025-07-20</lastmod>
+        <lastmod>2026-05-17</lastmod>
     </url>
 
     <url>
@@ -220,6 +220,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/trino.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/pulsar.html</loc>
         
 
@@ -234,10 +241,38 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/lakehouse.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/openshift.html</loc>
         
 
-        <lastmod>2025-07-20</lastmod>
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/openshiftai.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/minio.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/nessie.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
     </url>
 
     <url>
@@ -269,6 +304,13 @@
     </url>
 
     <url>
+        <loc>https://blog.eformat.me/tags/sql.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
+    </url>
+
+    <url>
         <loc>https://blog.eformat.me/tags/security.html</loc>
         
 
@@ -294,6 +336,13 @@
         
 
         <lastmod>2023-05-07</lastmod>
+    </url>
+
+    <url>
+        <loc>https://blog.eformat.me/tags/iceberg.html</loc>
+        
+
+        <lastmod>2026-05-17</lastmod>
     </url>
 
     <url>
@@ -380,6 +429,11 @@
         <lastmod>2022-11-10</lastmod>
     </url>
 
+
+    <url>
+        <loc>https://blog.eformat.me/2026/05/trino-ai-lakehouse.html</loc>
+        <lastmod>2026-05-17</lastmod>
+    </url>
 
     <url>
         <loc>https://blog.eformat.me/2025/07/etx-ai.html</loc>

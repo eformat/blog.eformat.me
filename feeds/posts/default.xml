@@ -6,9 +6,806 @@
     <atom:link href="https://blog.eformat.me/feeds/posts/default.xml" rel="self" type="application/rss+xml" />
     <description>eformat.me</description>
     <language>en-gb</language>
-      <pubDate>Sun, 20 Jul 2025 16:17:12 +0000</pubDate>
-      <lastBuildDate>Sun, 20 Jul 2025 16:17:12 +0000</lastBuildDate>
+      <pubDate>Sun, 17 May 2026 02:10:31 +0000</pubDate>
+      <lastBuildDate>Sun, 17 May 2026 02:10:31 +0000</lastBuildDate>
 
+      
+      <item>
+          <title>When SQL Meets GenAI: Building an Intelligent Lakehouse on OpenShift</title>
+          <link>https://blog.eformat.me/2026/05/trino-ai-lakehouse.html</link>
+          <pubDate>Sun, 17 May 2026 00:00:00 +0000</pubDate>
+          <guid isPermaLink="false">https://blog.eformat.me/2026/05/trino-ai-lakehouse.html</guid>
+          <description>
+              &lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;em&gt;Connecting data to LLMs using Trino AI Functions, Apache Iceberg, and
+Red Hat OpenShift AI&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Cloud data platforms like
+&lt;a href=&quot;https://docs.databricks.com/aws/en/large-language-models/ai-functions&quot;&gt;Databricks&lt;/a&gt;
+and
+&lt;a href=&quot;https://docs.snowflake.com/en/user-guide/ml-functions/classification&quot;&gt;Snowflake&lt;/a&gt;
+are racing to embed AI directly into SQL. With Trino’s AI Functions, the
+open-source ecosystem now has the same capability — and on Red Hat
+OpenShift AI, you can bring your own models, your own data, and your own
+infrastructure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This post walks through an architecture that connects a modern Iceberg
+lakehouse to LLM-hosted models using nothing but SQL. No Python
+notebooks. No ETL pipelines. No ML frameworks. Just SQL queries that
+think.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_the_architecture&quot;&gt;The Architecture&lt;/h3&gt;
+&lt;div id=&quot;lightbox&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;imageblock&quot; id=&quot;architecture&quot;&gt;
+  &lt;img src=&quot;architecture.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The stack runs entirely on OpenShift:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Red Hat OpenShift AI&lt;/strong&gt; hosts LLMs as a Model-as-a-Service (MaaS)
+endpoint — in our case, Llama 4 Scout 17B via NVIDIA NIM&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Trino&lt;/strong&gt; is the distributed SQL engine that federates queries across
+multiple data sources&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Apache Iceberg&lt;/strong&gt; on &lt;strong&gt;MinIO S3&lt;/strong&gt; provides the open table format
+lakehouse, managed by a &lt;strong&gt;Nessie&lt;/strong&gt; catalog server&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;PostgreSQL&lt;/strong&gt; (with pgvector) adds a relational/vector data source&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HuggingFace datasets&lt;/strong&gt; (hotel reviews, financial news) provide
+real-world text data for AI function demos&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Trino Query UI&lt;/strong&gt; gives analysts a web-based SQL editor&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The key insight: Trino sits at the center, federating across data
+sources &lt;em&gt;and&lt;/em&gt; LLM endpoints in a single query. A data analyst can join
+Iceberg tables with PostgreSQL, run sentiment analysis on the results,
+classify them by category, and generate an executive summary — all in
+one SQL statement.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_what_are_ai_functions&quot;&gt;What Are AI Functions?&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Trino AI Functions let you call an LLM directly from SQL. They’re
+built-in functions that transform and enrich text data using large
+language models, without leaving your SQL environment.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock&quot; id=&quot;data-flow&quot;&gt;
+  &lt;img src=&quot;data-flow.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Seven functions cover the most common text analysis patterns:&lt;/p&gt;
+&lt;/div&gt;
+&lt;table class=&quot;tableblock frame-all grid-all stretch&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 34%;&quot;&gt;
+&lt;col style=&quot;width: 33%;&quot;&gt;
+&lt;col style=&quot;width: 33%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Function&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;What It Does&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Example Use Case&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_analyze_sentiment(text)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Classifies text as positive, negative,
+neutral, or mixed&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Customer feedback triage, threat detection&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify(text, labels)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Assigns text to one of your predefined
+categories&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Log categorization, spam detection, risk classification&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_extract(text, labels)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Pulls structured data from unstructured
+text&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Entity extraction from logs, parsing incident reports&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_fix_grammar(text)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Corrects grammar and improves readability&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Cleaning noisy log data, polishing reports&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_gen(prompt)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Generates new text from a prompt&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Executive
+summaries, threat reports, daily briefings&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_mask(text, labels)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Replaces sensitive data with &lt;code&gt;[MASKED]&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;PII
+redaction, compliance exports&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_translate(text, language)&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Translates text to a target language&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Multilingual log analysis, international collaboration&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The functions connect to any OpenAI-compatible endpoint. On OpenShift
+AI, that means you can use any model served via vLLM, NVIDIA NIM, or the
+MaaS gateway — keeping your data and models within your own
+infrastructure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_why_this_matters_data_meets_model&quot;&gt;Why This Matters: Data Meets Model&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Traditional approaches to applying AI to enterprise data involve
+extracting data, running it through Python notebooks, calling APIs, and
+loading results back. This creates fragile pipelines, data movement
+overhead, and security concerns.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;With AI Functions in SQL:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Data stays in place.&lt;/strong&gt; Queries run where the data lives — S3,
+PostgreSQL, or any Trino-connected source. No ETL to a separate ML
+environment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Models are services.&lt;/strong&gt; The LLM is an API call, not a deployment you
+manage in your notebook. OpenShift AI handles serving, scaling, and GPU
+allocation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;SQL is the interface.&lt;/strong&gt; Data engineers and analysts already know SQL.
+No new frameworks, no new languages, no new tools.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Results are composable.&lt;/strong&gt; AI function outputs are regular SQL columns
+— you can filter, join, aggregate, and export them like any other data.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_the_query_ui_in_action&quot;&gt;The Query UI in Action&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The Trino Query UI lets analysts write and execute AI-enriched SQL
+queries directly in the browser — no CLI required. Here’s the knowledge
+graph example extracting technologies from semantically related
+developer articles:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock&quot; id=&quot;trino-query-ui&quot;&gt;
+  &lt;img src=&quot;trino-query-ui.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And the Trino cluster dashboard showing active workers processing AI
+function queries in parallel across the distributed engine:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock&quot; id=&quot;trino-ui&quot;&gt;
+  &lt;img src=&quot;trino-ui.png&quot; class=&quot;zoom&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_34_examples_from_security_analysis_to_financial_intelligence&quot;&gt;34 Examples: From Security Analysis to Financial Intelligence&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;We built 34 example queries that demonstrate every AI function across
+three domains: cybersecurity log analysis, financial intelligence, and
+developer knowledge base search. Here’s the breakdown:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;_self_contained_examples_inline_data&quot;&gt;Self-Contained Examples (inline data)&lt;/h4&gt;
+&lt;table class=&quot;tableblock frame-all grid-all stretch&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 12%;&quot;&gt;
+&lt;col style=&quot;width: 36%;&quot;&gt;
+&lt;col style=&quot;width: 52%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;#&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Example&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;AI Functions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;01-03&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Sentiment analysis — insider threats, phishing emails, support
+requests&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_analyze_sentiment&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;04-07&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Classification — firewall logs, phishing subjects, SIEM alerts,
+web requests&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;08-10&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Entity extraction — authentication logs, file integrity
+monitoring, process logs&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_extract&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;11-12&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Grammar correction — firewall logs, IDS alerts&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_fix_grammar&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;13-14&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Text generation — threat report summary, anomaly explanation&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;15-16&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;PII masking — login events, firewall logs&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_mask&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;17-18&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Translation — Japanese firewall logs, Spanish IDS alerts&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_translate&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;_lakehouse_examples_real_data_from_s3&quot;&gt;Lakehouse Examples (real data from S3)&lt;/h4&gt;
+&lt;table class=&quot;tableblock frame-all grid-all stretch&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 9%;&quot;&gt;
+&lt;col style=&quot;width: 23%;&quot;&gt;
+&lt;col style=&quot;width: 34%;&quot;&gt;
+&lt;col style=&quot;width: 34%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;#&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Example&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;AI Functions&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Data Source&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;19&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Review intelligence pipeline&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_analyze_sentiment&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;ai_classify&lt;/code&gt; + &lt;code&gt;ai_extract&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;17K hotel reviews&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;20&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Executive summary from guest feedback&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;17K hotel reviews&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;21&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;PII-safe multilingual review export&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_mask&lt;/code&gt; + &lt;code&gt;ai_fix_grammar&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;ai_translate&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;17K hotel reviews&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;22&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Market mood ring — AI vs human labels&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_analyze_sentiment&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;100K financial news&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;23&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Financial threat intelligence&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify&lt;/code&gt; + &lt;code&gt;ai_extract&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;ai_mask&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;100K financial news&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;24&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Multilingual trading desk&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_translate&lt;/code&gt; + &lt;code&gt;ai_analyze_sentiment&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;100K financial news&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;25&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;AI editorial pipeline&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_fix_grammar&lt;/code&gt; + &lt;code&gt;ai_gen&lt;/code&gt; + &lt;code&gt;ai_classify&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;100K financial news&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;26&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Daily analyst morning briefing&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;100K financial news&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The lakehouse examples are the most interesting because they combine
+multiple AI functions in a single query against real data stored in
+Apache Iceberg on S3. For example, the &lt;em&gt;Market Mood Ring&lt;/em&gt; (example 22)
+cross-validates AI sentiment against human-assigned labels and explains
+disagreements:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;WITH sample AS (
+    SELECT text, label AS human_label,
+           ai_analyze_sentiment(text) AS ai_sentiment
+    FROM lakehouse.finance.financial_news TABLESAMPLE BERNOULLI (0.05)
+    LIMIT 5
+)
+SELECT substr(text, 1, 80) AS snippet,
+       human_label, ai_sentiment,
+       CASE WHEN human_label != ai_sentiment THEN &apos;DISAGREE&apos; ELSE &apos;AGREE&apos; END AS verdict,
+       ai_gen(&apos;In one sentence, explain why this financial news might be seen as &apos;
+              || ai_sentiment || &apos;: &apos; || substr(text, 1, 500)) AS reasoning
+FROM sample;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And the &lt;em&gt;Daily Briefing&lt;/em&gt; (example 26) aggregates negative financial news
+into an analyst morning report:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;WITH bad_news AS (
+    SELECT text FROM lakehouse.finance.financial_news TABLESAMPLE BERNOULLI (0.5)
+    WHERE label = &apos;negative&apos; LIMIT 10
+)
+SELECT ai_gen(
+    &apos;You are a senior financial analyst. Write a concise morning briefing (5 bullet
+    points max) summarizing the key risks and themes. Include actionable
+    recommendations: &apos; ||
+    (SELECT json_format(CAST(array_agg(text) AS JSON)) FROM bad_news)
+) AS morning_briefing;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;These aren’t toy examples. They query 100,000 real financial news
+articles stored as Iceberg tables on MinIO S3, with the LLM inference
+happening in parallel across Trino workers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_part_of_a_modern_data_mesh&quot;&gt;Part of a Modern Data Mesh&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This architecture isn’t just a demo — it’s a pattern for how enterprises
+can operationalize AI within a data mesh strategy:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Data Products.&lt;/strong&gt; Each Iceberg table (hotel reviews, financial news,
+vector embeddings) is a self-describing data product with its own
+schema, quality guarantees, and access controls.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Federated Governance.&lt;/strong&gt; Trino federates across MinIO S3, PostgreSQL,
+and benchmark datasets without moving data. Domain teams own their
+sources; Trino provides a unified query layer.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;AI as a Shared Capability.&lt;/strong&gt; The LLM endpoint is a platform service —
+any domain team can call &lt;code&gt;ai_classify()&lt;/code&gt; or &lt;code&gt;ai_gen()&lt;/code&gt; from their SQL
+queries without provisioning GPUs or managing model lifecycles.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Open Standards.&lt;/strong&gt; Apache Iceberg, S3-compatible storage,
+OpenAI-compatible API, and SQL. No proprietary lock-in — swap MinIO for
+AWS S3, swap the LLM for Claude or GPT, swap Nessie for AWS Glue. The
+architecture is portable.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_openshift_ai_the_platform_advantage&quot;&gt;OpenShift AI: The Platform Advantage&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Running this on Red Hat OpenShift AI provides specific advantages:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Serving at Scale.&lt;/strong&gt; OpenShift AI’s MaaS gateway handles model
+serving, load balancing, and GPU scheduling. Models are exposed as
+simple REST endpoints that Trino calls via the OpenAI-compatible
+protocol.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Security by Default.&lt;/strong&gt; OpenShift’s Security Context Constraints (SCCs)
+enforce non-root containers, capability dropping, and namespace
+isolation. Data never leaves the cluster.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;One-Click Deployment.&lt;/strong&gt; The entire stack — MinIO, Nessie, Trino, Query
+UI — deploys with a single &lt;code&gt;./install.sh&lt;/code&gt; script. Environment variables
+configure the LLM endpoint, S3 credentials, and optional PostgreSQL
+catalog.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubernetes-Native Operations.&lt;/strong&gt; Helm charts, K8s Jobs for data
+loading, OpenShift Routes for external access. Standard Kubernetes
+tooling for day-2 operations.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_getting_started&quot;&gt;Getting Started&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The entire stack deploys in under 10 minutes:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;export OPENAI_API_KEY=&amp;lt;your-maas-token&amp;gt;
+export OPENAI_BASE_URL=https://your-openshift-ai-endpoint
+export HF_TOKEN=&amp;lt;your-huggingface-token&amp;gt;
+./install.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then run the example queries:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;./examples/run_all.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Or open the Trino Query UI in your browser and start writing SQL that
+thinks.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_hybrid_search_when_vectors_meet_ai_functions&quot;&gt;Hybrid Search: When Vectors Meet AI Functions&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The architecture gets even more interesting when you connect Trino to a
+vector database. Our PostgreSQL instance (with pgvector) stores 154,000
+document chunks from every article on
+&lt;a href=&quot;https://developers.redhat.com&quot;&gt;developers.redhat.com&lt;/a&gt;, each with a
+768-dimensional embedding vector. These embeddings power the
+&lt;a href=&quot;https://chatbot-dev-red-rag.apps.ocp.cloud.rhai-tmm.dev/&quot;&gt;Red Hat
+Developer RAG chatbot&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;With Trino, we can compute cosine similarity in pure SQL — no pgvector
+operators needed — and combine it with AI functions for hybrid semantic
++ AI analysis:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;-- Cosine similarity computed entirely in Trino SQL
+reduce(
+    zip_with(a.embedding, b.embedding,
+             (x, y) -&amp;gt; CAST(x AS double) * CAST(y AS double)),
+    DOUBLE &apos;0.0&apos;, (s, x) -&amp;gt; s + x, s -&amp;gt; s
+) / (sqrt(...) * sqrt(...)) AS cosine_similarity&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This opens up powerful patterns that neither vector search nor AI
+functions can achieve alone:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;_vector_search_ai_examples&quot;&gt;Vector Search + AI Examples&lt;/h4&gt;
+&lt;table class=&quot;tableblock frame-all grid-all stretch&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 9%;&quot;&gt;
+&lt;col style=&quot;width: 21%;&quot;&gt;
+&lt;col style=&quot;width: 31%;&quot;&gt;
+&lt;col style=&quot;width: 39%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;#&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Example&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;What It Does&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Functions Used&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;27&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Semantic Reading List&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Find articles similar to a seed by cosine
+similarity, generate a curated reading list&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Cosine similarity&lt;br&gt;
+&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;28&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Topic Discovery&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Classify random knowledge base chunks into Red Hat
+product areas&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;29&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Content Quality Audit&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Analyze tone and fix grammar across the
+knowledge base&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_analyze_sentiment&lt;/code&gt; + &lt;code&gt;ai_fix_grammar&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;ai_classify&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;30&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Knowledge Graph&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Find semantically related articles, extract
+technologies and products mentioned&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Cosine similarity + &lt;code&gt;ai_extract&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;31&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Multilingual Knowledge Base&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Find similar articles, translate to
+Japanese and Korean on-the-fly&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Cosine similarity + &lt;code&gt;ai_translate&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For example, the &lt;em&gt;Semantic Reading List&lt;/em&gt; (example 27) finds the 5 most
+similar articles to an LLM tutorial using cosine similarity over
+768-dimensional embeddings, then asks the LLM to generate a recommended
+reading list:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;WITH seed AS (
+    SELECT embedding AS seed_vec
+    FROM vectordb.public.langchain_pg_embedding
+    WHERE json_extract_scalar(cmetadata, &apos;$.title&apos;) LIKE &apos;%LLM%&apos;
+    LIMIT 1
+),
+similar_docs AS (
+    SELECT DISTINCT
+        json_extract_scalar(e.cmetadata, &apos;$.title&apos;) AS title,
+        json_extract_scalar(e.cmetadata, &apos;$.source&apos;) AS url,
+        -- cosine similarity in pure Trino SQL
+        reduce(zip_with(e.embedding, s.seed_vec,
+               (a, b) -&amp;gt; CAST(a AS double) * CAST(b AS double)),
+               DOUBLE &apos;0.0&apos;, (st, x) -&amp;gt; st + x, st -&amp;gt; st)
+        / (sqrt(reduce(transform(e.embedding, ...), ...))
+         * sqrt(reduce(transform(s.seed_vec, ...), ...)))
+        AS similarity
+    FROM vectordb.public.langchain_pg_embedding e
+    CROSS JOIN seed s
+    ORDER BY similarity DESC
+    LIMIT 5
+)
+SELECT ai_gen(
+    &apos;Create a recommended reading list from these articles: &apos; ||
+    (SELECT json_format(CAST(array_agg(title) AS JSON))
+     FROM similar_docs)
+) AS reading_list;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The result: a semantically curated, LLM-summarized reading list — built
+from a single SQL query that spans a vector database and an LLM
+endpoint. In one run, it surfaced articles on Llama Stack, AI
+safeguards, Compressed Granite, and AI Agents — all semantically related
+to the seed article, ranked by embedding similarity, and summarized by
+the LLM.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;And the &lt;em&gt;Knowledge Graph&lt;/em&gt; (example 30) maps the technology landscape
+around a topic by finding related articles via embedding similarity,
+then extracting products, technologies, and programming languages from
+each:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;literalblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre&gt;&quot;Accelerate model training on OpenShift AI...&quot;   0.7742  {product=SFTTrainer, language=Python, technology=Trainer}
+&quot;Accelerated expert-parallel distributed...&quot;     0.6786  {product=granite-4.0, language=Python, technology=FSDP}
+&quot;Optimizing LLMs for accuracy | RHEL AI...&quot;      0.6617  {product=tokenizer, language=Python, technology=LINUX}&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This is hybrid search in its purest form: vector similarity narrows the
+search space, AI functions enrich and structure the results, and SQL
+ties it all together. No external search infrastructure, no separate ML
+pipeline — just a query.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_federated_queries_joining_across_data_sources&quot;&gt;Federated Queries: Joining Across Data Sources&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The real power emerges when you join data across catalogs. Trino
+federates queries across the Iceberg lakehouse on S3 and PostgreSQL in a
+single statement — something no single database can do alone.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;_cross_catalog_examples&quot;&gt;Cross-Catalog Examples&lt;/h4&gt;
+&lt;table class=&quot;tableblock frame-all grid-all stretch&quot;&gt;
+&lt;colgroup&gt;
+&lt;col style=&quot;width: 9%;&quot;&gt;
+&lt;col style=&quot;width: 23%;&quot;&gt;
+&lt;col style=&quot;width: 33%;&quot;&gt;
+&lt;col style=&quot;width: 35%;&quot;&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;#&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Example&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;Data Sources&lt;/th&gt;
+&lt;th class=&quot;tableblock halign-left valign-top&quot;&gt;AI Functions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;32&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;News-to-Docs: match financial news to KB articles&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;lakehouse.finance&lt;/code&gt; + &lt;code&gt;vectordb&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify&lt;/code&gt; + &lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;33&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Reviews-to-Architecture: hotel complaints as software lessons&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;lakehouse.reviews&lt;/code&gt; + &lt;code&gt;vectordb&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_classify&lt;/code&gt; + &lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;34&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;Federated Intelligence Briefing&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;lakehouse.finance&lt;/code&gt; + &lt;code&gt;vectordb&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;td class=&quot;tableblock halign-left valign-top&quot;&gt;&lt;p class=&quot;tableblock&quot;&gt;&lt;code&gt;ai_gen&lt;/code&gt;&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The &lt;em&gt;Federated Intelligence Briefing&lt;/em&gt; (example 34) is the most ambitious
+— it pulls negative tech news from the S3 lakehouse, finds related Red
+Hat developer articles from PostgreSQL, and generates a structured
+intelligence report connecting market risks to technology solutions:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;WITH negative_news AS (
+    SELECT text FROM lakehouse.finance.financial_news     -- Iceberg on S3
+    WHERE label = &apos;negative&apos; AND text LIKE &apos;%technology%&apos;
+    LIMIT 5
+),
+kb_highlights AS (
+    SELECT json_extract_scalar(cmetadata, &apos;$.title&apos;) AS title
+    FROM vectordb.public.langchain_pg_embedding            -- PostgreSQL
+    WHERE json_extract_scalar(cmetadata, &apos;$.title&apos;) LIKE &apos;%OpenShift%&apos;
+    LIMIT 5
+)
+SELECT ai_gen(                                             -- LLM via MaaS
+    &apos;Write an intelligence briefing connecting these market risks: &apos; ||
+    (SELECT json_format(...) FROM negative_news) ||
+    &apos; to these technology solutions: &apos; ||
+    (SELECT json_format(...) FROM kb_highlights)
+) AS intelligence_briefing;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A single SQL query that reads from S3, reads from PostgreSQL, calls an
+LLM, and produces an executive-ready intelligence report. Three data
+sources, one query, zero data movement.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The results are striking. In one run, the briefing automatically
+connected the SolarWinds supply-chain breach to OpenShift Service Mesh
+as a mitigation strategy, linked Uber’s service outages to Quarkus
+serverless architecture as a resilience pattern, and recommended
+OpenShift Pipelines for CI/CD hardening in response to Oracle’s manual
+support struggles. The LLM drew these connections entirely on its own —
+the query just put the right data in front of it by federating across an
+S3 data lake and a PostgreSQL knowledge base in a single SQL statement.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_getting_started_2&quot;&gt;Getting Started&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The entire stack deploys in under 10 minutes:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;export OPENAI_API_KEY=&amp;lt;your-maas-token&amp;gt;
+export OPENAI_BASE_URL=https://your-openshift-ai-endpoint
+export HF_TOKEN=&amp;lt;your-huggingface-token&amp;gt;
+export POSTGRES_HOST=postgres.your-namespace.svc.cluster.local
+./install.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Then run the example queries:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;prettyprint highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;./examples/run_all.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The source code is in github:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/eformat/trino-chart&quot; class=&quot;bare&quot;&gt;https://github.com/eformat/trino-chart&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Or open the Trino Query UI in your browser and start writing SQL that
+thinks.&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;em&gt;The source code, Helm charts, install script, and all 34 example
+queries are available in the &lt;a href=&quot;.&quot;&gt;trino-chart&lt;/a&gt; repository.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_references&quot;&gt;References&lt;/h3&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://trino.io/docs/current/functions/ai.html&quot;&gt;Trino AI Functions
+Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://levelup.gitconnected.com/trino-471-when-sql-meets-ai-and-s3-gets-easier-0ce690334b34&quot;&gt;Trino
+471: When SQL Meets AI and S3 Gets Easier&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.databricks.com/aws/en/large-language-models/ai-functions&quot;&gt;Databricks
+AI Functions&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.snowflake.com/en/user-guide/ml-functions/classification&quot;&gt;Snowflake
+ML Functions&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://iceberg.apache.org/&quot;&gt;Apache Iceberg&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://projectnessie.org/&quot;&gt;Project Nessie&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai&quot;&gt;Red
+Hat OpenShift AI&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+          </description>
+      </item>
       
       <item>
           <title>Emerging Tech Experience (ETX AI), Vibe Coding, GenAI</title>
