@@ -36,7 +36,7 @@ think.
 The stack runs entirely on OpenShift:
 
 * *Red Hat OpenShift AI* hosts LLMs as a Model-as-a-Service (MaaS)
-endpoint — in our case, Llama 4 Scout 17B via NVIDIA NIM
+endpoint — in our case, Llama 4 Scout 17B with NVIDIA
 * *Trino* is the distributed SQL engine that federates queries across
 multiple data sources
 * *Apache Iceberg* on *MinIO S3* provides the open table format
